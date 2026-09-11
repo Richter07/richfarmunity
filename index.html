@@ -1,0 +1,2213 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rĩch Farm Unity — Bénin, terre connectée</title>
+<meta name="google-site-verification" content="v8ZEKWyuqfAcaiPynsZSwDQaX0bbhykWiLHx65PzXmY" />
+<meta property="og:title" content="Rĩch Farm Unity — Bénin, terre connectée">
+<meta property="og:description" content="La plateforme qui relie semenciers, vendeurs d'outils, producteurs, éleveurs, transformateurs, commerçants et consommateurs, partout au Bénin.">
+<meta property="og:image" content="https://richfarmunity.com/logo.png">
+<meta property="og:url" content="https://richfarmunity.com">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Rĩch Farm Unity — Bénin, terre connectée">
+<meta name="twitter:description" content="La plateforme qui relie tous les acteurs de la filière agricole béninoise.">
+<meta name="twitter:image" content="https://richfarmunity.com/logo.png">
+<link rel="icon" type="image/png" href="https://richfarmunity.com/icon-192.png?v=4">
+<link rel="apple-touch-icon" href="https://richfarmunity.com/icon-192.png?v=4">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#1B5E20">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Rĩch Farm Unity">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600;9..144,700&family=Work+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  :root{
+    --vert-nuit:#0F2C13;
+    --vert-profond:#081A0B;
+    --vert-rich:#1B5E20;
+    --vert-clair:#3F8B44;
+    --or:#B8860B;
+    --or-clair:#D9A62B;
+    --or-fonce:#8B6508;
+    --ivoire:#F7F1E3;
+    --ivoire-2:#EDE1C4;
+    --creme:#FBF8F0;
+    --terre:#A8461F;
+    --encre:#1C1A14;
+    --encre-douce:#4A4436;
+    --rouge:#B23A2E;
+    --grad-or: linear-gradient(135deg, #E8BE4F 0%, #B8860B 55%, #8B6508 100%);
+    --grad-vert: linear-gradient(160deg, #234D26 0%, #0F2C13 65%, #081A0B 100%);
+    --ombre-or: 0 10px 30px rgba(184,134,11,0.28);
+    --ombre-douce: 0 18px 44px rgba(15,44,19,0.14);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    font-family:'Work Sans',sans-serif;color:var(--encre);overflow-x:hidden;
+    background-color:var(--ivoire);
+    background-image:
+      repeating-linear-gradient(135deg, rgba(184,134,11,0.045) 0px, rgba(184,134,11,0.045) 1px, transparent 1px, transparent 27px),
+      repeating-linear-gradient(45deg, rgba(27,94,32,0.03) 0px, rgba(27,94,32,0.03) 1px, transparent 1px, transparent 27px);
+  }
+  @media (prefers-reduced-motion: reduce){ *{animation-duration:0.01ms !important; transition-duration:0.01ms !important; scroll-behavior:auto !important;} }
+  h1,h2,h3,.display{font-family:'Fraunces',serif; font-weight:500; letter-spacing:-0.012em; color:var(--vert-nuit);}
+  a{color:inherit; text-decoration:none;}
+  img{max-width:100%; display:block;}
+  :focus-visible{outline:2px solid var(--or-clair); outline-offset:3px;}
+  .wrap{max-width:1180px; margin:0 auto; padding:0 32px;}
+  input,select,textarea,button{font-family:'Work Sans',sans-serif; font-size:0.95rem;}
+
+  /* ---------- HEADER / TABS (commun à tout le site) ---------- */
+  header{
+    position:sticky; top:0; z-index:100;
+    background:linear-gradient(180deg, rgba(8,26,11,0.97), rgba(15,44,19,0.93));
+    border-bottom:1px solid rgba(217,166,43,0.22);
+    box-shadow:0 4px 24px rgba(0,0,0,0.18);
+  }
+  nav{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:14px 24px; max-width:1180px; margin:0 auto; gap:14px; flex-wrap:wrap;
+  }
+  .logo{
+    font-family:'Fraunces',serif; font-size:1.1rem; font-weight:600; color:var(--ivoire);
+    display:flex; align-items:center; gap:10px; flex-shrink:0;
+  }
+  .logo .mark{ width:24px; height:24px; border-radius:50%; border:1.5px solid var(--or-clair); position:relative; flex-shrink:0; }
+  .logo .mark::before, .logo .mark::after{ content:""; position:absolute; background:var(--or-clair); }
+  .logo .mark::before{ width:1.4px; height:12px; top:5.5px; left:11px; transform:rotate(20deg);}
+  .logo .mark::after{ width:12px; height:1.4px; top:11px; left:5.5px; transform:rotate(20deg);}
+
+  nav.tabs{ display:flex; gap:6px; flex-wrap:wrap; }
+  nav.tabs button{
+    position:relative;
+    background:transparent; border:1px solid rgba(245,239,224,0.2); color:rgba(245,239,224,0.85);
+    padding:9px 17px; border-radius:100px; cursor:pointer; font-size:0.85rem; transition:all .25s ease;
+  }
+  nav.tabs button.active{ background:var(--grad-or); color:var(--vert-profond); border-color:transparent; font-weight:700; box-shadow:var(--ombre-or); }
+  nav.tabs button:hover:not(.active){ border-color:var(--or-clair); color:var(--or-clair); transform:translateY(-1px); }
+
+  .menu-toggle{
+    display:none; background:transparent; border:1px solid rgba(245,239,224,0.25); color:var(--ivoire);
+    width:42px; height:42px; border-radius:12px; cursor:pointer; font-size:1.3rem; align-items:center; justify-content:center; flex-shrink:0;
+  }
+
+  .menu-close{
+    display:none; align-self:flex-end;
+    background:transparent; border:1px solid rgba(245,239,224,0.25); color:var(--ivoire);
+    width:38px; height:38px; border-radius:12px; align-items:center; justify-content:center; font-size:1.2rem; cursor:pointer;
+    margin-bottom:6px;
+  }
+  @media (max-width:820px){
+    .menu-toggle{ display:flex; }
+    .menu-backdrop{
+      display:none;
+      position:fixed; inset:0; background:rgba(0,0,0,0.5);
+      z-index:149; opacity:0; transition:opacity .3s ease;
+    }
+    .menu-backdrop.open{ display:block; opacity:1; }
+    nav.tabs{
+      display:flex;
+      position:fixed; top:0; right:0; left:auto; bottom:0;
+      width:82%; max-width:320px;
+      background:linear-gradient(180deg, rgba(6,20,9,0.99), rgba(12,36,16,0.98));
+      backdrop-filter:blur(10px);
+      flex-direction:column; align-items:stretch; gap:8px;
+      padding:24px 18px 24px; overflow-y:auto; z-index:150;
+      transform:translateX(100%);
+      transition:transform .3s cubic-bezier(.2,.7,.2,1);
+      box-shadow:-8px 0 30px rgba(0,0,0,0.3);
+    }
+    nav.tabs.open{ transform:translateX(0); }
+    nav.tabs button{
+      width:100%; text-align:left; padding:15px 18px; font-size:0.98rem; border-radius:14px;
+    }
+    .menu-close{ display:flex; }
+  }
+
+  .account-box{ font-size:0.82rem; color:rgba(245,239,224,0.85); white-space:nowrap; }
+
+  main{ }
+  .view{ display:none; }
+  .view.active{ display:block; animation:fade .35s ease; }
+  @keyframes fade{ from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);} }
+
+  /* ---------- HERO (vue Accueil) ---------- */
+  .hero{
+    background:
+      radial-gradient(ellipse 1000px 560px at 84% -8%, rgba(217,166,43,0.22), transparent 60%),
+      radial-gradient(ellipse 700px 500px at -5% 105%, rgba(63,139,68,0.25), transparent 55%),
+      var(--grad-vert);
+    color:var(--ivoire); padding:64px 32px 118px; position:relative; overflow:hidden;
+  }
+  .hero-grain{
+    position:absolute; inset:0; pointer-events:none;
+    background-image:
+      repeating-linear-gradient(60deg, rgba(217,166,43,0.05) 0px, rgba(217,166,43,0.05) 1px, transparent 1px, transparent 34px),
+      repeating-linear-gradient(-60deg, rgba(245,239,224,0.035) 0px, rgba(245,239,224,0.035) 1px, transparent 1px, transparent 34px),
+      radial-gradient(rgba(245,239,224,0.06) 1px, transparent 1px);
+    background-size:auto, auto, 3px 3px;
+  }
+  .hero-inner{ max-width:1180px; margin:0 auto; position:relative; display:grid; grid-template-columns:1.15fr 0.85fr; gap:60px; align-items:center; }
+  .hero-eyebrow{ display:flex; align-items:center; gap:10px; margin-bottom:22px; }
+  .hero-eyebrow .line{ width:32px; height:1.5px; background:var(--grad-or); }
+  .eyebrow{ font-family:'IBM Plex Mono',monospace; font-size:0.72rem; letter-spacing:0.16em; text-transform:uppercase; color:var(--or-clair); font-weight:600; }
+  .hero h1{ font-size:clamp(2.5rem, 5vw, 4.3rem); line-height:1.04; font-weight:500; color:var(--ivoire); letter-spacing:-0.02em; }
+  .hero h1 em{
+    font-style:italic; font-weight:400;
+    background:var(--grad-or); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;
+  }
+  .hero p.lede{ margin-top:28px; font-size:1.14rem; line-height:1.68; color:rgba(245,239,224,0.82); max-width:46ch; }
+  .hero-actions{ margin-top:40px; display:flex; gap:16px; flex-wrap:wrap; }
+
+  .btn-primary{
+    position:relative; overflow:hidden;
+    background:var(--grad-or); color:var(--vert-profond); font-weight:700; font-size:0.95rem;
+    padding:16px 30px; border-radius:100px; border:none; cursor:pointer;
+    transition:transform .25s ease, box-shadow .25s ease; display:inline-block; box-shadow:var(--ombre-or);
+  }
+  .btn-primary::after{
+    content:""; position:absolute; top:0; left:-60%; width:40%; height:100%;
+    background:linear-gradient(120deg, transparent, rgba(255,255,255,0.55), transparent);
+    transform:skewX(-20deg); transition:left .6s ease;
+  }
+  .btn-primary:hover{ transform:translateY(-3px); box-shadow:0 16px 34px rgba(184,134,11,0.42); }
+  .btn-primary:hover::after{ left:130%; }
+  .btn-ghost{
+    border:1.5px solid rgba(245,239,224,0.4); color:var(--ivoire); font-weight:500; font-size:0.95rem;
+    padding:15.5px 26px; border-radius:100px; transition:border-color .25s ease, background .25s ease, transform .25s ease; display:inline-block;
+  }
+  .btn-ghost:hover{ border-color:var(--or-clair); background:rgba(217,166,43,0.1); transform:translateY(-2px); }
+
+  .hero-stats{ margin-top:52px; display:flex; gap:14px; flex-wrap:wrap; }
+  .hero-stat{
+    background:rgba(245,239,224,0.07); border:1px solid rgba(217,166,43,0.28); backdrop-filter:blur(6px);
+    border-radius:16px; padding:14px 20px; min-width:120px;
+  }
+  .hero-stat .num{ font-family:'Fraunces',serif; font-size:1.7rem; color:var(--or-clair); font-weight:500; }
+  .hero-stat .label{ font-size:0.78rem; color:rgba(245,239,224,0.65); margin-top:2px; }
+
+  .hero-weave{ position:relative; aspect-ratio:1/1.05; filter:drop-shadow(0 20px 40px rgba(0,0,0,0.35)); }
+  .hero-weave svg{ width:100%; height:100%; }
+  .weave-node-label{ font-family:'IBM Plex Mono',monospace; font-size:0.62rem; fill:rgba(245,239,224,0.7); letter-spacing:0.05em; }
+  @media (max-width:880px){ .hero-inner{ grid-template-columns:1fr; } .hero-weave{ max-width:320px; margin:0 auto; } }
+
+  section{ padding:96px 0; position:relative; }
+  .section-head{ max-width:640px; margin-bottom:58px; }
+  .section-head .eyebrow{ margin-bottom:16px; display:block; color:var(--or); }
+  .section-head h2{ font-size:clamp(1.9rem, 3.4vw, 2.6rem); line-height:1.14; font-weight:500; }
+  .section-head p{ margin-top:18px; font-size:1.03rem; color:var(--encre-douce); line-height:1.62; }
+  .reveal{ opacity:0; transform:translateY(26px) scale(0.985); transition:opacity .75s cubic-bezier(.2,.7,.2,1), transform .75s cubic-bezier(.2,.7,.2,1); }
+  .reveal.is-visible{ opacity:1; transform:translateY(0) scale(1); }
+
+  .pillars{ display:grid; grid-template-columns:repeat(3,1fr); gap:20px; }
+  .pillar{
+    position:relative; background:var(--creme); padding:38px 30px 32px; border-radius:18px;
+    border:1px solid rgba(27,94,32,0.1); box-shadow:var(--ombre-douce);
+    transition:transform .3s ease, box-shadow .3s ease;
+  }
+  .pillar::before{ content:""; position:absolute; top:0; left:24px; right:24px; height:4px; border-radius:0 0 6px 6px; background:var(--grad-or); }
+  .pillar:hover{ transform:translateY(-6px); box-shadow:0 24px 50px rgba(15,44,19,0.16); }
+  .pillar .eyebrow{ color:var(--vert-rich); }
+  .pillar h3{ margin-top:14px; font-size:1.22rem; font-weight:500; }
+  .pillar p{ margin-top:12px; font-size:0.94rem; line-height:1.6; color:var(--encre-douce); }
+  @media (max-width:820px){ .pillars{ grid-template-columns:1fr; } }
+
+  .chain-section{
+    background:var(--ivoire-2);
+    clip-path:polygon(0 0, 100% 2.4%, 100% 97.6%, 0 100%);
+    margin-top:-36px; padding-top:132px; padding-bottom:132px;
+  }
+  .chain{ position:relative; display:grid; grid-template-columns:repeat(5,1fr); gap:20px; }
+  .chain::before{ content:""; position:absolute; top:34px; left:6%; right:6%; height:3px; border-radius:3px; background:repeating-linear-gradient(90deg, var(--or-clair) 0 10px, transparent 10px 18px); z-index:0; opacity:0.85; }
+  .chain-step{ position:relative; z-index:1; }
+  .chain-num{
+    width:64px; height:64px; border-radius:50%; background:var(--grad-vert); color:var(--or-clair);
+    display:flex; align-items:center; justify-content:center; font-family:'Fraunces',serif; font-size:1.3rem; font-weight:500;
+    border:2px solid var(--or-clair); box-shadow:0 10px 22px rgba(15,44,19,0.25); transition:transform .3s ease;
+  }
+  .chain-step:hover .chain-num{ transform:scale(1.08) rotate(-4deg); }
+  .chain-step h3{ margin-top:20px; font-size:1.05rem; font-weight:500; }
+  .chain-step p{ margin-top:10px; font-size:0.88rem; line-height:1.55; color:var(--encre-douce); }
+  @media (max-width:1020px){ .chain{ grid-template-columns:repeat(2,1fr); gap:36px; } .chain::before{ display:none; } }
+  @media (max-width:560px){ .chain{ grid-template-columns:1fr; } }
+
+  .acteurs-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:22px; }
+  .acteur-card{
+    position:relative; overflow:hidden;
+    border:1px solid rgba(27,94,32,0.12); border-radius:18px; padding:30px 26px; background:var(--creme);
+    box-shadow:var(--ombre-douce);
+    transition:border-color .3s ease, transform .3s ease, box-shadow .3s ease;
+  }
+  .acteur-card::before{ content:""; position:absolute; top:0; left:0; right:0; height:5px; background:var(--grad-or); opacity:0; transition:opacity .3s ease; }
+  .acteur-card:hover{ border-color:var(--or); transform:translateY(-7px); box-shadow:0 26px 50px rgba(15,44,19,0.18); }
+  .acteur-card:hover::before{ opacity:1; }
+  .acteur-card .tag{ font-family:'IBM Plex Mono',monospace; font-size:0.7rem; letter-spacing:0.08em; text-transform:uppercase; color:var(--terre); font-weight:600; }
+  .acteur-card h3{ margin-top:12px; font-size:1.12rem; font-weight:500; }
+  .acteur-card ul{ margin-top:16px; list-style:none; display:flex; flex-direction:column; gap:10px; }
+  .acteur-card li{ font-size:0.87rem; line-height:1.5; color:var(--encre-douce); padding-left:18px; position:relative; }
+  .acteur-card li::before{ content:""; position:absolute; left:0; top:7px; width:7px; height:7px; background:var(--grad-or); border-radius:50%; }
+  @media (max-width:980px){ .acteurs-grid{ grid-template-columns:1fr 1fr; } }
+  @media (max-width:560px){ .acteurs-grid{ grid-template-columns:1fr; } }
+
+  .cedeao{
+    background:var(--grad-vert); color:var(--ivoire); border-radius:30px; padding:64px 54px;
+    display:grid; grid-template-columns:1fr 1fr; gap:50px; align-items:center;
+    box-shadow:0 30px 70px rgba(8,26,11,0.35); border:1px solid rgba(217,166,43,0.2); position:relative; overflow:hidden;
+  }
+  .cedeao::before{ content:""; position:absolute; inset:0; background:radial-gradient(ellipse 500px 300px at 90% 0%, rgba(217,166,43,0.18), transparent 60%); pointer-events:none; }
+  .cedeao h2{ color:var(--ivoire); font-size:clamp(1.8rem,3.2vw,2.3rem); }
+  .cedeao p{ margin-top:18px; color:rgba(245,239,224,0.78); line-height:1.65; font-size:0.99rem; }
+  .cedeao .countries{ margin-top:26px; display:flex; flex-wrap:wrap; gap:10px; }
+  .cedeao .countries span{ font-family:'IBM Plex Mono',monospace; font-size:0.72rem; border:1px solid rgba(217,166,43,0.45); color:var(--or-clair); padding:7px 13px; border-radius:100px; transition:background .25s ease; }
+  .cedeao .countries span:hover{ background:rgba(217,166,43,0.14); }
+  .map-svg{ width:100%; height:auto; position:relative; }
+  @media (max-width:820px){ .cedeao{ grid-template-columns:1fr; padding:46px 30px; border-radius:22px; } }
+
+  .cta-section{
+    text-align:center; padding:120px 0 132px; position:relative;
+    background:radial-gradient(ellipse 700px 400px at 50% 0%, rgba(184,134,11,0.09), transparent 65%);
+  }
+  .cta-section::before, .cta-section::after{
+    content:""; position:absolute; left:50%; transform:translateX(-50%); width:min(680px,84%); height:1px;
+    background:linear-gradient(90deg, transparent, rgba(184,134,11,0.5), transparent);
+  }
+  .cta-section::before{ top:36px; }
+  .cta-section::after{ bottom:36px; }
+  .cta-section h2{ font-size:clamp(2rem,4.2vw,2.9rem); max-width:16ch; margin:0 auto; line-height:1.14; }
+  .cta-section p{ margin:22px auto 0; max-width:52ch; color:var(--encre-douce); font-size:1.03rem; }
+
+  footer.site-footer{ background:var(--grad-vert); color:rgba(245,239,224,0.7); padding:50px 0 32px; position:relative; }
+  footer.site-footer::before{ content:""; position:absolute; top:0; left:0; right:0; height:3px; background:var(--grad-or); }
+  .footer-top{ display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:32px; padding-bottom:32px; border-bottom:1px solid rgba(245,239,224,0.12); }
+  .footer-brand .logo{ color:var(--ivoire); }
+  .footer-brand p{ margin-top:14px; font-size:0.86rem; max-width:32ch; line-height:1.6; }
+  .footer-social{ display:flex; gap:12px; margin-top:18px; }
+  .footer-social a{
+    display:flex; align-items:center; justify-content:center;
+    width:38px; height:38px; border-radius:50%; border:1px solid rgba(245,239,224,0.25);
+    color:rgba(245,239,224,0.75); transition:all .25s ease;
+  }
+  .footer-social a:hover{ color:var(--vert-profond); background:var(--grad-or); border-color:transparent; transform:translateY(-2px); }
+  .footer-cols{ display:flex; gap:50px; flex-wrap:wrap; }
+  .footer-col h4{ font-family:'IBM Plex Mono',monospace; font-size:0.7rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--or-clair); margin-bottom:14px; }
+  .footer-col button, .footer-col p{ display:block; font-size:0.86rem; color:rgba(245,239,224,0.68); margin-bottom:10px; background:none; border:none; cursor:pointer; padding:0; font-family:inherit; text-align:left; }
+  .footer-col button:hover{ color:var(--or-clair); }
+  .footer-bottom{ padding-top:24px; display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px; font-size:0.76rem; color:rgba(245,239,224,0.45); }
+
+  /* ---------- APP (Annonces / Formations / Compte) ---------- */
+  .app-main{ max-width:920px; margin:0 auto; padding:44px 24px 100px; }
+  .page-head{ margin-bottom:28px; }
+  .page-head h2{ font-size:1.9rem; }
+  .page-head p{ margin-top:8px; color:var(--encre-douce); }
+  .card{ background:var(--creme); border:1px solid rgba(27,94,32,0.12); border-radius:18px; padding:30px; box-shadow:var(--ombre-douce); }
+  form .field{ margin-bottom:16px; }
+  form label{ display:block; font-size:0.84rem; font-weight:600; margin-bottom:6px; color:var(--vert-nuit); }
+  form input, form select, form textarea{ width:100%; padding:12px 14px; border:1px solid rgba(27,94,32,0.22); border-radius:10px; background:#fff; transition:border-color .2s ease, box-shadow .2s ease; }
+  form input:focus, form select:focus, form textarea:focus{ border-color:var(--or); box-shadow:0 0 0 3px rgba(184,134,11,0.14); outline:none; }
+  form textarea{ resize:vertical; min-height:80px; }
+  .field-row{ display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+  @media (max-width:600px){ .field-row{ grid-template-columns:1fr; } }
+  .btn-main{
+    background:var(--grad-vert); color:var(--ivoire); border:none; padding:14px 26px; border-radius:100px;
+    font-weight:600; cursor:pointer; font-size:0.92rem; transition:transform .25s ease, box-shadow .25s ease;
+    box-shadow:0 10px 24px rgba(15,44,19,0.22); display:inline-block; text-align:center; text-decoration:none;
+  }
+  .btn-main:hover{ transform:translateY(-2px); box-shadow:0 14px 30px rgba(15,44,19,0.3); }
+  .btn-main:disabled{ opacity:0.6; cursor:not-allowed; transform:none; }
+  .btn-small{ background:var(--grad-or); color:var(--vert-profond); border:none; padding:9px 18px; border-radius:100px; font-weight:700; cursor:pointer; font-size:0.84rem; box-shadow:var(--ombre-or); transition:transform .25s ease; }
+  .btn-small:hover{ transform:translateY(-2px); }
+  .btn-outline-small{ background:transparent; border:1.5px solid rgba(27,94,32,0.3); color:var(--vert-rich); padding:8px 17px; border-radius:100px; cursor:pointer; font-size:0.84rem; transition:all .2s ease; }
+  .btn-outline-small:hover{ border-color:var(--vert-rich); background:rgba(27,94,32,0.06); }
+  .switch-auth{ margin-top:16px; font-size:0.86rem; color:var(--encre-douce); }
+  .switch-auth button{ background:none; border:none; color:var(--vert-rich); font-weight:600; cursor:pointer; text-decoration:underline; padding:0; }
+  .msg{ margin-top:14px; padding:12px 14px; border-radius:10px; font-size:0.86rem; display:none; }
+  .msg.error{ background:#FBE9E7; color:var(--rouge); display:block; }
+  .msg.success{ background:#E6F1E6; color:var(--vert-rich); display:block; }
+  .filters{ display:flex; gap:10px; flex-wrap:wrap; margin-bottom:22px; }
+  .filters select{ padding:9px 14px; border-radius:100px; border:1px solid rgba(27,94,32,0.25); background:#fff; font-size:0.84rem; }
+  .pub-list{ display:flex; flex-direction:column; gap:16px; }
+  .pub-card{ background:var(--creme); border:1px solid rgba(27,94,32,0.12); border-radius:16px; padding:24px; box-shadow:var(--ombre-douce); transition:transform .25s ease, box-shadow .25s ease; }
+  .pub-card:hover{ transform:translateY(-3px); box-shadow:0 20px 40px rgba(15,44,19,0.14); }
+  .pub-top{ display:flex; justify-content:space-between; align-items:flex-start; gap:12px; flex-wrap:wrap; }
+  .pub-card h3{ font-size:1.06rem; }
+  .pub-tag{ font-family:'IBM Plex Mono',monospace; font-size:0.68rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--terre); margin-bottom:6px; display:block; font-weight:600; }
+  .pub-statut{ font-size:0.72rem; font-weight:700; padding:5px 12px; border-radius:100px; background:var(--ivoire-2); color:var(--vert-rich); white-space:nowrap; }
+  .pub-statut.reserve{ background:#FBF0DC; color:var(--or-fonce); }
+  .pub-statut.ecoule{ background:#F0E8E0; color:var(--encre-douce); }
+  .pub-card p.desc{ margin-top:10px; font-size:0.9rem; color:var(--encre-douce); line-height:1.5; }
+  .pub-meta{ margin-top:14px; display:flex; gap:16px; flex-wrap:wrap; font-size:0.82rem; color:var(--encre-douce); }
+  .pub-meta strong{ color:var(--vert-nuit); }
+  .pub-footer{ margin-top:12px; font-size:0.78rem; color:var(--encre-douce); font-family:'IBM Plex Mono',monospace; }
+  .empty{ text-align:center; padding:54px 20px; color:var(--encre-douce); }
+  .empty h3{ margin-bottom:8px; color:var(--vert-nuit); }
+  .formation-card{ background:var(--creme); border:1px solid rgba(184,134,11,0.28); border-radius:16px; padding:26px; margin-bottom:18px; box-shadow:var(--ombre-douce); }
+  .formation-card .eyebrow{ font-family:'IBM Plex Mono',monospace; font-size:0.7rem; color:var(--or); text-transform:uppercase; letter-spacing:0.08em; font-weight:600; }
+  .formation-card h3{ margin-top:8px; }
+  .formation-card p{ margin-top:10px; color:var(--encre-douce); line-height:1.6; font-size:0.92rem; }
+  .toolbar{ display:flex; justify-content:space-between; align-items:center; margin-bottom:22px; flex-wrap:wrap; gap:12px; }
+
+  .gallery-section{
+    background:var(--ivoire);
+    clip-path:polygon(0 2.4%, 100% 0, 100% 100%, 0 97.6%);
+    margin-top:-36px; padding-top:130px; padding-bottom:130px;
+  }
+  .gallery-grid{
+    column-count:2;
+    column-gap:16px;
+  }
+  .gallery-grid > div{
+    break-inside:avoid; margin-bottom:16px;
+    border-radius:18px; overflow:hidden; box-shadow:0 20px 44px rgba(15,44,19,0.18); position:relative;
+  }
+  .gallery-grid img{
+    width:100%; height:auto; display:block;
+    transition:transform .55s cubic-bezier(.2,.7,.2,1);
+  }
+  .gallery-grid > div:hover img{ transform:scale(1.06); }
+  @media (min-width:1024px){
+    .gallery-grid{ column-gap:20px; }
+    .gallery-grid > div{ margin-bottom:20px; }
+  }
+  @media (max-width:760px){
+    .gallery-grid{ column-count:1; }
+  }
+</style>
+
+</head>
+<body>
+
+<header>
+  <nav>
+    <a href="#" class="logo" onclick="showView('accueil'); return false;"><img src="https://richfarmunity.com/icon-192.png" alt="Rĩch Farm Unity" style="height:40px;width:auto;border-radius:6px;">Rĩch Farm Unity</a>
+    <nav class="tabs">
+      <button class="menu-close" id="menuClose" aria-label="Fermer le menu">✕</button>
+      <button data-view="accueil" class="active">Accueil</button>
+      <button data-view="publications">Annonces</button>
+      <button data-view="formations">Formations</button>
+      <button data-view="forums">Forums</button>
+      <button data-view="institutionnel">Ancrage institutionnel</button>
+      <button data-view="apropos">À propos</button>
+      <button data-view="moderation" id="tabModeration" style="display:none;">Modération</button>
+      <button data-view="membres" id="tabMembres" style="display:none;">Membres</button>
+      <button data-view="stats" id="tabStats" style="display:none;">Statistiques</button>
+      <button data-view="compte">Mon compte</button>
+      <button data-view="conditions" style="font-size:0.75rem;opacity:0.6;">Conditions</button>
+    </nav>
+    <div class="account-box" id="accountLabel"></div>
+    <button class="menu-toggle" id="menuToggle" aria-label="Ouvrir le menu">☰</button>
+  </nav>
+  <div class="menu-backdrop" id="menuBackdrop"></div>
+</header>
+
+
+<script>
+  // Menu mobile : totalement indépendant du reste de l'app (Supabase, etc.)
+  // pour continuer à fonctionner même si le reste du script rencontre un problème
+  // (ex: connexion lente empêchant le SDK Supabase de charger à temps).
+  (function(){
+    function openMenu(){
+      document.querySelector('nav.tabs').classList.add('open');
+      document.getElementById('menuBackdrop').classList.add('open');
+    }
+    function closeMenu(){
+      document.querySelector('nav.tabs').classList.remove('open');
+      document.getElementById('menuBackdrop').classList.remove('open');
+    }
+    document.getElementById('menuToggle').addEventListener('click', openMenu);
+    document.getElementById('menuClose').addEventListener('click', closeMenu);
+    document.getElementById('menuBackdrop').addEventListener('click', closeMenu);
+    document.querySelectorAll('nav.tabs button').forEach(function(btn){
+      btn.addEventListener('click', closeMenu);
+    });
+  })();
+</script>
+
+<main>
+
+  <!-- ==================== VUE ACCUEIL ==================== -->
+  <div class="view active" id="view-accueil">
+
+    <div id="banniereInstallApp" style="display:none;background:var(--vert-rich);color:#fff;padding:14px 20px;text-align:center;">
+      <span style="font-size:0.95rem;">📲 Installez l'application Rĩch Farm Unity sur votre téléphone</span>
+      <button type="button" onclick="installerApp()" style="margin-left:12px;background:#fff;color:var(--vert-rich);border:none;border-radius:100px;padding:8px 18px;font-weight:600;font-size:0.9rem;cursor:pointer;">Installer</button>
+    </div>
+
+    <section class="hero">
+      <div class="hero-grain"></div>
+      <div class="hero-inner">
+        <div>
+          <div class="hero-eyebrow"><span class="line"></span><span class="eyebrow">Plateforme numérique agricole — Bénin</span></div>
+          <h1>Bénin,<br><em>terre connectée</em>.</h1>
+          <p class="lede">Rĩch Farm Unity relie sur une seule plateforme semenciers, vendeurs d'outils agricoles, producteurs, éleveurs, transformateurs, commerçants et consommateurs — pour que chaque récolte trouve son marché, et que chaque marché trouve sa récolte, partout au Bénin.</p>
+          <div class="hero-actions">
+            <a href="#" class="btn-primary" onclick="showView('compte'); return false;">Créer mon compte</a>
+            <a href="https://whatsapp.com/channel/0029VaqhsG3B4hdYsix5ZO0I" target="_blank" class="btn-ghost">Rejoindre sur WhatsApp</a>
+          </div>
+          <div class="hero-stats">
+            <div class="hero-stat"><div class="num">8</div><div class="label">maillons réunis sur une plateforme</div></div>
+            <div class="hero-stat"><div class="num">1</div><div class="label">réseau, du champ à la table</div></div>
+            <div class="hero-stat"><div class="num">12</div><div class="label">départements du Bénin visés</div></div>
+          </div>
+        </div>
+        <div class="hero-weave" aria-hidden="true">
+          <svg viewBox="0 0 340 360" fill="none">
+            <g stroke="rgba(217,166,43,0.35)" stroke-width="1">
+              <path d="M60,60 Q170,140 280,80" /><path d="M60,60 Q170,220 280,300" />
+              <path d="M280,80 Q170,180 60,300" /><path d="M60,300 Q170,240 280,300" />
+              <path d="M60,60 Q170,20 280,300" /><path d="M280,80 Q170,340 60,300" />
+            </g>
+            <g>
+              <circle cx="60" cy="60" r="7" fill="#0F2C13" stroke="#D9A62B" stroke-width="1.5"/>
+              <circle cx="280" cy="80" r="7" fill="#0F2C13" stroke="#D9A62B" stroke-width="1.5"/>
+              <circle cx="60" cy="300" r="7" fill="#0F2C13" stroke="#D9A62B" stroke-width="1.5"/>
+              <circle cx="280" cy="300" r="7" fill="#0F2C13" stroke="#D9A62B" stroke-width="1.5"/>
+              <circle cx="170" cy="180" r="9" fill="#D9A62B"/>
+            </g>
+            <text x="70" y="46" class="weave-node-label">PRODUCTEUR</text>
+            <text x="200" y="66" class="weave-node-label">TRANSFORMATEUR</text>
+            <text x="70" y="326" class="weave-node-label">CONSOMMATEUR</text>
+            <text x="196" y="322" class="weave-node-label">COMMERÇANT</text>
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    
+    <section class="gallery-section">
+      <div class="wrap">
+        <div class="section-head reveal">
+          <span class="eyebrow">Le Bénin qui cultive</span>
+          <h2>Des champs réels, des mains réelles.</h2>
+        </div>
+        <div class="gallery-grid reveal"><div><img src="https://richfarmunity.com/photo-hero-1.jpg" alt="Vue aerienne exploitation agricole au Benin" style="width:100%;height:100%;object-fit:cover;border-radius:14px;"></div><div><img src="https://richfarmunity.com/photo-hero-2.jpg" alt="Champ de mais au Benin" style="width:100%;height:100%;object-fit:cover;border-radius:14px;"></div><div><img src="https://richfarmunity.com/photo-hero-3.jpg" alt="Eleveur avec ses poussins au Benin" style="width:100%;height:100%;object-fit:cover;border-radius:14px;"></div><div><img src="https://richfarmunity.com/photo-terrain-1.jpg" alt="Agriculteur arrosant une pepiniere au Benin" style="width:100%;height:100%;object-fit:cover;border-radius:14px;"></div><div><img src="https://richfarmunity.com/photo-terrain-2.jpg" alt="Champ de laitue et papayers au Benin" style="width:100%;height:100%;object-fit:cover;border-radius:14px;"></div><div><img src="https://richfarmunity.com/photo-terrain-3.jpg" alt="Champ de concombres au Benin" style="width:100%;height:100%;object-fit:cover;border-radius:14px;"></div><div style="border-radius:14px;background:var(--vert-nuit);display:flex;align-items:center;justify-content:center;padding:20px;text-align:center;"><span style="color:var(--or-clair);font-family:'Fraunces',serif;font-size:1.1rem;">Rejoins la communaute Rich Farm Unity</span></div></div>
+      </div>
+    </section>
+
+    <section id="vision">
+      <div class="wrap">
+        <div class="section-head reveal">
+          <span class="eyebrow">Notre raison d'être</span>
+          <h2>Trop de productions se perdent avant d'atteindre un marché.</h2>
+          <p>Au Bénin, producteurs, éleveurs, transformateurs et commerçants travaillent souvent séparément, sans visibilité les uns sur les autres. Rĩch Farm Unity construit le fil qui les relie — information, confiance et opportunité, au même endroit.</p>
+        </div>
+        <div class="pillars reveal">
+          <div class="pillar"><span class="eyebrow">Accès</span><h3>Un marché à portée de main</h3><p>Chaque acteur trouve, en un même lieu, qui vend, qui achète, qui transforme — sans intermédiaire caché.</p></div>
+          <div class="pillar"><span class="eyebrow">Confiance</span><h3>Des échanges vérifiables</h3><p>Profils et annonces sont visibles et traçables, pour bâtir des relations qui durent.</p></div>
+          <div class="pillar"><span class="eyebrow">Croissance</span><h3>Une filière qui se renforce</h3><p>Plus les acteurs se connectent, plus la filière agricole béninoise gagne en valeur et en résilience.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="chaine" class="chain-section">
+      <div class="wrap">
+        <div class="section-head reveal">
+          <span class="eyebrow">La chaîne de valeur</span>
+          <h2>Du champ à la table, un outil à chaque étape.</h2>
+          <p>Rĩch Farm Unity suit le chemin réel d'une production — et donne à chaque acteur ce dont il a besoin pour avancer.</p>
+        </div>
+        <div class="acteurs-grid reveal">
+          <div class="acteur-card">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:2px;">
+              <svg width="40" height="40" viewBox="0 0 56 56" fill="none" style="margin-bottom:10px;">
+              <circle cx="28" cy="28" r="27" fill="none" stroke="#B8860B" stroke-width="1.5"/><path d="M16 40 L40 40 M20 40 L20 26 L28 20 L36 26 L36 40" fill="none" stroke="#1B5E20" stroke-width="1.8"/><path d="M24 40 L24 32 L32 32 L32 40" stroke="#1B5E20" stroke-width="1.5"/><circle cx="28" cy="20" r="2.5" fill="#B8860B"/></svg>
+              <span class="chain-num" style="width:34px;height:34px;font-size:0.85rem;">01</span>
+            </div>
+            
+            <span class="tag">Foncier</span><h3>Accéder à la terre</h3>
+            <p style="margin-top:8px;font-size:0.88rem;line-height:1.5;color:var(--encre-douce);">La ressource première — sans accès à la terre, pas de production ni d'installation.</p>
+            <ul><li>Louer, vendre ou mettre à disposition une parcelle</li><li>Trouver une terre disponible près de chez soi</li><li>S'informer sur la sécurisation foncière</li></ul>
+          </div>
+          <div class="acteur-card">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:2px;">
+              <svg width="40" height="40" viewBox="0 0 56 56" fill="none" style="margin-bottom:10px;">
+              <circle cx="28" cy="28" r="27" fill="none" stroke="#B8860B" stroke-width="1.5"/><path d="M18 36 L18 24 L28 16 L38 24 L38 36 Z" fill="none" stroke="#1B5E20" stroke-width="1.8"/><circle cx="28" cy="30" r="3" fill="#B8860B"/><path d="M22 40 L34 40" stroke="#1B5E20" stroke-width="1.5"/></svg>
+              <span class="chain-num" style="width:34px;height:34px;font-size:0.85rem;">02</span>
+            </div>
+            
+            <span class="tag">Semenciers</span><h3>Faire connaître ses semences</h3>
+            <p style="margin-top:8px;font-size:0.88rem;line-height:1.5;color:var(--encre-douce);">Présentent leurs variétés disponibles avant chaque campagne agricole.</p>
+            <ul><li>Présenter ses variétés disponibles par saison</li><li>Toucher directement les producteurs d'une zone</li><li>Anticiper la demande avant chaque campagne</li></ul>
+          </div>
+          <div class="acteur-card">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:2px;">
+              <svg width="40" height="40" viewBox="0 0 56 56" fill="none" style="margin-bottom:10px;">
+              <circle cx="28" cy="28" r="27" fill="none" stroke="#B8860B" stroke-width="1.5"/><path d="M20 20 L36 36" stroke="#1B5E20" stroke-width="2.2"/><path d="M17 17 L23 23" stroke="#B8860B" stroke-width="2.2"/><path d="M33 33 L39 39" stroke="#B8860B" stroke-width="2.2"/></svg>
+              <span class="chain-num" style="width:34px;height:34px;font-size:0.85rem;">03</span>
+            </div>
+            
+            <span class="tag">Vendeurs d'outils</span><h3>Équiper les producteurs</h3>
+            <p style="margin-top:8px;font-size:0.88rem;line-height:1.5;color:var(--encre-douce);">Font connaître leur matériel et leurs équipements agricoles au bon moment.</p>
+            <ul><li>Référencer son matériel agricole</li><li>Être visible auprès des producteurs</li><li>Proposer location ou vente</li></ul>
+          </div>
+          <div class="acteur-card">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:2px;">
+              <svg width="40" height="40" viewBox="0 0 56 56" fill="none" style="margin-bottom:10px;">
+              <circle cx="28" cy="28" r="27" fill="none" stroke="#B8860B" stroke-width="1.5"/><path d="M22 32 L34 32 M28 20 L28 32 M20 40 Q28 34 36 40" stroke="#1B5E20" stroke-width="1.8" fill="none"/><circle cx="28" cy="20" r="2.5" fill="#B8860B"/></svg>
+              <span class="chain-num" style="width:34px;height:34px;font-size:0.85rem;">04</span>
+            </div>
+            <span class="tag">Fournisseurs d'intrants</span><h3>Nourrir et protéger les cultures</h3>
+            <p style="margin-top:8px;font-size:0.88rem;line-height:1.5;color:var(--encre-douce);">Proposent engrais, pesticides, produits vétérinaires et autres intrants essentiels.</p>
+            <ul><li>Présenter engrais, pesticides, produits phytosanitaires</li><li>Toucher producteurs et éleveurs directement</li><li>Proposer aussi des produits vétérinaires</li></ul>
+          </div>
+          <div class="acteur-card">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:2px;">
+              <svg width="40" height="40" viewBox="0 0 56 56" fill="none" style="margin-bottom:10px;">
+              <circle cx="28" cy="28" r="27" fill="none" stroke="#B8860B" stroke-width="1.5"/><path d="M28 14 C 20 20, 20 30, 28 42 C 36 30, 36 20, 28 14 Z" fill="none" stroke="#1B5E20" stroke-width="1.8"/><path d="M28 24 L28 42" stroke="#1B5E20" stroke-width="1.5"/><circle cx="28" cy="20" r="2.5" fill="#B8860B"/></svg>
+              <span class="chain-num" style="width:34px;height:34px;font-size:0.85rem;">05</span>
+            </div>
+            <span class="tag">Producteurs &amp; éleveurs</span><h3>Vendre avant de récolter</h3>
+            <p style="margin-top:8px;font-size:0.88rem;line-height:1.5;color:var(--encre-douce);">S'équipent et sèment en connaissance de cause, annoncent récoltes ou bétail disponibles.</p>
+            <ul><li>Publier cultures, volumes ou bétail disponibles</li><li>Voir la demande par région et saison</li><li>Être mis en relation directe avec des acheteurs</li></ul>
+          </div>
+          <div class="acteur-card">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:2px;">
+              <svg width="40" height="40" viewBox="0 0 56 56" fill="none" style="margin-bottom:10px;">
+              <circle cx="28" cy="28" r="27" fill="none" stroke="#B8860B" stroke-width="1.5"/><rect x="18" y="22" width="20" height="14" rx="1.5" fill="none" stroke="#1B5E20" stroke-width="1.8"/><path d="M22 22 L22 17 L34 17 L34 22" fill="none" stroke="#1B5E20" stroke-width="1.5"/><circle cx="28" cy="29" r="2.5" fill="#B8860B"/></svg>
+              <span class="chain-num" style="width:34px;height:34px;font-size:0.85rem;">06</span>
+            </div>
+            
+            <span class="tag">Transformateurs</span><h3>Sécuriser sa matière première</h3>
+            <p style="margin-top:8px;font-size:0.88rem;line-height:1.5;color:var(--encre-douce);">Trouvent la matière première au bon volume, proposent leurs produits transformés.</p>
+            <ul><li>Repérer les producteurs proches et disponibles</li><li>Planifier ses approvisionnements</li><li>Mettre en avant ses produits transformés</li></ul>
+          </div>
+          <div class="acteur-card">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:2px;">
+              <svg width="40" height="40" viewBox="0 0 56 56" fill="none" style="margin-bottom:10px;">
+              <circle cx="28" cy="28" r="27" fill="none" stroke="#B8860B" stroke-width="1.5"/><path d="M17 24 L39 24 L37 38 L19 38 Z" fill="none" stroke="#1B5E20" stroke-width="1.8"/><path d="M21 24 L24 16 L32 16 L35 24" fill="none" stroke="#1B5E20" stroke-width="1.5"/><circle cx="28" cy="31" r="2.5" fill="#B8860B"/></svg>
+              <span class="chain-num" style="width:34px;height:34px;font-size:0.85rem;">07</span>
+            </div>
+            
+            <span class="tag">Commerçants</span><h3>Acheter avec visibilité</h3>
+            <p style="margin-top:8px;font-size:0.88rem;line-height:1.5;color:var(--encre-douce);">Comparent les offres, planifient leurs achats et distribuent vers les marchés locaux.</p>
+            <ul><li>Comparer les offres de plusieurs régions</li><li>Anticiper prix et périodes de récolte</li><li>Construire des relations d'achat durables</li></ul>
+          </div>
+          <div class="acteur-card">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:2px;">
+              <svg width="40" height="40" viewBox="0 0 56 56" fill="none" style="margin-bottom:10px;">
+              <circle cx="28" cy="28" r="27" fill="none" stroke="#B8860B" stroke-width="1.5"/><circle cx="28" cy="21" r="5" fill="none" stroke="#1B5E20" stroke-width="1.8"/><path d="M17 41 C 17 32, 39 32, 39 41" fill="none" stroke="#1B5E20" stroke-width="1.8"/><circle cx="28" cy="21" r="1.8" fill="#B8860B"/></svg>
+              <span class="chain-num" style="width:34px;height:34px;font-size:0.85rem;">08</span>
+            </div>
+            
+            <span class="tag">Consommateurs</span><h3>Connaître ce que l'on mange</h3>
+            <p style="margin-top:8px;font-size:0.88rem;line-height:1.5;color:var(--encre-douce);">Accèdent à des produits locaux, traçables, avec une meilleure lisibilité sur origine et prix.</p>
+            <ul><li>Retrouver l'origine des produits locaux</li><li>Accéder à des circuits courts et fiables</li><li>Soutenir directement les producteurs locaux</li></ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section style="padding-top:0;padding-bottom:70px;">
+      <div class="wrap">
+        <div class="pillars reveal" style="grid-template-columns:1fr;">
+          <div class="pillar" style="text-align:center;padding:36px 30px;">
+            <span class="eyebrow">🌱 Un engagement transversal</span>
+            <h3 style="margin-top:14px;font-size:1.25rem;">L'environnement, à chaque maillon.</h3>
+            <p style="margin-top:12px;font-size:0.94rem;line-height:1.65;color:var(--encre-douce);max-width:60ch;margin-left:auto;margin-right:auto;">Variétés résistantes au climat, agroécologie, gestion durable de l'eau, réduction des pertes post-récolte, emballages responsables, consommation locale et de saison — l'environnement n'est pas un maillon à part, c'est une exigence à chaque étape. Repérez le badge <strong>🌱 Éco-responsable</strong> sur les annonces qui s'inscrivent dans cette démarche.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="region">
+      <div class="wrap">
+        <div class="cedeao reveal">
+          <div>
+            <span class="eyebrow" style="color:var(--or-clair)">Priorité nationale</span>
+            <h2>Le Bénin d'abord.</h2>
+            <p>Rĩch Farm Unity part d'Abomey-Calavi et se concentre entièrement sur le Bénin : y ancrer des échanges solides entre semenciers, producteurs, transformateurs, commerçants et consommateurs, avant d'envisager toute étape suivante.</p>
+            <div class="countries"><span>Alibori</span><span>Atacora</span><span>Atlantique</span><span>Borgou</span><span>Collines</span><span>Couffo</span><span>Donga</span><span>Littoral</span><span>Mono</span><span>Ouémé</span><span>Plateau</span><span>Zou</span></div>
+          </div>
+          <svg class="map-svg" viewBox="0 0 300 260" fill="none" aria-hidden="true">
+            <g stroke="rgba(217,166,43,0.4)" stroke-width="1" stroke-dasharray="2 4">
+              <path d="M150,130 L60,60"/><path d="M150,130 L250,50"/><path d="M150,130 L60,210"/>
+              <path d="M150,130 L250,220"/><path d="M150,130 L150,30"/><path d="M150,130 L230,140"/>
+            </g>
+            <circle cx="150" cy="130" r="10" fill="#D9A62B"/>
+            <circle cx="60" cy="60" r="4" fill="#F5EFE0" opacity="0.7"/><circle cx="250" cy="50" r="4" fill="#F5EFE0" opacity="0.7"/>
+            <circle cx="60" cy="210" r="4" fill="#F5EFE0" opacity="0.7"/><circle cx="250" cy="220" r="4" fill="#F5EFE0" opacity="0.7"/>
+            <circle cx="150" cy="30" r="4" fill="#F5EFE0" opacity="0.7"/><circle cx="230" cy="140" r="4" fill="#F5EFE0" opacity="0.7"/>
+            <text x="128" y="118" font-family="IBM Plex Mono, monospace" font-size="9" fill="#F5EFE0">BÉNIN</text>
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <section class="cta-section">
+      <div class="wrap">
+        <span class="eyebrow">Rejoindre le mouvement</span>
+        <h2 style="margin-top:16px;">Soyez parmi les premiers connectés.</h2>
+        <p>Semencier, vendeur d'outils, producteur, éleveur, transformateur, commerçant ou consommateur — créez votre compte et publiez votre première annonce.</p>
+        <div style="margin-top:32px;"><a href="#" class="btn-primary" onclick="showView('compte'); return false;">Créer mon compte</a></div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- ==================== VUE ANNONCES ==================== -->
+  <div class="view" id="view-publications">
+    <div class="app-main">
+      <div class="toolbar">
+        <div class="page-head" style="margin-bottom:0;">
+          <h2>Annonces</h2>
+          <p>Semences, outils, récoltes, bétail, produits transformés — tout ce qui se propose au Bénin.</p>
+        </div>
+      </div>
+      <div style="display:flex;gap:12px;margin-bottom:20px;">
+        <button type="button" id="btnFiltreVentes" class="btn-main" style="flex:1;" onclick="filtrerTypeAnnonce('vente')">🌾 Ventes</button>
+        <button type="button" id="btnFiltreAchats" class="btn-outline-small" style="flex:1;padding:14px;font-size:0.92rem;" onclick="filtrerTypeAnnonce('achat')">🛒 Achats</button>
+      </div>
+      <div class="field" style="margin-bottom:16px;">
+        <input type="text" id="searchAnnonces" placeholder="Rechercher (ex : maïs, tracteur, semences...)" style="width:100%;padding:13px 16px;border-radius:100px;border:1px solid rgba(27,94,32,0.3);background:#fff;">
+      </div>
+      <div class="filters">
+        <select id="filterCategorie">
+          <option value="">Tous les secteurs</option>
+          <option value="Production végétale">Production végétale</option>
+          <option value="Production animale">Production animale</option>
+          <option value="Transformation agroalimentaire">Transformation agroalimentaire</option>
+          <option value="Agroforesterie / Foresterie">Agroforesterie / Foresterie</option>
+          <option value="Intrants">Intrants (engrais, pesticides, produits vétérinaires…)</option>
+          <option value="Foncier">Foncier (terres à louer, vendre, disposer)</option>
+          <option value="Autre">Autre (outils, services)</option>
+        </select>
+        <select id="filterStatut">
+          <option value="">Tous les statuts</option>
+          <option value="disponible">Disponible</option>
+          <option value="reserve">Réservé</option>
+          <option value="ecoule">Écoulé</option>
+        </select>
+        <label style="display:flex;align-items:center;gap:6px;padding:9px 14px;border-radius:100px;border:1px solid rgba(27,94,32,0.25);background:#fff;font-size:0.84rem;cursor:pointer;">
+          <input type="checkbox" id="filterEco" style="width:auto;"> 🌱 Éco-responsable
+        </label>
+      </div>
+      <div id="pubListContainer" class="pub-list"><div class="empty"><h3>Chargement…</h3></div></div>
+    </div>
+  </div>
+
+  <!-- ==================== VUE NOUVELLE PUBLICATION ==================== -->
+  <div class="view" id="view-nouvelle-pub">
+    <div class="app-main">
+      <div class="page-head"><h2>Publier une annonce</h2><p>Décrivez ce que vous proposez — les autres acteurs pourront vous contacter directement.</p></div>
+      <div class="card">
+        <form id="formPublication">
+          <div class="field">
+            <label>Type d'annonce</label>
+            <div style="display:flex;gap:12px;margin-top:8px;">
+              <button type="button" id="btnTypeVente" class="btn-main" style="flex:1;opacity:1;" onclick="choisirTypeAnnonce('vente')">🌾 Je vends</button>
+              <button type="button" id="btnTypeAchat" class="btn-outline-small" style="flex:1;padding:14px;font-size:0.92rem;" onclick="choisirTypeAnnonce('achat')">🛒 Je cherche à acheter</button>
+            </div>
+            <input type="hidden" id="pubTypeAnnonce" value="vente">
+          </div>
+          <div class="field"><label for="pubTitre">Titre de l'annonce</label><input type="text" id="pubTitre" required placeholder="Ex : 200 kg de maïs disponible"></div>
+          <div class="field-row">
+            <div class="field"><label for="pubCategorie">Secteur d'activité</label>
+              <select id="pubCategorie" required>
+                <option value="">Choisir…</option>
+                <option value="Production végétale">Production végétale</option>
+                <option value="Production animale">Production animale</option>
+                <option value="Transformation agroalimentaire">Transformation agroalimentaire</option>
+                <option value="Agroforesterie / Foresterie">Agroforesterie / Foresterie</option>
+                <option value="Intrants">Intrants (engrais, pesticides, produits vétérinaires…)</option>
+                <option value="Foncier">Foncier (terres à louer, vendre, disposer)</option>
+                <option value="Autre">Autre (outils, services)</option>
+              </select>
+            </div>
+            <div class="field"><label for="pubQuantite">Quantité</label><input type="text" id="pubQuantite" placeholder="Ex : 200 kg, 10 unités"></div>
+          </div>
+          <div class="field-row">
+            <div class="field"><label for="pubPrix">Prix</label><input type="text" id="pubPrix" placeholder="Ex : 15 000 FCFA, à négocier"></div>
+            <div class="field"><label for="pubLocalisation">Localisation</label><input type="text" id="pubLocalisation" placeholder="Ex : Abomey-Calavi, Atlantique"></div>
+          </div>
+          <div class="field" id="pubCertifWrap" style="display:none;">
+            <label for="pubCertif">Certification(s) du produit ou de l'unité de transformation</label>
+            <input type="text" id="pubCertif" placeholder="Ex : Autorisation ABSSA, Label bio, HACCP, ISO 22000, Certificat sanitaire…">
+          </div>
+          <div class="field"><label for="pubDescription">Description</label><textarea id="pubDescription" placeholder="Détails utiles pour un acheteur ou un partenaire"></textarea></div>
+          <div class="field" style="display:flex;align-items:flex-start;gap:10px;">
+            <input type="checkbox" id="pubEcoResponsable" style="width:auto;margin-top:3px;flex-shrink:0;">
+            <label for="pubEcoResponsable" style="font-weight:400;font-size:0.86rem;line-height:1.5;color:var(--encre-douce);margin-bottom:0;">🌱 Ce produit ou cette pratique est éco-responsable (bio, agroécologie, économie d'eau, emballage durable…)</label>
+          </div>
+          <div class="field"><label for="pubPhoto">Photos (jusqu'à 5, optionnel)</label><input type="file" id="pubPhoto" accept="image/*" multiple></div>
+          <button type="submit" class="btn-main" id="btnPublier">Publier l'annonce</button>
+          <div class="msg" id="msgPublication"></div>
+          <div id="notifPromptPublication" style="display:none;margin-top:14px;padding:16px;background:var(--ivoire-2);border-radius:12px;">
+            <p style="font-size:0.88rem;color:var(--encre);margin-bottom:10px;">🔔 Activez les notifications pour savoir dès que votre annonce est validée.</p>
+            <button type="button" class="btn-small" onclick="activerNotifications()">Activer les notifications</button>
+            <button type="button" class="btn-outline-small" onclick="showView('publications')" style="margin-left:8px;">Voir les annonces</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== VUE FORMATIONS ==================== -->
+  <div class="view" id="view-formations">
+    <div class="app-main">
+      <div class="toolbar">
+        <div class="page-head" style="margin-bottom:0;"><h2>Formations &amp; astuces</h2><p>Conseils de production et actualités publiés par Rĩch Farm Unity.</p></div>
+        <button class="btn-small" id="btnNouvelleFormation" style="display:none;">+ Nouvelle formation</button>
+      </div>
+      <div id="formationsContainer"><div class="empty"><h3>Chargement…</h3></div></div>
+    </div>
+  </div>
+
+  <!-- ==================== VUE ANCRAGE INSTITUTIONNEL ==================== -->
+  <div class="view" id="view-institutionnel">
+    <div class="app-main">
+      <div class="page-head"><h2>Ancrage institutionnel</h2><p>Vos obligations administratives et les structures publiques à contacter, selon votre département.</p></div>
+
+      <div class="card" style="margin-bottom:20px;">
+        <h3 style="margin-bottom:14px;">Obligations administratives des transformateurs</h3>
+        <p style="line-height:1.7;color:var(--encre-douce);">Avant de commercialiser un produit transformé au Bénin, plusieurs démarches sont généralement attendues auprès des structures compétentes :</p>
+        <ul style="margin-top:12px;line-height:1.85;color:var(--encre-douce);padding-left:20px;">
+          <li><strong>Immatriculation de l'activité</strong> — enregistrement de l'entreprise ou de l'unité de transformation (RCCM / IFU) auprès du Guichet Unique de Formalisation des Entreprises (GUFE) de l'APIEx.</li>
+          <li><strong>Autorisation sanitaire</strong> — pour les produits alimentaires, un contrôle et une autorisation de mise sur le marché sont délivrés par l'Agence Béninoise de Sécurité Sanitaire des Aliments (ABSSA).</li>
+          <li><strong>Étiquetage &amp; normes de qualité</strong> — conformité aux normes en vigueur (poids net, ingrédients, date de fabrication/péremption, traçabilité), avec l'appui de l'Agence Nationale de Normalisation, de Métrologie et du Contrôle Qualité (ANM).</li>
+          <li><strong>Accompagnement filière</strong> — l'Agence Territoriale de Développement Agricole (ATDA) de votre pôle peut vous orienter et vous accompagner (formations, mise en relation, appui technique).</li>
+        </ul>
+        <p style="margin-top:14px;font-size:0.85rem;color:var(--encre-douce);">ℹ️ Informations données à titre indicatif : les démarches précises et les pièces à fournir peuvent varier. Confirmez toujours auprès de la structure compétente de votre département avant d'engager une procédure.</p>
+      </div>
+
+      <div class="card" id="carteAjoutContactInstit" style="margin-bottom:20px;display:none;">
+        <h3 style="margin-bottom:14px;">Ajouter un contact (admin)</h3>
+        <form id="formContactInstit">
+          <div class="field-row">
+            <div class="field"><label for="ciDepartement">Département</label><input type="text" id="ciDepartement" required placeholder="Ex : Atacora"></div>
+            <div class="field"><label for="ciStructure">Structure</label><input type="text" id="ciStructure" required placeholder="Ex : ATDA Pôle 3"></div>
+          </div>
+          <div class="field-row">
+            <div class="field"><label for="ciContactNom">Nom &amp; prénom du contact</label><input type="text" id="ciContactNom" placeholder="Ex : M. Jean KOUDJO"></div>
+            <div class="field"><label for="ciContactPoste">Poste</label><input type="text" id="ciContactPoste" placeholder="Ex : Responsable filière transformation"></div>
+          </div>
+          <div class="field-row">
+            <div class="field"><label for="ciTelephone">Téléphone</label><input type="text" id="ciTelephone" placeholder="+229XXXXXXXX"></div>
+            <div class="field"><label for="ciEmail">Email</label><input type="email" id="ciEmail"></div>
+          </div>
+          <div class="field-row">
+            <div class="field"><label for="ciVille">Ville / siège</label><input type="text" id="ciVille" placeholder="Ex : Natitingou"></div>
+            <div class="field"><label for="ciAdresse">Adresse</label><input type="text" id="ciAdresse"></div>
+          </div>
+          <div class="field"><label for="ciNotes">Notes (optionnel)</label><input type="text" id="ciNotes" placeholder="Ex : Coordonnées à confirmer"></div>
+          <button type="submit" class="btn-main">Ajouter ce contact</button>
+          <div class="msg" id="msgContactInstit"></div>
+        </form>
+      </div>
+
+      <div class="card">
+        <h3 style="margin-bottom:14px;">Contacts institutionnels par département</h3>
+        <div id="contactsInstitutionnelsContainer"><div class="empty"><h3>Chargement…</h3></div></div>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="view" id="view-forums">
+    <div class="app-main">
+      <div class="toolbar">
+        <div class="page-head" style="margin-bottom:0;">
+          <h2>Forums par filière</h2>
+          <p>Échangez, posez vos questions, partagez vos informations sur les marchés — par secteur.</p>
+        </div>
+        <button class="btn-small" id="btnNouveauSujet" style="display:none;">+ Nouveau sujet</button>
+      </div>
+      <div class="filters">
+        <select id="filterForumSecteur">
+          <option value="">Tous les secteurs</option>
+          <option value="Production végétale">Production végétale</option>
+          <option value="Production animale">Production animale</option>
+          <option value="Transformation agroalimentaire">Transformation agroalimentaire</option>
+          <option value="Agroforesterie / Foresterie">Agroforesterie / Foresterie</option>
+          <option value="Intrants">Intrants</option>
+          <option value="Foncier">Foncier</option>
+          <option value="Autre">Autre</option>
+        </select>
+      </div>
+      <div id="sujetsContainer" class="pub-list"><div class="empty"><h3>Chargement…</h3></div></div>
+    </div>
+  </div>
+
+  <!-- ==================== VUE NOUVEAU SUJET ==================== -->
+  <div class="view" id="view-nouveau-sujet">
+    <div class="app-main">
+      <div class="page-head"><h2>Nouveau sujet</h2><p>Posez une question ou lancez une discussion avec la communauté.</p></div>
+      <div class="card">
+        <form id="formSujet">
+          <div class="field"><label for="sujetSecteur">Secteur / filière</label>
+            <select id="sujetSecteur">
+              <option value="">Choisir…</option>
+              <option value="Production végétale">Production végétale</option>
+              <option value="Production animale">Production animale</option>
+              <option value="Transformation agroalimentaire">Transformation agroalimentaire</option>
+              <option value="Agroforesterie / Foresterie">Agroforesterie / Foresterie</option>
+              <option value="Intrants">Intrants</option>
+              <option value="Foncier">Foncier</option>
+              <option value="Autre">Autre</option>
+            </select>
+          </div>
+          <div class="field"><label for="sujetTitre">Titre</label><input type="text" id="sujetTitre" required placeholder="Ex : Comment lutter contre les chenilles légionnaires ?"></div>
+          <div class="field"><label for="sujetContenu">Message</label><textarea id="sujetContenu" required style="min-height:120px;"></textarea></div>
+          <button type="submit" class="btn-main">Publier le sujet</button>
+          <div class="msg" id="msgSujet"></div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== VUE NOUVELLE FORMATION ==================== -->
+  <div class="view" id="view-nouvelle-formation">
+    <div class="app-main">
+      <div class="page-head"><h2 id="formationFormTitle">Publier une formation</h2><p>Visible par tous les utilisateurs de la plateforme.</p></div>
+      <div class="card">
+        <form id="formFormation">
+          <input type="hidden" id="formationEditId" value="">
+          <div class="field"><label for="formTitre">Titre</label><input type="text" id="formTitre" required></div>
+          <div class="field"><label for="formContenu">Contenu</label><textarea id="formContenu" required style="min-height:160px;"></textarea></div>
+          <div class="field"><label for="formMedia">Photo ou vidéo (optionnel)</label><input type="file" id="formMedia" accept="image/*,video/*"></div>
+          <button type="submit" class="btn-main" id="btnFormationSubmit">Publier</button>
+          <div class="msg" id="msgFormation"></div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== VUE COMPTE ==================== -->
+  <div class="view" id="view-compte">
+    <div class="app-main">
+      <div id="compteConnecte" style="display:none;">
+        <div class="page-head"><h2>Mon compte</h2><p id="compteResume"></p></div>
+        <div id="compteEnAttente" class="card" style="margin-bottom:20px;display:none;background:#FBF0DC;border-color:var(--or);">
+          <p style="color:var(--encre);line-height:1.6;"><strong>Votre compte est en cours de vérification.</strong><br>Nous allons vous contacter pour quelques informations avant de valider votre accès à la publication d'annonces. Merci de votre patience.</p>
+        </div>
+        <div id="carteCompleterProfil" class="card" style="margin-bottom:20px;display:none;background:#FBF0DC;border-color:var(--or);">
+          <p style="color:var(--encre);line-height:1.6;margin-bottom:14px;"><strong>Encore une étape !</strong><br>Complétez ces informations pour pouvoir publier des annonces et être contacté(e).</p>
+          <form id="formCompleterProfil">
+            <div class="field-row">
+              <div class="field"><label for="cpPrenom">Prénom</label><input type="text" id="cpPrenom" required></div>
+              <div class="field"><label for="cpNom">Nom</label><input type="text" id="cpNom" required></div>
+            </div>
+            <div class="field"><label for="cpTelephone">Téléphone (avec indicatif du pays)</label><input type="tel" id="cpTelephone" required pattern="^\+[0-9]{7,15}$" placeholder="+229XXXXXXXX"></div>
+            <div class="field"><label for="cpType">Je suis…</label>
+              <select id="cpType" required>
+                <option value="">Choisir un rôle</option>
+                <option value="Producteur">Producteur</option>
+                <option value="Transformateur">Transformateur</option>
+                <option value="Distributeur">Distributeur / commerçant</option>
+                <option value="Consommateur">Consommateur</option>
+                <option value="Membre d'institution">Membre d'institution (recherche, ONG, État…)</option>
+              </select>
+            </div>
+            <div class="field"><label for="cpDomaine">Domaine / filière (optionnel)</label><input type="text" id="cpDomaine" placeholder="Ex : maraîchage, aviculture, foresterie…"></div>
+            <button type="submit" class="btn-main">Valider mon profil</button>
+            <div class="msg" id="msgCompleterProfil"></div>
+          </form>
+        </div>
+        <div class="card" style="margin-bottom:20px;"><button class="btn-main" id="btnAllerPublier">Publier une nouvelle annonce</button></div>
+        <div class="card" style="margin-bottom:20px;display:none;" id="carteInstallerApp">
+          <p style="font-size:0.9rem;color:var(--encre-douce);margin-bottom:12px;" id="texteInstallerApp">📲 Installez l'application sur votre téléphone pour un accès plus rapide, même hors connexion.</p>
+          <button type="button" class="btn-small" id="btnInstallerAppCompte" onclick="installerApp()">Installer l'application</button>
+        </div>
+        <div class="card" style="margin-bottom:20px;" id="carteActiverNotifs">
+          <p style="font-size:0.9rem;color:var(--encre-douce);margin-bottom:12px;">🔔 Recevez une alerte dès que votre compte ou vos annonces sont validés, et dès qu'il y a du nouveau sur la plateforme.</p>
+          <button type="button" class="btn-small" onclick="activerNotifications()">Activer les notifications</button>
+        </div>
+        <div class="card" style="margin-bottom:20px;display:none;" id="carteNotifsActives">
+          <p style="font-size:0.9rem;color:var(--vert-rich);margin:0;">🔔 Notifications activées sur cet appareil.</p>
+        </div>
+        <div class="card" style="margin-bottom:20px;">
+          <h3 style="margin-bottom:14px;">Modifier mon profil</h3>
+          <form id="formModifierProfil">
+            <div class="field-row">
+              <div class="field"><label for="editPrenom">Prénom</label><input type="text" id="editPrenom" required></div>
+              <div class="field"><label for="editNom">Nom</label><input type="text" id="editNom" required></div>
+            </div>
+            <div class="field"><label for="editTelephone">Téléphone (avec indicatif du pays)</label><input type="tel" id="editTelephone" required pattern="^\+[0-9]{7,15}$" title="Le numéro doit commencer par l'indicatif du pays, ex : +229XXXXXXXX" placeholder="+229XXXXXXXX"></div>
+            <div class="field"><label for="editDomaine">Domaine / filière</label><input type="text" id="editDomaine" placeholder="Ex : maraîchage, aviculture, foresterie…"></div>
+            <button type="submit" class="btn-main">Enregistrer les modifications</button>
+            <div class="msg" id="msgModifierProfil"></div>
+          </form>
+        </div>
+        <div class="card" style="margin-bottom:20px;">
+          <div class="toolbar" style="margin-bottom:0;">
+            <h3>Mes annonces</h3>
+            <button type="button" class="btn-outline-small" onclick="toggleMesAnnonces()">Afficher / masquer</button>
+          </div>
+          <div id="mesAnnoncesContainer" class="pub-list" style="display:none;margin-top:16px;"></div>
+        </div>
+        <button class="btn-outline-small" id="btnDeconnexion">Se déconnecter</button>
+      </div>
+
+      <div id="compteNonConnecte">
+        <div class="page-head"><h2 id="authTitle">Créer un compte</h2><p id="authSubtitle">Inscrivez-vous pour publier des annonces et contacter les autres acteurs.</p></div>
+        <div class="card" style="margin-bottom:16px;" id="carteOAuth">
+          <button type="button" class="btn-outline-small" style="width:100%;justify-content:center;display:flex;align-items:center;gap:10px;" onclick="connexionOAuth('google')">
+            <svg width="18" height="18" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg"><path fill="#4285F4" d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 0 1-1.8 2.72v2.26h2.9c1.7-1.57 2.7-3.88 2.7-6.62z"/><path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.9-2.26c-.8.54-1.84.86-3.06.86-2.35 0-4.34-1.59-5.05-3.72H.98v2.33A9 9 0 0 0 9 18z"/><path fill="#FBBC05" d="M3.95 10.7A5.4 5.4 0 0 1 3.67 9c0-.59.1-1.17.28-1.7V4.97H.98A9 9 0 0 0 0 9c0 1.45.35 2.83.98 4.03l2.97-2.33z"/><path fill="#EA4335" d="M9 3.58c1.32 0 2.5.45 3.44 1.35l2.58-2.58C13.46.89 11.43 0 9 0A9 9 0 0 0 .98 4.97l2.97 2.33C4.66 5.17 6.65 3.58 9 3.58z"/></svg>
+            Continuer avec Google
+          </button>
+          <div style="text-align:center;color:var(--encre-douce);font-size:0.85rem;margin-top:14px;">— ou avec un email —</div>
+        </div>
+        <div class="card">
+          <form id="formInscription">
+            <div class="field-row">
+              <div class="field"><label for="regPrenom">Prénom</label><input type="text" id="regPrenom" required></div>
+              <div class="field"><label for="regNom">Nom</label><input type="text" id="regNom" required></div>
+            </div>
+            <div class="field-row">
+              <div class="field"><label for="regTelephone">Téléphone (avec indicatif du pays)</label><input type="tel" id="regTelephone" required pattern="^\+[0-9]{7,15}$" title="Le numéro doit commencer par l'indicatif du pays, ex : +229XXXXXXXX" placeholder="+229XXXXXXXX"></div>
+              <div class="field"><label for="regEmail">Email</label><input type="email" id="regEmail" required></div>
+            </div>
+            <div class="field-row">
+              <div class="field"><label for="regType">Type d'acteur</label>
+                <select id="regType" required>
+                  <option value="">Choisir…</option>
+                  <option value="Semencier">Semencier</option>
+                  <option value="Vendeur d'outils agricoles">Vendeur d'outils agricoles</option>
+                  <option value="Fournisseur d'intrants">Fournisseur d'intrants (engrais, pesticides, produits vétérinaires…)</option>
+                  <option value="Propriétaire foncier">Propriétaire foncier (terres à louer, vendre, disposer)</option>
+                  <option value="Producteur (végétal)">Producteur (végétal)</option>
+                  <option value="Éleveur (animal)">Éleveur (animal)</option>
+                  <option value="Agroforesterie / Foresterie">Agroforesterie / Foresterie</option>
+                  <option value="Transformateur">Transformateur</option>
+                  <option value="Commerçant">Commerçant</option>
+                  <option value="Consommateur">Consommateur</option>
+                  <option value="Membre d'institution">Membre d'institution (recherche, ONG, État…)</option>
+                </select>
+              </div>
+              <div class="field"><label for="regDomaine">Domaine / filière</label><input type="text" id="regDomaine" placeholder="Ex : maraîchage, aviculture, foresterie…"></div>
+            </div>
+            <div class="field"><label for="regPassword">Mot de passe</label><input type="password" id="regPassword" required minlength="6"></div>
+            <div class="field" style="display:flex;align-items:flex-start;gap:10px;">
+              <input type="checkbox" id="regAcceptConditions" required style="width:auto;margin-top:3px;flex-shrink:0;">
+              <label for="regAcceptConditions" style="font-weight:400;font-size:0.86rem;line-height:1.5;color:var(--encre-douce);margin-bottom:0;">J'ai lu et j'accepte les <button type="button" onclick="showView('conditions')" style="background:none;border:none;color:var(--vert-rich);font-weight:600;text-decoration:underline;cursor:pointer;padding:0;font-size:inherit;">conditions d'utilisation et la politique de confidentialité</button>.</label>
+            </div>
+            <button type="submit" class="btn-main">Créer mon compte</button>
+            <div class="msg" id="msgInscription"></div>
+            <div id="notifPromptInscription" style="display:none;margin-top:14px;padding:16px;background:var(--ivoire-2);border-radius:12px;">
+              <p style="font-size:0.88rem;color:var(--encre);margin-bottom:10px;">🔔 Activez les notifications pour savoir dès que votre compte est validé.</p>
+              <button type="button" class="btn-small" onclick="activerNotifications()">Activer les notifications</button>
+            </div>
+            <div class="switch-auth">Déjà inscrit ? <button type="button" id="toLogin">Se connecter</button></div>
+          </form>
+
+          <form id="formConnexion" style="display:none;">
+            <div class="field"><label for="logEmail">Email</label><input type="email" id="logEmail" required></div>
+            <div class="field"><label for="logPassword">Mot de passe</label><input type="password" id="logPassword" required></div>
+            <button type="submit" class="btn-main">Se connecter</button>
+            <div class="msg" id="msgConnexion"></div>
+            <div class="switch-auth">Pas encore de compte ? <button type="button" id="toRegister">S'inscrire</button></div>
+            <div class="switch-auth">Mot de passe oublié ? <button type="button" id="toForgotPassword">Réinitialiser</button></div>
+          </form>
+
+          <form id="formForgotPassword" style="display:none;">
+            <p style="font-size:0.88rem;color:var(--encre-douce);margin-bottom:14px;">Entrez votre email, vous recevrez un lien pour choisir un nouveau mot de passe.</p>
+            <div class="field"><label for="forgotEmail">Email</label><input type="email" id="forgotEmail" required></div>
+            <button type="submit" class="btn-main">Envoyer le lien</button>
+            <div class="msg" id="msgForgotPassword"></div>
+            <div class="switch-auth">Vous vous souvenez ? <button type="button" id="toLoginFromForgot">Se connecter</button></div>
+          </form>
+
+          <form id="formResetPassword" style="display:none;">
+            <p style="font-size:0.88rem;color:var(--encre-douce);margin-bottom:14px;">Choisissez votre nouveau mot de passe.</p>
+            <div class="field"><label for="newPassword">Nouveau mot de passe</label><input type="password" id="newPassword" required minlength="6"></div>
+            <button type="submit" class="btn-main">Enregistrer le mot de passe</button>
+            <div class="msg" id="msgResetPassword"></div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- ==================== VUE À PROPOS / CONTACT ==================== -->
+  <div class="view" id="view-apropos">
+    <div class="app-main">
+      <div class="page-head">
+        <h2>À propos de Rĩch Farm Unity</h2>
+        <p>Une initiative née à Abomey-Calavi, au service de la filière agricole béninoise.</p>
+      </div>
+      <div class="card" style="margin-bottom:20px;">
+        <h3 style="margin-bottom:14px;">Notre mission</h3>
+        <p style="line-height:1.7;color:var(--encre-douce);">Rĩch Farm Unity est une plateforme numérique qui relie semenciers, vendeurs d'outils agricoles, producteurs, éleveurs, transformateurs, commerçants et consommateurs à travers le Bénin. Notre objectif est simple : résoudre le déséquilibre entre l'offre et la demande dans le secteur agricole, en donnant à chaque acteur un espace pour publier, découvrir et se connecter directement — sans intermédiaire caché.</p>
+        <p style="line-height:1.7;color:var(--encre-douce);margin-top:14px;">Rĩch Farm Unity est une initiative de <strong>Rĩchinnov</strong>, marque béninoise engagée dans la valorisation des produits agricoles locaux.</p>
+      </div>
+      <div class="card" style="margin-bottom:20px;">
+        <h3 style="margin-bottom:14px;">Le promoteur</h3>
+        <div style="display:flex;gap:20px;flex-wrap:wrap;align-items:flex-start;">
+          <img src="https://richfarmunity.com/photo-promoteur.jpg" alt="Orence Credias Richter TCHOHOUNGBO, promoteur de Rich Farm Unity" style="width:clamp(130px, 28vw, 220px);height:auto;border-radius:12px;flex-shrink:0;">
+          <p style="line-height:1.7;color:var(--encre-douce);flex:1;min-width:220px;">Orence Crédias Richter TCHOHOUNGBO est le fondateur de Rĩchinnov et le promoteur de Rĩch Farm Unity. Agronome de formation (Licence Professionnelle en Sciences et Techniques de Production Végétale, Université d'Abomey-Calavi), il porte ce projet avec la conviction que la force de l'agriculture béninoise ne manque ni de terres ni de bras, mais de connexions entre ceux qui produisent, transforment, vendent et consomment.</p>
+        </div>
+      </div>
+      <div class="card" style="margin-bottom:20px;">
+        <h3 style="margin-bottom:14px;">Nous contacter</h3>
+        <p style="line-height:1.7;color:var(--encre-douce);">Abomey-Calavi, Bénin</p>
+        <div style="margin-top:16px;display:flex;gap:12px;flex-wrap:wrap;">
+          <a href="https://wa.me/2290146471497" target="_blank" class="btn-main waBusinessLink">Nous écrire sur WhatsApp</a>
+        </div>
+      </div>
+      <div class="card">
+        <h3 style="margin-bottom:14px;">Rejoindre la communauté</h3>
+        <p style="line-height:1.7;color:var(--encre-douce);">Reçois les annonces, astuces agricoles et actualités de la plateforme directement sur WhatsApp.</p>
+        <div style="margin-top:16px;">
+          <a href="https://whatsapp.com/channel/0029VaqhsG3B4hdYsix5ZO0I" target="_blank" class="btn-main">Rejoindre la chaîne WhatsApp</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- ==================== VUE CONDITIONS ==================== -->
+  <div class="view" id="view-conditions">
+    <div class="app-main">
+      <div class="page-head">
+        <h2>Conditions d'utilisation &amp; confidentialité</h2>
+        <p>Dernière mise à jour : août 2026</p>
+      </div>
+
+      <div class="card" style="margin-bottom:20px;">
+        <h3 style="margin-bottom:14px;">1. Ce qu'est Rĩch Farm Unity</h3>
+        <p style="line-height:1.7;color:var(--encre-douce);">Rĩch Farm Unity est une plateforme numérique mettant en relation semenciers, vendeurs d'outils agricoles, producteurs, éleveurs, transformateurs, commerçants et consommateurs au Bénin. La plateforme permet de créer un compte et de publier des annonces (produits, semences, outils, services).</p>
+      </div>
+
+      <div class="card" style="margin-bottom:20px;">
+        <h3 style="margin-bottom:14px;">2. Règles d'utilisation</h3>
+        <p style="line-height:1.7;color:var(--encre-douce);">En utilisant la plateforme, vous vous engagez à :</p>
+        <ul style="margin-top:10px;padding-left:20px;line-height:1.8;color:var(--encre-douce);">
+          <li>Fournir des informations exactes lors de l'inscription</li>
+          <li>Publier uniquement des annonces réelles et légales</li>
+          <li>Ne pas publier de contenu trompeur, offensant ou frauduleux</li>
+          <li>Rester courtois dans vos échanges avec les autres utilisateurs</li>
+        </ul>
+        <p style="line-height:1.7;color:var(--encre-douce);margin-top:14px;">Rĩch Farm Unity se réserve le droit de suspendre ou supprimer tout compte ou annonce ne respectant pas ces règles.</p>
+        <p style="line-height:1.7;color:var(--encre-douce);margin-top:14px;"><strong>Délai de validation :</strong> les nouveaux comptes et les nouvelles annonces sont examinés et validés uniquement entre <strong>8h et 19h</strong> (heure du Bénin). Une inscription ou une annonce envoyée en dehors de cette plage sera traitée dès la réouverture, le jour même ou le lendemain.</p>
+      </div>
+
+      <div class="card" style="margin-bottom:20px;">
+        <h3 style="margin-bottom:14px;">3. Exactitude des informations et responsabilité juridique</h3>
+        <p style="line-height:1.7;color:var(--encre-douce);">Toute information publiée sur la plateforme — notamment concernant les <strong>certifications</strong> (autorisation ABSSA, label bio, HACCP, ISO 22000, certificat sanitaire, etc.), les <strong>conditions de production</strong>, l'origine, la qualité ou toute autre caractéristique d'un produit ou d'un service — doit être exacte, vérifiable et conforme à la réalité.</p>
+        <p style="line-height:1.7;color:var(--encre-douce);margin-top:14px;">Tout utilisateur qui publie de fausses informations, notamment en revendiquant une certification qu'il ne détient pas réellement ou en décrivant de manière trompeuse ses conditions de production, s'expose à la suspension immédiate de son compte ainsi qu'à d'<strong>éventuelles poursuites judiciaires</strong>, conformément à la législation béninoise en vigueur en matière de tromperie, de fraude et de protection des consommateurs. Rĩch Farm Unity se réserve le droit de signaler tout contenu manifestement frauduleux aux autorités compétentes.</p>
+      </div>
+
+      <div class="card" style="margin-bottom:20px;">
+        <h3 style="margin-bottom:14px;">4. Rôle de la plateforme</h3>
+        <p style="line-height:1.7;color:var(--encre-douce);">Rĩch Farm Unity met en relation les utilisateurs mais n'est ni acheteur, ni vendeur, ni intermédiaire dans les transactions. Les échanges (prix, livraison, paiement, qualité des produits) se négocient directement entre les utilisateurs, sous leur seule responsabilité. Rĩch Farm Unity ne garantit pas l'exactitude des annonces publiées par les utilisateurs et ne peut être tenu responsable des litiges entre utilisateurs.</p>
+      </div>
+
+      <div class="card" style="margin-bottom:20px;">
+        <h3 style="margin-bottom:14px;">5. Données personnelles collectées</h3>
+        <p style="line-height:1.7;color:var(--encre-douce);">Lors de l'inscription, nous collectons : nom, prénom, numéro de téléphone, adresse email, type d'acteur et domaine d'activité. Ces informations servent uniquement à faire fonctionner la plateforme (création de compte, affichage des annonces, mise en relation entre utilisateurs).</p>
+        <p style="line-height:1.7;color:var(--encre-douce);margin-top:14px;">Votre numéro de téléphone est affiché publiquement sur vos annonces afin que les autres utilisateurs puissent vous contacter directement. Les photos que vous ajoutez à vos annonces sont également publiques.</p>
+      </div>
+
+      <div class="card" style="margin-bottom:20px;">
+        <h3 style="margin-bottom:14px;">6. Utilisation et conservation des données</h3>
+        <p style="line-height:1.7;color:var(--encre-douce);">Vos données sont stockées de manière sécurisée et ne sont jamais vendues à des tiers. Elles sont conservées tant que votre compte reste actif. Vous pouvez demander la suppression de votre compte et de vos données à tout moment en nous contactant.</p>
+      </div>
+
+      <div class="card">
+        <h3 style="margin-bottom:14px;">7. Contact</h3>
+        <p style="line-height:1.7;color:var(--encre-douce);">Pour toute question sur ces conditions, vos données personnelles, ou pour demander la suppression de votre compte :</p>
+        <div style="margin-top:16px;">
+          <a href="https://wa.me/2290146471497" target="_blank" class="btn-main waBusinessLink">Nous écrire sur WhatsApp</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- ==================== VUE MODERATION (ADMIN) ==================== -->
+  <div class="view" id="view-moderation">
+    <div class="app-main">
+      <div class="page-head">
+        <h2>Modération des annonces</h2>
+        <p>Ces annonces sont en attente de validation avant publication.</p>
+      </div>
+      <div id="moderationContainer" class="pub-list"><div class="empty"><h3>Chargement…</h3></div></div>
+    </div>
+  </div>
+  <!-- ==================== VUE COMPTES (ADMIN) ==================== -->
+  <!-- ==================== VUE MEMBRES (ADMIN) ==================== -->
+  <div class="view" id="view-membres">
+    <div class="app-main">
+      <div class="page-head">
+        <h2>Membres</h2>
+        <p>Liste complète des inscrits. Les comptes sont activés automatiquement après confirmation de l'email — utilisez "Suspendre" uniquement en cas de problème.</p>
+      </div>
+      <div class="field" style="margin-bottom:16px;">
+        <input type="text" id="searchMembres" placeholder="Rechercher (nom, email, téléphone, type...)" style="width:100%;padding:13px 16px;border-radius:100px;border:1px solid rgba(27,94,32,0.3);background:#fff;">
+      </div>
+      <div id="membresContainer" class="pub-list"><div class="empty"><h3>Chargement…</h3></div></div>
+    </div>
+  </div>
+
+  <!-- ==================== VUE STATISTIQUES (ADMIN) ==================== -->
+  <div class="view" id="view-stats">
+    <div class="app-main">
+      <div class="page-head">
+        <h2>Statistiques</h2>
+        <p>Évolution et volumes de la plateforme.</p>
+      </div>
+
+      <div id="statsCards" style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:24px;">
+        <div class="empty"><h3>Chargement…</h3></div>
+      </div>
+
+      <div class="card" style="margin-bottom:20px;">
+        <h3 style="margin-bottom:16px;">Nouveaux comptes par semaine</h3>
+        <div id="chartComptes" style="display:flex;align-items:flex-end;gap:8px;height:140px;"></div>
+      </div>
+
+      <div class="card">
+        <h3 style="margin-bottom:16px;">Nouvelles annonces par semaine</h3>
+        <div id="chartAnnonces" style="display:flex;align-items:flex-end;gap:8px;height:140px;"></div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <a href="#" class="logo" onclick="showView('accueil'); return false;"><img src="https://richfarmunity.com/icon-192.png" alt="Rĩch Farm Unity" style="height:40px;width:auto;border-radius:6px;">Rĩch Farm Unity</a>
+        <p>Une initiative de Rĩchinnov, née à Abomey-Calavi — au service de la filière agricole béninoise.</p>
+        <div class="footer-social">
+          <a href="https://www.facebook.com/profile.php?id=61563468366219" target="_blank" rel="noopener" aria-label="Facebook">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M22 12.06C22 6.51 17.52 2 12 2S2 6.51 2 12.06c0 5 3.66 9.15 8.44 9.94v-7.03H7.9v-2.91h2.54V9.85c0-2.51 1.49-3.9 3.77-3.9 1.09 0 2.24.2 2.24.2v2.46h-1.26c-1.24 0-1.63.77-1.63 1.56v1.88h2.78l-.44 2.91h-2.34V22c4.78-.79 8.44-4.94 8.44-9.94z"/></svg>
+          </a>
+          <a href="https://www.linkedin.com/in/richter-tchohoungbo-589341306" target="_blank" rel="noopener" aria-label="LinkedIn">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.34V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.38-1.85 3.61 0 4.28 2.38 4.28 5.47v6.27zM5.34 7.43a2.07 2.07 0 1 1 0-4.14 2.07 2.07 0 0 1 0 4.14zM7.12 20.45H3.56V9h3.56v11.45z"/></svg>
+          </a>
+          <a href="https://www.tiktok.com/@rich_202411" target="_blank" rel="noopener" aria-label="TikTok">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M16.6 5.82c-1.02-.99-1.6-2.35-1.6-3.82h-3.19v13.44c0 1.65-1.34 2.99-2.99 2.99a2.99 2.99 0 0 1 0-5.98c.33 0 .64.05.94.15V9.4a6.18 6.18 0 0 0-.94-.07 6.18 6.18 0 1 0 6.18 6.18V9.28a8.32 8.32 0 0 0 4.85 1.55V7.65a4.83 4.83 0 0 1-3.25-1.83z"/></svg>
+          </a>
+        </div>
+      </div>
+      <div class="footer-cols">
+        <div class="footer-col">
+          <h4>Plateforme</h4>
+          <button onclick="showView('accueil')">Accueil</button>
+          <button onclick="showView('publications')">Annonces</button>
+          <button onclick="showView('formations')">Formations</button>
+        </div>
+        <div class="footer-col">
+          <h4>Contact</h4>
+          <p>Abomey-Calavi, Bénin</p>
+          <button onclick="showView('compte')">Créer un compte</button>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Rĩch Farm Unity — Rĩchinnov</span>
+      <span>Conçu à Abomey-Calavi, pour tout le Bénin</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // ---- Configuration Supabase ----
+  const SUPABASE_URL = "https://eablggolxlmnquryqztp.supabase.co";
+  const SUPABASE_ANON_KEY = "sb_publishable_mz6zfBMh-JYYJpe5cVZ46g_bdmF-SWd";
+  const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+    global: {
+      fetch: (url, options) => fetch(url, { ...options, cache: 'no-store' })
+    }
+  });
+
+  let currentUser = null;
+
+  // ---- Installation de l'application (PWA) ----
+  let deferredInstallPrompt = null;
+  const estStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+  const estIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+
+  function afficherBanniereInstall(afficher){
+    const banniere = document.getElementById('banniereInstallApp');
+    const carte = document.getElementById('carteInstallerApp');
+    if(banniere) banniere.style.display = afficher ? 'block' : 'none';
+    if(carte) carte.style.display = afficher ? 'block' : 'none';
+  }
+
+  if(!estStandalone){
+    if(estIOS){
+      // Safari iOS ne propose jamais l'installation automatique : on affiche l'instruction manuelle
+      const texte = document.getElementById('texteInstallerApp');
+      if(texte) texte.textContent = "📲 Sur iPhone : appuyez sur le bouton Partager (carré avec une flèche) en bas de Safari, puis « Sur l'écran d'accueil ».";
+      const btn = document.getElementById('btnInstallerAppCompte');
+      if(btn) btn.style.display = 'none';
+      afficherBanniereInstall(true);
+    } else {
+      window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredInstallPrompt = e;
+        afficherBanniereInstall(true);
+      });
+      window.addEventListener('appinstalled', () => {
+        deferredInstallPrompt = null;
+        afficherBanniereInstall(false);
+      });
+    }
+  }
+
+  window.installerApp = async function(){
+    if(deferredInstallPrompt){
+      deferredInstallPrompt.prompt();
+      const { outcome } = await deferredInstallPrompt.userChoice;
+      if(outcome === 'accepted'){ afficherBanniereInstall(false); }
+      deferredInstallPrompt = null;
+    } else if(estIOS){
+      alert("Sur iPhone : appuyez sur le bouton Partager (le carré avec une flèche vers le haut) en bas de Safari, puis choisissez « Sur l'écran d'accueil ».");
+    } else {
+      alert("Ouvrez le menu ⋮ de votre navigateur (en haut à droite), puis choisissez « Installer l'application » ou « Ajouter à l'écran d'accueil ».");
+    }
+  };
+
+  // ---- Enregistrement du service worker (pour tous, pas seulement ceux abonnés aux notifs) ----
+  if('serviceWorker' in navigator){
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/sw.js').catch(e => console.error('Service worker non enregistré', e));
+    });
+  }
+
+  // ---- Bandeau de connectivité ----
+  function majBandeauConnexion(){
+    let bandeau = document.getElementById('bandeauHorsLigne');
+    if(!bandeau){
+      bandeau = document.createElement('div');
+      bandeau.id = 'bandeauHorsLigne';
+      bandeau.style.cssText = 'display:none;position:sticky;top:0;z-index:9999;background:var(--rouge);color:#fff;text-align:center;padding:8px 12px;font-size:0.85rem;font-family:"Work Sans",sans-serif;';
+      bandeau.textContent = '📡 Vous êtes hors connexion — certaines informations peuvent être obsolètes.';
+      document.body.prepend(bandeau);
+    }
+    bandeau.style.display = navigator.onLine ? 'none' : 'block';
+  }
+  window.addEventListener('online', majBandeauConnexion);
+  window.addEventListener('offline', majBandeauConnexion);
+  majBandeauConnexion();
+  let currentProfile = null;
+  let isPasswordRecovery = false;
+
+  function showRecoveryScreen(){
+    isPasswordRecovery = true;
+    showView('compte');
+    document.getElementById('compteConnecte').style.display = 'none';
+    document.getElementById('compteNonConnecte').style.display = 'block';
+    document.getElementById('formInscription').style.display = 'none';
+    document.getElementById('formConnexion').style.display = 'none';
+    document.getElementById('formForgotPassword').style.display = 'none';
+    document.getElementById('formResetPassword').style.display = 'block';
+    document.getElementById('carteOAuth').style.display = 'none';
+    document.getElementById('authTitle').textContent = 'Nouveau mot de passe';
+  }
+
+  // ---- Navigation entre vues ----
+  const tabButtons = document.querySelectorAll('nav.tabs button');
+  function showView(name){
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    document.getElementById('view-' + name).classList.add('active');
+    tabButtons.forEach(b => b.classList.toggle('active', b.dataset.view === name));
+    window.scrollTo({top:0, behavior:'instant'});
+    if(name === 'publications') loadPublications();
+    if(name === 'formations') loadFormations();
+    if(name === 'moderation'){ loadModeration(); }
+    if(name === 'forums') loadSujets();
+    if(name === 'institutionnel') loadContactsInstitutionnels();
+    if(name === 'membres') loadMembres();
+    if(name === 'stats') loadStats();
+  }
+  tabButtons.forEach(btn => btn.addEventListener('click', () => showView(btn.dataset.view)));
+
+  // ---- Auth : bascule inscription / connexion ----
+  document.getElementById('toLogin').addEventListener('click', () => {
+    document.getElementById('formInscription').style.display = 'none';
+    document.getElementById('formConnexion').style.display = 'block';
+    document.getElementById('authTitle').textContent = 'Se connecter';
+  });
+  document.getElementById('toRegister').addEventListener('click', () => {
+    document.getElementById('formConnexion').style.display = 'none';
+    document.getElementById('formInscription').style.display = 'block';
+    document.getElementById('authTitle').textContent = 'Créer un compte';
+  });
+  document.getElementById('toForgotPassword').addEventListener('click', () => {
+    document.getElementById('formConnexion').style.display = 'none';
+    document.getElementById('formForgotPassword').style.display = 'block';
+    document.getElementById('authTitle').textContent = 'Mot de passe oublié';
+  });
+  document.getElementById('toLoginFromForgot').addEventListener('click', () => {
+    document.getElementById('formForgotPassword').style.display = 'none';
+    document.getElementById('formConnexion').style.display = 'block';
+    document.getElementById('authTitle').textContent = 'Se connecter';
+  });
+
+  function showMsg(id, text, type){
+    const el = document.getElementById(id);
+    el.textContent = text;
+    el.className = 'msg ' + type;
+  }
+
+  // ---- Inscription ----
+  document.getElementById('formInscription').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if(!document.getElementById('regAcceptConditions').checked){
+      showMsg('msgInscription', 'Merci d\'accepter les conditions d\'utilisation avant de continuer.', 'error');
+      return;
+    }
+    const btn = e.target.querySelector('button[type="submit"]');
+    btn.disabled = true;
+    const email = document.getElementById('regEmail').value.trim();
+    const password = document.getElementById('regPassword').value;
+    const prenom = document.getElementById('regPrenom').value.trim();
+    const nom = document.getElementById('regNom').value.trim();
+    const telephone = document.getElementById('regTelephone').value.trim();
+    const type_acteur = document.getElementById('regType').value;
+    const domaine = document.getElementById('regDomaine').value.trim();
+
+    const { data, error } = await sb.auth.signUp({
+      email, password,
+      options: { data: { nom, prenom, telephone, type_acteur, domaine } }
+    });
+    if(error){ showMsg('msgInscription', error.message, 'error'); btn.disabled = false; return; }
+    if(data && data.session){
+      showMsg('msgInscription', 'Compte créé avec succès !', 'success');
+      document.getElementById('notifPromptInscription').style.display = 'block';
+    } else {
+      showMsg('msgInscription', 'Compte créé ! Vérifiez votre boîte mail (et vos spams) et cliquez sur le lien de confirmation avant de vous connecter.', 'success');
+    }
+    await refreshSession();
+    btn.disabled = false;
+  });
+
+  // ---- Connexion Google / Apple ----
+  window.connexionOAuth = async function(provider){
+    const { error } = await sb.auth.signInWithOAuth({
+      provider,
+      options: { redirectTo: 'https://richfarmunity.com/?view=compte' }
+    });
+    if(error){ alert(error.message); }
+  };
+
+  // ---- Connexion ----
+  document.getElementById('formConnexion').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const btn = e.target.querySelector('button[type="submit"]');
+    btn.disabled = true;
+    const email = document.getElementById('logEmail').value.trim();
+    const password = document.getElementById('logPassword').value;
+    const { data, error } = await sb.auth.signInWithPassword({ email, password });
+    if(error){
+      const msg = /email not confirmed/i.test(error.message)
+        ? "Votre adresse email n'est pas encore confirmée. Vérifiez votre boîte mail (et vos spams) et cliquez sur le lien reçu."
+        : error.message;
+      showMsg('msgConnexion', msg, 'error');
+      btn.disabled = false;
+      return;
+    }
+    await refreshSession();
+    btn.disabled = false;
+  });
+
+  document.getElementById('btnDeconnexion').addEventListener('click', async () => {
+    await sb.auth.signOut();
+    await refreshSession();
+    showView('accueil');
+  });
+  document.getElementById('btnAllerPublier').addEventListener('click', () => { choisirTypeAnnonce('vente'); showView('nouvelle-pub'); });
+
+  // ---- Mot de passe oublié ----
+  document.getElementById('formForgotPassword').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const btn = e.target.querySelector('button[type="submit"]');
+    btn.disabled = true;
+    const email = document.getElementById('forgotEmail').value.trim();
+    const { error } = await sb.auth.resetPasswordForEmail(email, { redirectTo: 'https://richfarmunity.com/?view=compte' });
+    if(error){ showMsg('msgForgotPassword', error.message, 'error'); }
+    else { showMsg('msgForgotPassword', 'Email envoyé ! Vérifiez votre boîte de réception (et vos spams).', 'success'); }
+    btn.disabled = false;
+  });
+
+  // ---- Réinitialisation du mot de passe (arrivée depuis le lien email) ----
+  document.getElementById('formResetPassword').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const btn = e.target.querySelector('button[type="submit"]');
+    btn.disabled = true;
+    const newPassword = document.getElementById('newPassword').value;
+    const { error } = await sb.auth.updateUser({ password: newPassword });
+    if(error){ showMsg('msgResetPassword', error.message, 'error'); }
+    else {
+      showMsg('msgResetPassword', 'Mot de passe mis à jour ! Vous êtes connecté.', 'success');
+      document.getElementById('formResetPassword').style.display = 'none';
+      isPasswordRecovery = false;
+      await refreshSession();
+    }
+    btn.disabled = false;
+  });
+  if(window.location.hash.includes('type=recovery')){
+    showRecoveryScreen();
+  }
+
+  // ---- Modifier mon profil ----
+  // ---- Compléter le profil (première connexion Google/Apple) ----
+  document.getElementById('formCompleterProfil').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if(!currentUser) return;
+    const btn = e.target.querySelector('button[type="submit"]');
+    btn.disabled = true;
+    const payload = {
+      prenom: document.getElementById('cpPrenom').value.trim(),
+      nom: document.getElementById('cpNom').value.trim(),
+      telephone: document.getElementById('cpTelephone').value.trim(),
+      type_acteur: document.getElementById('cpType').value,
+      domaine: document.getElementById('cpDomaine').value.trim(),
+    };
+    const { error } = await sb.from('profiles').update(payload).eq('id', currentUser.id);
+    if(error){ showMsg('msgCompleterProfil', error.message, 'error'); }
+    else { showMsg('msgCompleterProfil', 'Profil complété !', 'success'); await refreshSession(); }
+    btn.disabled = false;
+  });
+
+  document.getElementById('formModifierProfil').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if(!currentUser) return;
+    const btn = e.target.querySelector('button[type="submit"]');
+    btn.disabled = true;
+    const payload = {
+      prenom: document.getElementById('editPrenom').value.trim(),
+      nom: document.getElementById('editNom').value.trim(),
+      telephone: document.getElementById('editTelephone').value.trim(),
+      domaine: document.getElementById('editDomaine').value.trim(),
+    };
+    const { error } = await sb.from('profiles').update(payload).eq('id', currentUser.id);
+    if(error){ showMsg('msgModifierProfil', error.message, 'error'); }
+    else { showMsg('msgModifierProfil', 'Profil mis à jour !', 'success'); await refreshSession(); }
+    btn.disabled = false;
+  });
+
+  async function refreshSession(){
+    if(isPasswordRecovery) return;
+    const { data: { session } } = await sb.auth.getSession();
+    currentUser = session ? session.user : null;
+    if(currentUser){
+      const { data: profile } = await sb.from('profiles').select('*').eq('id', currentUser.id).single();
+      if(profile && profile.compte_rejete){
+        await sb.auth.signOut();
+        currentUser = null;
+        currentProfile = null;
+        alert("Votre compte n'a pas été validé et n'est plus accessible. Vous pouvez créer un nouveau compte si besoin, ou nous contacter sur WhatsApp.");
+        document.getElementById('accountLabel').textContent = '';
+        document.getElementById('compteConnecte').style.display = 'none';
+        document.getElementById('compteNonConnecte').style.display = 'block';
+        document.getElementById('tabModeration').style.display = 'none';
+        document.getElementById('tabMembres').style.display = 'none';
+        document.getElementById('tabStats').style.display = 'none';
+        return;
+      }
+      currentProfile = profile;
+      document.getElementById('accountLabel').textContent = profile ? (profile.prenom + ' ' + profile.nom) : currentUser.email;
+      document.getElementById('compteConnecte').style.display = 'block';
+      document.getElementById('compteNonConnecte').style.display = 'none';
+      checkNotifStatus();
+      document.getElementById('carteAjoutContactInstit').style.display = (profile && profile.is_admin) ? 'block' : 'none';
+      document.getElementById('compteResume').textContent = profile ? profile.type_acteur + (profile.domaine ? ' — ' + profile.domaine : '') : '';
+      if(profile){
+        document.getElementById('editPrenom').value = profile.prenom || '';
+        document.getElementById('editNom').value = profile.nom || '';
+        document.getElementById('editTelephone').value = profile.telephone || '';
+        document.getElementById('editDomaine').value = profile.domaine || '';
+      }
+      document.getElementById('btnNouvelleFormation').style.display = (profile && profile.is_admin) ? 'inline-block' : 'none';
+      document.getElementById('tabModeration').style.display = (profile && profile.is_admin) ? 'inline-block' : 'none';
+      document.getElementById('btnNouveauSujet').style.display = (profile && profile.compte_approuve) ? 'inline-block' : 'none';
+      document.getElementById('tabMembres').style.display = (profile && profile.is_admin) ? 'inline-block' : 'none';
+      document.getElementById('tabStats').style.display = (profile && profile.is_admin) ? 'inline-block' : 'none';
+      const pendingMsg = document.getElementById('compteEnAttente');
+      const completeCard = document.getElementById('carteCompleterProfil');
+      const publierBtn = document.getElementById('btnAllerPublier');
+      if(profile && !profile.type_acteur){
+        if(completeCard){
+          completeCard.style.display = 'block';
+          document.getElementById('cpPrenom').value = profile.prenom || '';
+          document.getElementById('cpNom').value = profile.nom || '';
+        }
+        if(pendingMsg) pendingMsg.style.display = 'none';
+        if(publierBtn) publierBtn.style.display = 'none';
+      } else if(profile && profile.compte_rejete){
+        if(completeCard) completeCard.style.display = 'none';
+        if(pendingMsg){
+          pendingMsg.style.display = 'block';
+          pendingMsg.style.background = '#FBE9E7';
+          pendingMsg.style.borderColor = 'var(--rouge)';
+          pendingMsg.innerHTML = '<p style="color:var(--encre);line-height:1.6;"><strong>Votre compte n\'a pas été validé.</strong><br>Contactez-nous sur WhatsApp pour plus d\'informations.</p>';
+        }
+        if(publierBtn) publierBtn.style.display = 'none';
+      } else if(profile && !profile.compte_approuve){
+        if(completeCard) completeCard.style.display = 'none';
+        if(pendingMsg) pendingMsg.style.display = 'block';
+        if(publierBtn) publierBtn.style.display = 'none';
+      } else if(!profile){
+        if(completeCard) completeCard.style.display = 'none';
+        if(pendingMsg){
+          pendingMsg.style.display = 'block';
+          pendingMsg.style.background = '#FBE9E7';
+          pendingMsg.style.borderColor = 'var(--rouge)';
+          pendingMsg.innerHTML = '<p style="color:var(--encre);line-height:1.6;"><strong>Ton profil est introuvable.</strong><br>Il y a eu un problème lors de la création de ton compte. Contacte-nous sur WhatsApp pour le corriger.</p>';
+        }
+        if(publierBtn) publierBtn.style.display = 'none';
+      } else {
+        if(completeCard) completeCard.style.display = 'none';
+        if(pendingMsg) pendingMsg.style.display = 'none';
+        if(publierBtn) publierBtn.style.display = 'inline-block';
+      }
+    } else {
+      currentProfile = null;
+      document.getElementById('accountLabel').textContent = '';
+      document.getElementById('compteConnecte').style.display = 'none';
+      document.getElementById('compteNonConnecte').style.display = 'block';
+      document.getElementById('btnNouvelleFormation').style.display = 'none';
+    }
+  }
+
+  let typeAnnonceActuel = 'vente';
+  async function loadPublications(){
+    const container = document.getElementById('pubListContainer');
+    container.innerHTML = '<div class="empty"><h3>Chargement…</h3></div>';
+    let query = sb.from('publications').select('*, profiles(prenom, nom, telephone, type_acteur)').eq('type_annonce', typeAnnonceActuel).order('created_at', { ascending: false });
+    const cat = document.getElementById('filterCategorie').value;
+    const statut = document.getElementById('filterStatut').value;
+    const search = document.getElementById('searchAnnonces').value.trim();
+    if(cat) query = query.eq('categorie', cat);
+    if(statut) query = query.eq('statut', statut);
+    if(document.getElementById('filterEco').checked) query = query.eq('eco_responsable', true);
+    if(search) query = query.or(`titre.ilike.%${search}%,description.ilike.%${search}%,localisation.ilike.%${search}%`);
+    const { data, error } = await query;
+    if(error){ container.innerHTML = '<div class="empty"><h3>Erreur de chargement</h3><p>' + error.message + '</p></div>'; return; }
+    if(!data || data.length === 0){ container.innerHTML = '<div class="empty"><h3>Aucune annonce pour le moment</h3><p>Sois le premier à publier.</p></div>'; return; }
+    container.innerHTML = data.map(p => {
+      const auteur = p.profiles ? (p.profiles.prenom + ' ' + p.profiles.nom + ' — ' + p.profiles.type_acteur) : 'Utilisateur';
+      const contact = p.profiles ? p.profiles.telephone : '';
+      const certifBadge = p.certification ? ' <span class="pub-statut" style="background:#E6F1E6;color:var(--vert-rich);">✅ ' + escapeHtml(p.certification) + '</span>' : '';
+      const statutClass = !p.approuve ? 'reserve' : (p.statut === 'reserve' ? 'reserve' : (p.statut === 'ecoule' ? 'ecoule' : ''));
+      const statutLabel = !p.approuve ? 'En attente de validation' : (p.statut === 'reserve' ? 'Réservé' : (p.statut === 'ecoule' ? 'Écoulé' : 'Disponible'));
+      const photoHtml = galleryHtml(p, 300);
+      const ecoBadge = p.eco_responsable ? '<span class="pub-statut" style="background:#E6F1E6;color:var(--vert-rich);margin-left:6px;">🌱 Éco-responsable</span>' : '';
+      const waNumber = contact ? contact.replace(/[^0-9]/g, '') : '';
+      const contactBtn = waNumber ? `<a href="https://wa.me/${waNumber}?text=${encodeURIComponent('Bonjour, je vous contacte au sujet de votre annonce "' + p.titre + '" sur Rĩch Farm Unity.')}" target="_blank" class="btn-small" style="display:inline-block;margin-top:12px;">Contacter sur WhatsApp</a>` : '';
+      const shareUrl = `https://richfarmunity.com/share?id=${p.id}`;
+      const shareText = `🌾 ${p.titre}\n${p.prix ? 'Prix : ' + p.prix + '\n' : ''}${p.localisation ? 'Lieu : ' + p.localisation + '\n' : ''}\nVu sur Rĩch Farm Unity, la plateforme agricole béninoise 🇧🇯\n👉 ${shareUrl}`;
+      const shareBtn = `<a href="https://wa.me/?text=${encodeURIComponent(shareText)}" target="_blank" class="btn-outline-small" style="display:inline-block;margin-top:12px;margin-left:8px;">📤 Partager</a>`;
+      const isOwner = currentUser && p.user_id === currentUser.id;
+      const deleteBtn = isOwner ? `<button class="btn-outline-small" style="margin-top:12px;margin-left:8px;border-color:var(--rouge);color:var(--rouge);" onclick="supprimerAnnonce('${p.id}')">Supprimer mon annonce</button>` : '';
+      return `<div class="pub-card"><div class="pub-top"><div><span class="pub-tag">${p.categorie}</span><h3>${escapeHtml(p.titre)}</h3></div><span class="pub-statut ${statutClass}">${statutLabel}</span>${ecoBadge}</div>${photoHtml}${p.description ? '<p class="desc">' + escapeHtml(p.description) + '</p>' : ''}<div class="pub-meta">${p.quantite ? '<span><strong>Quantité :</strong> ' + escapeHtml(p.quantite) + '</span>' : ''}${p.prix ? '<span><strong>Prix :</strong> ' + escapeHtml(p.prix) + '</span>' : ''}${p.localisation ? '<span><strong>Lieu :</strong> ' + escapeHtml(p.localisation) + '</span>' : ''}</div><div class="pub-footer">Publié par ${escapeHtml(auteur)}${contact ? ' · ' + escapeHtml(contact) : ''}${certifBadge}</div>${contactBtn}${shareBtn}${deleteBtn}</div>`;
+    }).join('');
+  }
+
+  async function loadContactsInstitutionnels(){
+    const container = document.getElementById('contactsInstitutionnelsContainer');
+    container.innerHTML = '<div class="empty"><h3>Chargement…</h3></div>';
+    const { data, error } = await sb.from('contacts_institutionnels').select('*').order('departement', { ascending: true }).order('ordre', { ascending: true });
+    if(error){ container.innerHTML = '<div class="empty"><h3>Erreur de chargement</h3><p>' + error.message + '</p></div>'; return; }
+    if(!data || data.length === 0){ container.innerHTML = '<div class="empty"><h3>Aucun contact renseigné pour le moment</h3><p>Revenez bientôt.</p></div>'; return; }
+    const estAdmin = currentProfile && currentProfile.is_admin;
+    const groupes = {};
+    data.forEach(c => { (groupes[c.departement] = groupes[c.departement] || []).push(c); });
+    container.innerHTML = Object.keys(groupes).map(dep => {
+      const items = groupes[dep].map(c => `
+        <div style="padding:12px 0;border-top:1px solid var(--ivoire-2);">
+          <strong>${escapeHtml(c.structure)}</strong>${c.ville_siege ? ' — ' + escapeHtml(c.ville_siege) : ''}
+          ${c.adresse ? '<div style="font-size:0.85rem;color:var(--encre-douce);margin-top:2px;">' + escapeHtml(c.adresse) + '</div>' : ''}
+          ${c.contact_nom ? '<div style="font-size:0.9rem;margin-top:4px;">👤 ' + escapeHtml(c.contact_nom) + (c.contact_poste ? ' — ' + escapeHtml(c.contact_poste) : '') + '</div>' : ''}
+          <div style="font-size:0.85rem;color:var(--encre-douce);margin-top:4px;">${c.telephone ? '📞 ' + escapeHtml(c.telephone) : '📞 à confirmer'}${c.email ? ' · ✉️ ' + escapeHtml(c.email) : ''}</div>
+          ${c.notes ? '<div style="font-size:0.8rem;color:var(--or-fonce);margin-top:4px;">' + escapeHtml(c.notes) + '</div>' : ''}
+          ${estAdmin ? '<button type="button" class="btn-outline-small" style="margin-top:8px;border-color:var(--rouge);color:var(--rouge);" onclick="supprimerContactInstit(\'' + c.id + '\')">Supprimer</button>' : ''}
+        </div>`).join('');
+      return `<div style="margin-bottom:22px;"><h4 style="font-family:'Fraunces',serif;color:var(--vert-nuit);margin-bottom:2px;">${escapeHtml(dep)}</h4>${items}</div>`;
+    }).join('');
+  }
+
+  const formContactInstit = document.getElementById('formContactInstit');
+  if(formContactInstit){
+    formContactInstit.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = e.target.querySelector('button[type="submit"]');
+      btn.disabled = true;
+      const payload = {
+        departement: document.getElementById('ciDepartement').value.trim(),
+        structure: document.getElementById('ciStructure').value.trim(),
+        contact_nom: document.getElementById('ciContactNom').value.trim() || null,
+        contact_poste: document.getElementById('ciContactPoste').value.trim() || null,
+        telephone: document.getElementById('ciTelephone').value.trim() || null,
+        email: document.getElementById('ciEmail').value.trim() || null,
+        ville_siege: document.getElementById('ciVille').value.trim() || null,
+        adresse: document.getElementById('ciAdresse').value.trim() || null,
+        notes: document.getElementById('ciNotes').value.trim() || null,
+      };
+      const { error } = await sb.from('contacts_institutionnels').insert(payload);
+      if(error){ showMsg('msgContactInstit', error.message, 'error'); }
+      else { showMsg('msgContactInstit', 'Contact ajouté !', 'success'); e.target.reset(); loadContactsInstitutionnels(); }
+      btn.disabled = false;
+    });
+  }
+
+  window.supprimerContactInstit = async function(id){
+    if(!confirm('Supprimer ce contact ?')) return;
+    const { error } = await sb.from('contacts_institutionnels').delete().eq('id', id);
+    if(!error){ loadContactsInstitutionnels(); }
+  };
+
+  window.supprimerAnnonce = async function(id){
+    if(!confirm('Supprimer définitivement cette annonce ?')) return;
+    const { error } = await sb.from('publications').delete().eq('id', id);
+    if(!error){ loadPublications(); loadMesAnnonces(); }
+  };
+
+  let mesAnnoncesVisible = false;
+  window.toggleMesAnnonces = async function(){
+    const container = document.getElementById('mesAnnoncesContainer');
+    mesAnnoncesVisible = !mesAnnoncesVisible;
+    container.style.display = mesAnnoncesVisible ? 'block' : 'none';
+    if(mesAnnoncesVisible) await loadMesAnnonces();
+  };
+
+  async function loadMesAnnonces(){
+    if(!currentUser) return;
+    const container = document.getElementById('mesAnnoncesContainer');
+    container.innerHTML = '<div class="empty"><h3>Chargement…</h3></div>';
+    const { data, error } = await sb.from('publications').select('*').eq('user_id', currentUser.id).order('created_at', { ascending: false });
+    if(error){ container.innerHTML = '<div class="empty"><h3>Erreur</h3><p>' + error.message + '</p></div>'; return; }
+    if(!data || data.length === 0){ container.innerHTML = '<div class="empty"><h3>Vous n\'avez encore rien publié</h3></div>'; return; }
+    container.innerHTML = data.map(p => {
+      let statutLabel, statutClass;
+      if(p.rejete){ statutLabel = 'Rejetée'; statutClass = 'ecoule'; }
+      else if(!p.approuve){ statutLabel = 'En attente de validation'; statutClass = 'reserve'; }
+      else { statutLabel = p.statut === 'reserve' ? 'Réservé' : (p.statut === 'ecoule' ? 'Écoulé' : 'Disponible'); statutClass = p.statut === 'reserve' ? 'reserve' : (p.statut === 'ecoule' ? 'ecoule' : ''); }
+      const date = p.created_at ? new Date(p.created_at).toLocaleDateString('fr-FR') : '';
+      const photoHtml = galleryHtml(p, 220);
+      return `<div class="pub-card"><div class="pub-top"><div><span class="pub-tag">${escapeHtml(p.categorie)}</span><h3>${escapeHtml(p.titre)}</h3></div><span class="pub-statut ${statutClass}">${statutLabel}</span></div>${photoHtml}<div class="pub-footer">Publié le ${date}</div><button class="btn-outline-small" style="margin-top:12px;border-color:var(--rouge);color:var(--rouge);" onclick="supprimerAnnonce('${p.id}')">Supprimer</button></div>`;
+    }).join('');
+  }
+
+  window.filtrerTypeAnnonce = function(type){
+    typeAnnonceActuel = type;
+    const btnVentes = document.getElementById('btnFiltreVentes');
+    const btnAchats = document.getElementById('btnFiltreAchats');
+    if(type === 'vente'){
+      btnVentes.className = 'btn-main'; btnVentes.style.cssText = 'flex:1;';
+      btnAchats.className = 'btn-outline-small'; btnAchats.style.cssText = 'flex:1;padding:14px;font-size:0.92rem;';
+    } else {
+      btnAchats.className = 'btn-main'; btnAchats.style.cssText = 'flex:1;';
+      btnVentes.className = 'btn-outline-small'; btnVentes.style.cssText = 'flex:1;padding:14px;font-size:0.92rem;';
+    }
+    loadPublications();
+  };
+
+  window.choisirTypeAnnonce = function(type){
+    document.getElementById('pubTypeAnnonce').value = type;
+    const btnVente = document.getElementById('btnTypeVente');
+    const btnAchat = document.getElementById('btnTypeAchat');
+    if(type === 'vente'){
+      btnVente.className = 'btn-main'; btnVente.style.cssText = 'flex:1;opacity:1;';
+      btnAchat.className = 'btn-outline-small'; btnAchat.style.cssText = 'flex:1;padding:14px;font-size:0.92rem;';
+    } else {
+      btnAchat.className = 'btn-main'; btnAchat.style.cssText = 'flex:1;opacity:1;';
+      btnVente.className = 'btn-outline-small'; btnVente.style.cssText = 'flex:1;padding:14px;font-size:0.92rem;';
+    }
+  };
+
+  document.getElementById('filterCategorie').addEventListener('change', loadPublications);
+  document.getElementById('filterStatut').addEventListener('change', loadPublications);
+  document.getElementById('filterEco').addEventListener('change', loadPublications);
+  let searchTimeout;
+  document.getElementById('searchAnnonces').addEventListener('input', () => {
+    clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(loadPublications, 400);
+  });
+  document.getElementById('searchMembres').addEventListener('input', renderMembres);
+
+  document.getElementById('pubCategorie').addEventListener('change', function(){
+    document.getElementById('pubCertifWrap').style.display = (this.value === 'Transformation agroalimentaire') ? 'block' : 'none';
+  });
+
+  document.getElementById('formPublication').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if(!currentUser){ showMsg('msgPublication', 'Connectez-vous pour publier une annonce.', 'error'); return; }
+    const btn = document.getElementById('btnPublier');
+    btn.disabled = true;
+
+    let photo_url = null;
+    let photos = [];
+    const fileInput = document.getElementById('pubPhoto');
+    const files = Array.from(fileInput.files).slice(0, 5);
+    if(files.length > 0){
+      for(let i = 0; i < files.length; i++){
+        const file = files[i];
+        btn.textContent = `Envoi de la photo ${i + 1}/${files.length}…`;
+        const ext = file.name.split('.').pop();
+        const path = currentUser.id + '/' + Date.now() + '_' + i + '.' + ext;
+        const { error: uploadError } = await sb.storage.from('photos-annonces').upload(path, file);
+        if(uploadError){
+          showMsg('msgPublication', 'Erreur photo : ' + uploadError.message, 'error');
+          btn.disabled = false;
+          btn.textContent = "Publier l'annonce";
+          return;
+        }
+        const { data: publicData } = sb.storage.from('photos-annonces').getPublicUrl(path);
+        photos.push(publicData.publicUrl);
+      }
+      photo_url = photos[0];
+    }
+
+    btn.textContent = 'Publication…';
+    const payload = {
+      user_id: currentUser.id,
+      titre: document.getElementById('pubTitre').value.trim(),
+      categorie: document.getElementById('pubCategorie').value,
+      type_annonce: document.getElementById('pubTypeAnnonce').value,
+      quantite: document.getElementById('pubQuantite').value.trim(),
+      prix: document.getElementById('pubPrix').value.trim(),
+      localisation: document.getElementById('pubLocalisation').value.trim(),
+      description: document.getElementById('pubDescription').value.trim(),
+      certification: document.getElementById('pubCertif').value.trim() || null,
+      eco_responsable: document.getElementById('pubEcoResponsable').checked,
+      photo_url: photo_url,
+      photos: photos
+    };
+    const { error } = await sb.from('publications').insert(payload);
+    if(error){ showMsg('msgPublication', error.message, 'error'); }
+    else { showMsg('msgPublication', 'Annonce publiée !', 'success'); e.target.reset(); document.getElementById('pubCertifWrap').style.display = 'none'; document.getElementById('notifPromptPublication').style.display = 'block'; await checkNotifStatus(); }
+    btn.disabled = false;
+    btn.textContent = "Publier l'annonce";
+  });
+
+  async function loadModeration(){
+    const container = document.getElementById('moderationContainer');
+    container.innerHTML = '<div class="empty"><h3>Chargement…</h3></div>';
+    const { data, error } = await sb.from('publications').select('*, profiles(prenom, nom, telephone, type_acteur)').eq('approuve', false).eq('rejete', false).order('created_at', { ascending: true });
+    if(error){ container.innerHTML = '<div class="empty"><h3>Erreur</h3><p>' + error.message + '</p></div>'; return; }
+    if(!data || data.length === 0){ container.innerHTML = '<div class="empty"><h3>Aucune annonce en attente</h3></div>'; return; }
+    container.innerHTML = data.map(p => {
+      const auteur = p.profiles ? (p.profiles.prenom + ' ' + p.profiles.nom + ' — ' + p.profiles.type_acteur) : 'Utilisateur';
+      const photoHtml = galleryHtml(p, 220);
+      return `<div class="pub-card"><div class="pub-top"><div><span class="pub-tag">${p.categorie}</span><h3>${escapeHtml(p.titre)}</h3></div><span class="pub-statut reserve">En attente</span></div>${photoHtml}${p.description ? '<p class="desc">' + escapeHtml(p.description) + '</p>' : ''}<div class="pub-footer">Publié par ${escapeHtml(auteur)}${p.profiles && p.profiles.telephone ? ' · ' + escapeHtml(p.profiles.telephone) : ''}</div><div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap;"><button class="btn-small" onclick="approuverAnnonce('${p.id}')">Approuver et publier</button><button class="btn-outline-small" style="border-color:var(--rouge);color:var(--rouge);" onclick="rejeterAnnonce('${p.id}')">Rejeter</button></div></div>`;
+    }).join('');
+  }
+
+  window.approuverAnnonce = async function(id){
+    const { error } = await sb.from('publications').update({ approuve: true }).eq('id', id);
+    if(!error){ loadModeration(); }
+  };
+
+  window.rejeterAnnonce = async function(id){
+    if(!confirm('Rejeter et supprimer cette annonce ?')) return;
+    const { error } = await sb.from('publications').delete().eq('id', id);
+    if(!error){ loadModeration(); }
+  };
+
+  function weeklyBuckets(rows, weeks){
+    const now = new Date();
+    const buckets = [];
+    for(let i = weeks - 1; i >= 0; i--){
+      const end = new Date(now); end.setDate(now.getDate() - i*7);
+      const start = new Date(end); start.setDate(end.getDate() - 6);
+      buckets.push({ start, end, count: 0, label: (start.getMonth()+1) + '/' + start.getDate() });
+    }
+    rows.forEach(r => {
+      const d = new Date(r.created_at);
+      for(const b of buckets){
+        if(d >= b.start && d <= b.end){ b.count++; break; }
+      }
+    });
+    return buckets;
+  }
+
+  function renderBarChart(containerId, buckets){
+    const max = Math.max(1, ...buckets.map(b => b.count));
+    const el = document.getElementById(containerId);
+    el.innerHTML = buckets.map(b => `
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;">
+        <div style="font-size:0.72rem;color:var(--vert-nuit);font-weight:600;">${b.count}</div>
+        <div style="width:100%;background:var(--vert-rich);border-radius:4px 4px 0 0;height:${Math.max(4, (b.count/max)*90)}px;"></div>
+        <div style="font-size:0.62rem;color:var(--encre-douce);font-family:'IBM Plex Mono',monospace;">${b.label}</div>
+      </div>`).join('');
+  }
+
+  async function loadStats(){
+    const cardsEl = document.getElementById('statsCards');
+    cardsEl.innerHTML = '<div class="empty"><h3>Chargement…</h3></div>';
+
+    const [profilesRes, pubsRes, formationsRes] = await Promise.all([
+      sb.from('profiles').select('id, created_at, compte_approuve').eq('compte_rejete', false),
+      sb.from('publications').select('id, created_at, approuve, rejete'),
+      sb.from('formations').select('id, created_at')
+    ]);
+
+    const profiles = profilesRes.data || [];
+    const pubs = pubsRes.data || [];
+    const formations = formationsRes.data || [];
+
+    const comptesApprouves = profiles.filter(p => p.compte_approuve).length;
+    const comptesEnAttente = profiles.length - comptesApprouves;
+    const pubsApprouvees = pubs.filter(p => p.approuve).length;
+    const pubsEnAttente = pubs.filter(p => !p.approuve && !p.rejete).length;
+
+    function statCard(label, value){
+      return `<div class="card"><div style="font-family:'Fraunces',serif;font-size:1.8rem;color:var(--vert-nuit);">${value}</div><div style="font-size:0.82rem;color:var(--encre-douce);margin-top:4px;">${label}</div></div>`;
+    }
+
+    cardsEl.innerHTML =
+      statCard('Comptes au total', profiles.length) +
+      statCard('Comptes approuvés', comptesApprouves) +
+      statCard('Comptes en attente', comptesEnAttente) +
+      statCard('Annonces au total', pubs.length) +
+      statCard('Annonces publiées', pubsApprouvees) +
+      statCard('Annonces en attente', pubsEnAttente) +
+      statCard('Formations publiées', formations.length);
+
+    renderBarChart('chartComptes', weeklyBuckets(profiles, 8));
+    renderBarChart('chartAnnonces', weeklyBuckets(pubs, 8));
+  }
+
+  async function loadMembres(){
+    const container = document.getElementById('membresContainer');
+    container.innerHTML = '<div class="empty"><h3>Chargement…</h3></div>';
+    const { data, error } = await sb.from('profiles').select('*').order('created_at', { ascending: false });
+    if(error){ container.innerHTML = '<div class="empty"><h3>Erreur</h3><p>' + error.message + '</p></div>'; return; }
+    window._allMembres = data || [];
+    renderMembres();
+  }
+
+  function renderMembres(){
+    const container = document.getElementById('membresContainer');
+    const search = (document.getElementById('searchMembres').value || '').toLowerCase().trim();
+    let list = window._allMembres || [];
+    if(search){
+      list = list.filter(p =>
+        (p.nom || '').toLowerCase().includes(search) ||
+        (p.prenom || '').toLowerCase().includes(search) ||
+        (p.email || '').toLowerCase().includes(search) ||
+        (p.telephone || '').toLowerCase().includes(search) ||
+        (p.type_acteur || '').toLowerCase().includes(search) ||
+        (p.domaine || '').toLowerCase().includes(search)
+      );
+    }
+    if(list.length === 0){ container.innerHTML = '<div class="empty"><h3>Aucun membre trouvé</h3></div>'; return; }
+    container.innerHTML = list.map(p => {
+      const statutLabel = p.compte_rejete ? 'Suspendu' : 'Actif';
+      const statutClass = '';
+      const statutStyle = p.compte_rejete ? 'background:#F0E8E0;color:var(--encre-douce);' : '';
+      const date = p.created_at ? new Date(p.created_at).toLocaleDateString('fr-FR') : '';
+      return `<div class="pub-card">
+        <div class="pub-top"><div><span class="pub-tag">${escapeHtml(p.type_acteur || '')}</span><h3>${escapeHtml((p.prenom || '') + ' ' + (p.nom || ''))}</h3></div><span class="pub-statut ${statutClass}" style="${statutStyle}">${statutLabel}</span></div>
+        <div class="pub-meta">
+          <span><strong>Téléphone :</strong> ${escapeHtml(p.telephone || '')}</span>
+          <span><strong>Email :</strong> ${escapeHtml(p.email || '')}</span>
+          ${p.domaine ? '<span><strong>Domaine :</strong> ' + escapeHtml(p.domaine) + '</span>' : ''}
+        </div>
+        <div class="pub-footer">Inscrit le ${date}${p.is_admin ? ' · Administrateur' : ''}</div>
+        ${!p.is_admin ? `<div style="margin-top:10px;">
+          ${p.compte_rejete
+            ? `<button class="btn-outline-small" onclick="reactiverCompte('${p.id}')">Réactiver ce compte</button>`
+            : `<button class="btn-outline-small" style="border-color:var(--rouge);color:var(--rouge);" onclick="rejeterCompte('${p.id}')">Suspendre ce compte</button>`}
+        </div>` : ''}
+      </div>`;
+    }).join('');
+  }
+
+  // ---- Forums ----
+  async function loadSujets(){
+    const container = document.getElementById('sujetsContainer');
+    container.innerHTML = '<div class="empty"><h3>Chargement…</h3></div>';
+    let query = sb.from('forum_sujets').select('*, profiles(prenom, nom)').order('created_at', { ascending: false });
+    const secteur = document.getElementById('filterForumSecteur').value;
+    if(secteur) query = query.eq('secteur', secteur);
+    const { data, error } = await query;
+    if(error){ container.innerHTML = '<div class="empty"><h3>Erreur</h3><p>' + error.message + '</p></div>'; return; }
+    if(!data || data.length === 0){ container.innerHTML = '<div class="empty"><h3>Aucun sujet pour le moment</h3><p>Sois le premier à en lancer un.</p></div>'; return; }
+    container.innerHTML = data.map(s => {
+      const auteur = s.profiles ? (s.profiles.prenom + ' ' + s.profiles.nom) : 'Utilisateur';
+      const date = s.created_at ? new Date(s.created_at).toLocaleDateString('fr-FR') : '';
+      return `<div class="pub-card">
+        <div class="pub-top"><div>${s.secteur ? '<span class="pub-tag">' + escapeHtml(s.secteur) + '</span>' : ''}<h3>${escapeHtml(s.titre)}</h3></div></div>
+        ${s.contenu ? '<p class="desc">' + escapeHtml(s.contenu) + '</p>' : ''}
+        <div class="pub-footer">Par ${escapeHtml(auteur)} · ${date}</div>
+        <button class="btn-outline-small" style="margin-top:12px;" onclick="toggleReponses('${s.id}')">💬 Voir les réponses</button>
+        <div id="reponses-${s.id}" style="display:none;margin-top:14px;padding-top:14px;border-top:1px solid rgba(27,94,32,0.14);">
+          <div id="reponsesListe-${s.id}"></div>
+          <div style="margin-top:14px;">
+            <textarea id="reponseTexte-${s.id}" placeholder="Écrire une réponse…" style="width:100%;padding:10px 12px;border:1px solid rgba(27,94,32,0.22);border-radius:10px;background:#fff;min-height:60px;"></textarea>
+            <button class="btn-small" style="margin-top:8px;" onclick="envoyerReponse('${s.id}')">Répondre</button>
+          </div>
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  let reponsesOuvertes = {};
+  window.toggleReponses = async function(sujetId){
+    const box = document.getElementById('reponses-' + sujetId);
+    reponsesOuvertes[sujetId] = !reponsesOuvertes[sujetId];
+    box.style.display = reponsesOuvertes[sujetId] ? 'block' : 'none';
+    if(reponsesOuvertes[sujetId]) await chargerReponses(sujetId);
+  };
+
+  async function chargerReponses(sujetId){
+    const liste = document.getElementById('reponsesListe-' + sujetId);
+    liste.innerHTML = 'Chargement…';
+    const { data, error } = await sb.from('forum_reponses').select('*, profiles(prenom, nom)').eq('sujet_id', sujetId).order('created_at', { ascending: true });
+    if(error){ liste.innerHTML = 'Erreur : ' + error.message; return; }
+    if(!data || data.length === 0){ liste.innerHTML = '<p style="font-size:0.86rem;color:var(--encre-douce);">Aucune réponse pour le moment.</p>'; return; }
+    liste.innerHTML = data.map(r => {
+      const auteur = r.profiles ? (r.profiles.prenom + ' ' + r.profiles.nom) : 'Utilisateur';
+      const date = r.created_at ? new Date(r.created_at).toLocaleDateString('fr-FR') : '';
+      return `<div style="padding:10px 0;border-bottom:1px solid rgba(27,94,32,0.08);"><p style="font-size:0.9rem;color:var(--encre);">${escapeHtml(r.contenu)}</p><p style="font-size:0.76rem;color:var(--encre-douce);margin-top:4px;font-family:'IBM Plex Mono',monospace;">${escapeHtml(auteur)} · ${date}</p></div>`;
+    }).join('');
+  }
+
+  window.envoyerReponse = async function(sujetId){
+    if(!currentUser){ alert('Connectez-vous pour répondre.'); return; }
+    const textarea = document.getElementById('reponseTexte-' + sujetId);
+    const contenu = textarea.value.trim();
+    if(!contenu) return;
+    const { error } = await sb.from('forum_reponses').insert({ sujet_id: sujetId, user_id: currentUser.id, contenu });
+    if(error){ alert(error.message); return; }
+    textarea.value = '';
+    await chargerReponses(sujetId);
+  };
+
+  document.getElementById('filterForumSecteur').addEventListener('change', loadSujets);
+  document.getElementById('btnNouveauSujet').addEventListener('click', () => showView('nouveau-sujet'));
+
+  document.getElementById('formSujet').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if(!currentUser) return;
+    const btn = e.target.querySelector('button[type="submit"]');
+    btn.disabled = true;
+    const payload = {
+      user_id: currentUser.id,
+      secteur: document.getElementById('sujetSecteur').value,
+      titre: document.getElementById('sujetTitre').value.trim(),
+      contenu: document.getElementById('sujetContenu').value.trim(),
+    };
+    const { error } = await sb.from('forum_sujets').insert(payload);
+    if(error){ showMsg('msgSujet', error.message, 'error'); }
+    else {
+      showMsg('msgSujet', 'Sujet publié !', 'success');
+      e.target.reset();
+      setTimeout(() => showView('forums'), 900);
+    }
+    btn.disabled = false;
+  });
+
+  window.rejeterCompte = async function(id){
+    if(!confirm('Suspendre ce compte ? La personne ne pourra plus se connecter ni publier d\'annonces.')) return;
+    const { error } = await sb.from('profiles').update({ compte_rejete: true }).eq('id', id);
+    if(!error){ loadMembres(); }
+  };
+
+  window.reactiverCompte = async function(id){
+    if(!confirm('Réactiver ce compte ?')) return;
+    const { error } = await sb.from('profiles').update({ compte_rejete: false }).eq('id', id);
+    if(!error){ loadMembres(); }
+  };
+
+  async function loadFormations(){
+    const container = document.getElementById('formationsContainer');
+    container.innerHTML = '<div class="empty"><h3>Chargement…</h3></div>';
+    const { data, error } = await sb.from('formations').select('*').order('created_at', { ascending: false });
+    if(error){ container.innerHTML = '<div class="empty"><h3>Erreur de chargement</h3><p>' + error.message + '</p></div>'; return; }
+    if(!data || data.length === 0){ container.innerHTML = '<div class="empty"><h3>Aucune formation publiée pour le moment</h3></div>'; return; }
+    container.innerHTML = data.map(f => {
+      let mediaHtml = '';
+      if(f.media_url && f.media_type === 'video'){
+        mediaHtml = `<video src="${f.media_url}" controls style="width:100%;border-radius:10px;margin-top:12px;"></video>`;
+      } else if(f.media_url){
+        mediaHtml = `<img src="${f.media_url}" alt="${escapeHtml(f.titre)}" style="width:100%;height:auto;max-height:420px;object-fit:contain;background:var(--ivoire-2);border-radius:10px;margin-top:12px;">`;
+      }
+      const shareText = `🌾 ${f.titre}\n\n${f.contenu}\n\nVoir plus sur Rĩch Farm Unity : https://richfarmunity.com/?view=formations`;
+      const shareBtn = `<a href="https://wa.me/?text=${encodeURIComponent(shareText)}" target="_blank" class="btn-outline-small" style="display:inline-block;margin-top:12px;">Partager sur WhatsApp</a>`;
+      const adminBtns = (currentProfile && currentProfile.is_admin) ? `<div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap;"><button class="btn-outline-small" onclick="modifierFormation('${f.id}')">Modifier</button><button class="btn-outline-small" style="border-color:var(--rouge);color:var(--rouge);" onclick="supprimerFormation('${f.id}')">Supprimer</button></div>` : '';
+      return `<div class="formation-card"><span class="eyebrow">Rĩch Farm Unity</span><h3>${escapeHtml(f.titre)}</h3><p>${escapeHtml(f.contenu)}</p>${mediaHtml}${shareBtn}${adminBtns}</div>`;
+    }).join('');
+  }
+
+  window.supprimerFormation = async function(id){
+    if(!confirm('Supprimer définitivement cette formation ?')) return;
+    const { error } = await sb.from('formations').delete().eq('id', id);
+    if(!error){ loadFormations(); }
+  };
+
+  window.modifierFormation = async function(id){
+    const { data, error } = await sb.from('formations').select('*').eq('id', id).single();
+    if(error || !data) return;
+    document.getElementById('formationEditId').value = data.id;
+    document.getElementById('formTitre').value = data.titre;
+    document.getElementById('formContenu').value = data.contenu;
+    document.getElementById('formationFormTitle').textContent = 'Modifier la formation';
+    document.getElementById('btnFormationSubmit').textContent = 'Enregistrer les modifications';
+    showView('nouvelle-formation');
+  };
+  document.getElementById('btnNouvelleFormation').addEventListener('click', () => {
+    document.getElementById('formationEditId').value = '';
+    document.getElementById('formFormation').reset();
+    document.getElementById('formationFormTitle').textContent = 'Publier une formation';
+    document.getElementById('btnFormationSubmit').textContent = 'Publier';
+    showView('nouvelle-formation');
+  });
+
+  document.getElementById('formFormation').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if(!currentUser){ return; }
+    const btn = e.target.querySelector('button[type="submit"]');
+    btn.disabled = true;
+
+    let media_url = null;
+    let media_type = null;
+    const fileInput = document.getElementById('formMedia');
+    const file = fileInput.files[0];
+    if(file){
+      btn.textContent = 'Envoi du média…';
+      const isVideo = file.type.startsWith('video');
+      media_type = isVideo ? 'video' : 'image';
+      const ext = file.name.split('.').pop();
+      const path = currentUser.id + '/' + Date.now() + '.' + ext;
+      const { error: uploadError } = await sb.storage.from('formations-media').upload(path, file);
+      if(uploadError){
+        showMsg('msgFormation', 'Erreur média : ' + uploadError.message, 'error');
+        btn.disabled = false;
+        btn.textContent = 'Publier';
+        return;
+      }
+      const { data: publicData } = sb.storage.from('formations-media').getPublicUrl(path);
+      media_url = publicData.publicUrl;
+    }
+
+    btn.textContent = 'Publication…';
+    const editId = document.getElementById('formationEditId').value;
+    const payload = { titre: document.getElementById('formTitre').value.trim(), contenu: document.getElementById('formContenu').value.trim() };
+    if(media_url){ payload.media_url = media_url; payload.media_type = media_type; }
+
+    let error;
+    if(editId){
+      const res = await sb.from('formations').update(payload).eq('id', editId);
+      error = res.error;
+    } else {
+      payload.auteur_id = currentUser.id;
+      if(!media_url){ payload.media_url = null; payload.media_type = null; }
+      const res = await sb.from('formations').insert(payload);
+      error = res.error;
+    }
+    if(error){ showMsg('msgFormation', error.message, 'error'); }
+    else { showMsg('msgFormation', editId ? 'Formation modifiée !' : 'Formation publiée !', 'success'); e.target.reset(); document.getElementById('formationEditId').value = ''; setTimeout(() => showView('formations'), 900); }
+    btn.disabled = false;
+    btn.textContent = 'Publier';
+  });
+
+  // Force l'ouverture dans WhatsApp Business plutôt que WhatsApp classique (Android).
+  // Sur iPhone/ordinateur, WhatsApp Business n'a pas de lien dédié : on utilise le lien standard.
+  function waBusinessHref(number, text){
+    const clean = number.replace(/[^0-9]/g, '');
+    const msg = text ? encodeURIComponent(text) : '';
+    const isAndroid = /Android/i.test(navigator.userAgent);
+    if(isAndroid){
+      return `intent://send?phone=${clean}${msg ? '&text=' + msg : ''}#Intent;package=com.whatsapp.w4b;scheme=whatsapp;end`;
+    }
+    return `https://wa.me/${clean}${msg ? '?text=' + msg : ''}`;
+  }
+  document.querySelectorAll('.waBusinessLink').forEach(el => {
+    el.href = waBusinessHref('2290146471497');
+  });
+
+  // ---- Notifications push ----
+  const VAPID_PUBLIC_KEY = "BNyFFAKrnQm5DHRZxs-TXzo2fkkKeu9pLUrqiGJh1qm7KEdwlWtm0iaijLvfyTCL2JhoUbVE6bvCTmAdF5T-I88";
+
+  function urlBase64ToUint8Array(base64String){
+    const padding = '='.repeat((4 - base64String.length % 4) % 4);
+    const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+    const rawData = atob(base64);
+    const outputArray = new Uint8Array(rawData.length);
+    for(let i = 0; i < rawData.length; i++){ outputArray[i] = rawData.charCodeAt(i); }
+    return outputArray;
+  }
+
+  async function checkNotifStatus(){
+    if(!('serviceWorker' in navigator) || !('PushManager' in window) || !currentUser) return;
+    try{
+      const reg = await navigator.serviceWorker.getRegistration('/sw.js');
+      const sub = reg ? await reg.pushManager.getSubscription() : null;
+      const dejaAbonne = !!sub && Notification.permission === 'granted';
+      document.getElementById('carteActiverNotifs').style.display = dejaAbonne ? 'none' : 'block';
+      document.getElementById('carteNotifsActives').style.display = dejaAbonne ? 'block' : 'none';
+      if(dejaAbonne){
+        document.getElementById('notifPromptInscription').style.display = 'none';
+        document.getElementById('notifPromptPublication').style.display = 'none';
+      }
+    } catch(e){ /* navigateur sans support, on laisse le bouton visible */ }
+  }
+
+  window.activerNotifications = async function(){
+    if(!('serviceWorker' in navigator) || !('PushManager' in window)){
+      alert("Les notifications ne sont pas prises en charge sur cet appareil ou ce navigateur.");
+      return;
+    }
+    if(!currentUser){ alert("Connectez-vous d'abord."); return; }
+    try{
+      const reg = await navigator.serviceWorker.register('/sw.js');
+      const permission = await Notification.requestPermission();
+      if(permission !== 'granted'){ return; }
+      let sub = await reg.pushManager.getSubscription();
+      if(!sub){
+        sub = await reg.pushManager.subscribe({
+          userVisibleOnly: true,
+          applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY)
+        });
+      }
+      const subJson = sub.toJSON();
+      await sb.from('push_subscriptions').upsert({
+        user_id: currentUser.id,
+        endpoint: subJson.endpoint,
+        p256dh: subJson.keys.p256dh,
+        auth: subJson.keys.auth
+      }, { onConflict: 'endpoint' });
+      document.getElementById('notifPromptInscription').style.display = 'none';
+      document.getElementById('notifPromptPublication').style.display = 'none';
+      await checkNotifStatus();
+      alert("Notifications activées !");
+    } catch(e){
+      console.error(e);
+      alert("Impossible d'activer les notifications sur cet appareil.");
+    }
+  };
+
+  function galleryHtml(p, maxH){
+    const list = (p.photos && p.photos.length > 0) ? p.photos : (p.photo_url ? [p.photo_url] : []);
+    if(list.length === 0) return '';
+    if(list.length === 1){
+      return `<img src="${list[0]}" alt="${escapeHtml(p.titre)}" style="width:100%;height:auto;max-height:${maxH}px;object-fit:contain;background:var(--ivoire-2);border-radius:10px;margin-top:12px;">`;
+    }
+    const thumbs = list.map(url => `<img src="${url}" alt="${escapeHtml(p.titre)}" style="height:${maxH}px;width:auto;max-width:90%;object-fit:contain;background:var(--ivoire-2);border-radius:10px;flex-shrink:0;">`).join('');
+    return `<div style="display:flex;gap:10px;overflow-x:auto;margin-top:12px;padding-bottom:4px;">${thumbs}</div>`;
+  }
+
+  function escapeHtml(str){
+    if(!str) return '';
+    return str.replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+  }
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('is-visible'); });
+  }, { threshold: 0.15 });
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+  sb.auth.onAuthStateChange((event) => {
+    if(event === 'PASSWORD_RECOVERY'){ showRecoveryScreen(); return; }
+    refreshSession();
+  });
+  refreshSession();
+
+  const urlParams = new URLSearchParams(window.location.search);
+  const targetView = urlParams.get('view');
+  if(targetView && document.getElementById('view-' + targetView)){
+    showView(targetView);
+  }
+</script>
+
+</body>
+</html>
