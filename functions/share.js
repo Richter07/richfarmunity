@@ -12,16 +12,27 @@ function escapeHtml(str) {
 export async function onRequestGet(context) {
   const url = new URL(context.request.url);
   const id = url.searchParams.get("id") || "";
-  const destination = id ? `${SITE_URL}/?view=publications&id=${id}` : `${SITE_URL}/?view=publications`;
+  const type = url.searchParams.get("type") === "formation" ? "formation" : "publication";
+
+  const view = type === "formation" ? "formations" : "publications";
+  const destination = id ? `${SITE_URL}/?view=${view}&id=${id}` : `${SITE_URL}/?view=${view}`;
 
   let titre = "Rĩch Farm Unity";
-  let description = "Découvre cette annonce sur Rĩch Farm Unity, la plateforme agricole béninoise.";
+  let description = type === "formation"
+    ? "Découvre cette formation sur Rĩch Farm Unity, la plateforme agricole béninoise."
+    : "Découvre cette annonce sur Rĩch Farm Unity, la plateforme agricole béninoise.";
   let image = DEFAULT_IMAGE;
 
   if (id) {
     try {
+      const table = type === "formation" ? "formations" : "publications";
+      const selectFields = type === "formation"
+        ? "titre,contenu,media_url,media_type"
+        : "titre,description,prix,localisation,photos,photo_url";
+      const filtre = type === "formation" ? "" : "&approuve=is.true";
+
       const res = await fetch(
-        `${SUPABASE_URL}/rest/v1/publications?id=eq.${encodeURIComponent(id)}&select=titre,description,prix,localisation,photos,photo_url&approuve=is.true`,
+        `${SUPABASE_URL}/rest/v1/${table}?id=eq.${encodeURIComponent(id)}&select=${selectFields}${filtre}`,
         { headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` } }
       );
       if (res.ok) {
@@ -29,13 +40,18 @@ export async function onRequestGet(context) {
         const p = rows && rows[0];
         if (p) {
           titre = p.titre || titre;
-          const bits = [];
-          if (p.prix) bits.push(`Prix : ${p.prix}`);
-          if (p.localisation) bits.push(`Lieu : ${p.localisation}`);
-          if (p.description) bits.push(p.description);
-          if (bits.length) description = bits.join(" · ");
-          const photo = (p.photos && p.photos.length > 0) ? p.photos[0] : p.photo_url;
-          if (photo) image = photo;
+          if (type === "formation") {
+            if (p.contenu) description = p.contenu.slice(0, 200);
+            if (p.media_url && p.media_type !== "video") image = p.media_url;
+          } else {
+            const bits = [];
+            if (p.prix) bits.push(`Prix : ${p.prix}`);
+            if (p.localisation) bits.push(`Lieu : ${p.localisation}`);
+            if (p.description) bits.push(p.description);
+            if (bits.length) description = bits.join(" · ");
+            const photo = (p.photos && p.photos.length > 0) ? p.photos[0] : p.photo_url;
+            if (photo) image = photo;
+          }
         }
       }
     } catch (e) {
@@ -68,5 +84,4 @@ export async function onRequestGet(context) {
   return new Response(html, {
     headers: { "Content-Type": "text/html; charset=UTF-8", "Cache-Control": "public, max-age=300" }
   });
-}
-
+  }
