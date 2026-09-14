@@ -314,6 +314,22 @@
   form textarea{ resize:vertical; min-height:80px; }
   .field-row{ display:grid; grid-template-columns:1fr 1fr; gap:14px; }
   @media (max-width:600px){ .field-row{ grid-template-columns:1fr; } }
+
+  .desc-mode-toggle{ display:flex; gap:8px; margin-bottom:10px; }
+  .desc-mode-btn{
+    flex:1; padding:9px 12px; border-radius:10px; border:1.5px solid rgba(27,94,32,0.22);
+    background:#fff; color:var(--encre-douce); font-size:0.85rem; font-weight:600; cursor:pointer; transition:all .2s ease;
+  }
+  .desc-mode-btn.is-active{ background:var(--vert-nuit); color:var(--ivoire); border-color:var(--vert-nuit); }
+
+  .voice-recorder{ background:var(--ivoire-2); border-radius:12px; padding:16px; text-align:center; }
+  .voice-rec-btn{
+    background:var(--rouge); color:#fff; border:none; padding:11px 20px; border-radius:100px;
+    font-weight:600; font-size:0.88rem; cursor:pointer;
+  }
+  .voice-rec-btn.is-recording{ animation:pulseRec 1.2s ease-in-out infinite; }
+  @keyframes pulseRec{ 0%,100%{ box-shadow:0 0 0 0 rgba(178,58,46,0.4); } 50%{ box-shadow:0 0 0 10px rgba(178,58,46,0); } }
+  .voice-rec-time{ display:block; margin-top:8px; font-weight:600; color:var(--encre-douce); font-size:0.9rem; }
   .btn-main{
     background:var(--grad-vert); color:var(--ivoire); border:none; padding:14px 26px; border-radius:100px;
     font-weight:600; cursor:pointer; font-size:0.92rem; transition:transform .25s ease, box-shadow .25s ease;
@@ -860,7 +876,24 @@
             <label for="pubCertif">Certification(s) du produit ou de l'unité de transformation</label>
             <input type="text" id="pubCertif" placeholder="Ex : Autorisation ABSSA, Label bio, HACCP, ISO 22000, Certificat sanitaire…">
           </div>
-          <div class="field"><label for="pubDescription">Description</label><textarea id="pubDescription" placeholder="Détails utiles pour un acheteur ou un partenaire"></textarea></div>
+          <div class="field">
+            <label>Description</label>
+            <div class="desc-mode-toggle">
+              <button type="button" class="desc-mode-btn is-active" data-mode="texte" id="pubModeTexteBtn">✏️ Texte</button>
+              <button type="button" class="desc-mode-btn" data-mode="vocal" id="pubModeVocalBtn">🎙️ Message vocal</button>
+            </div>
+            <div id="pubDescTexteWrap">
+              <textarea id="pubDescription" placeholder="Détails utiles pour un acheteur ou un partenaire"></textarea>
+            </div>
+            <div id="pubDescVocalWrap" style="display:none;">
+              <div class="voice-recorder" id="pubVoiceRecorder">
+                <button type="button" class="voice-rec-btn" id="pubBtnRecord">🎙️ Démarrer l'enregistrement</button>
+                <span class="voice-rec-time" id="pubRecordTime" style="display:none;">00:00</span>
+                <audio id="pubAudioPreview" controls style="display:none;width:100%;margin-top:10px;"></audio>
+                <button type="button" class="btn-outline-small" id="pubBtnReRecord" style="display:none;margin-top:8px;">🔁 Recommencer</button>
+              </div>
+            </div>
+          </div>
           <div class="field" style="display:flex;align-items:flex-start;gap:10px;">
             <input type="checkbox" id="pubEcoResponsable" style="width:auto;margin-top:3px;flex-shrink:0;">
             <label for="pubEcoResponsable" style="font-weight:400;font-size:0.86rem;line-height:1.5;color:var(--encre-douce);margin-bottom:0;">🌱 Ce produit ou cette pratique est éco-responsable (bio, agroécologie, économie d'eau, emballage durable…)</label>
@@ -1024,7 +1057,24 @@
             </select>
           </div>
           <div class="field"><label for="sujetTitre">Titre</label><input type="text" id="sujetTitre" required placeholder="Ex : Comment lutter contre les chenilles légionnaires ?"></div>
-          <div class="field"><label for="sujetContenu">Message</label><textarea id="sujetContenu" required style="min-height:120px;"></textarea></div>
+          <div class="field">
+            <label>Message</label>
+            <div class="desc-mode-toggle">
+              <button type="button" class="desc-mode-btn is-active" data-mode="texte" id="sujetModeTexteBtn">✏️ Texte</button>
+              <button type="button" class="desc-mode-btn" data-mode="vocal" id="sujetModeVocalBtn">🎙️ Message vocal</button>
+            </div>
+            <div id="sujetTexteWrap">
+              <textarea id="sujetContenu" style="min-height:120px;"></textarea>
+            </div>
+            <div id="sujetVocalWrap" style="display:none;">
+              <div class="voice-recorder" id="sujetVoiceRecorder">
+                <button type="button" class="voice-rec-btn" id="sujetBtnRecord">🎙️ Démarrer l'enregistrement</button>
+                <span class="voice-rec-time" id="sujetRecordTime" style="display:none;">00:00</span>
+                <audio id="sujetAudioPreview" controls style="display:none;width:100%;margin-top:10px;"></audio>
+                <button type="button" class="btn-outline-small" id="sujetBtnReRecord" style="display:none;margin-top:8px;">🔁 Recommencer</button>
+              </div>
+            </div>
+          </div>
           <button type="submit" class="btn-main">Publier le sujet</button>
           <div class="msg" id="msgSujet"></div>
         </form>
@@ -1887,7 +1937,8 @@
       const shareBtn = `<a href="https://wa.me/?text=${encodeURIComponent(shareText)}" target="_blank" class="btn-outline-small" style="display:inline-block;margin-top:12px;margin-left:8px;">📤 Partager</a>`;
       const isOwner = currentUser && p.user_id === currentUser.id;
       const deleteBtn = isOwner ? `<button class="btn-outline-small" style="margin-top:12px;margin-left:8px;border-color:var(--rouge);color:var(--rouge);" onclick="supprimerAnnonce('${p.id}')">Supprimer mon annonce</button>` : '';
-      return `<div class="pub-card"><div class="pub-top"><div><span class="pub-tag">${p.categorie}</span><h3>${escapeHtml(p.titre)}</h3></div><span class="pub-statut ${statutClass}">${statutLabel}</span>${ecoBadge}</div>${photoHtml}${p.description ? '<p class="desc">' + escapeHtml(p.description) + '</p>' : ''}<div class="pub-meta">${p.quantite ? '<span><strong>Quantité :</strong> ' + escapeHtml(p.quantite) + '</span>' : ''}${p.prix ? '<span><strong>Prix :</strong> ' + escapeHtml(p.prix) + '</span>' : ''}${p.localisation ? '<span><strong>Lieu :</strong> ' + escapeHtml(p.localisation) + '</span>' : ''}</div><div class="pub-footer">Publié par ${escapeHtml(auteur)}${contact ? ' · ' + escapeHtml(contact) : ''}${certifBadge}</div>${contactBtn}${shareBtn}${deleteBtn}</div>`;
+      const audioHtml = p.audio_url ? `<audio src="${p.audio_url}" controls style="width:100%;margin:10px 0;"></audio>` : '';
+      return `<div class="pub-card"><div class="pub-top"><div><span class="pub-tag">${p.categorie}</span><h3>${escapeHtml(p.titre)}</h3></div><span class="pub-statut ${statutClass}">${statutLabel}</span>${ecoBadge}</div>${photoHtml}${p.description ? '<p class="desc">' + escapeHtml(p.description) + '</p>' : ''}${audioHtml}<div class="pub-meta">${p.quantite ? '<span><strong>Quantité :</strong> ' + escapeHtml(p.quantite) + '</span>' : ''}${p.prix ? '<span><strong>Prix :</strong> ' + escapeHtml(p.prix) + '</span>' : ''}${p.localisation ? '<span><strong>Lieu :</strong> ' + escapeHtml(p.localisation) + '</span>' : ''}</div><div class="pub-footer">Publié par ${escapeHtml(auteur)}${contact ? ' · ' + escapeHtml(contact) : ''}${certifBadge}</div>${contactBtn}${shareBtn}${deleteBtn}</div>`;
     }).join('');
   }
 
@@ -2017,6 +2068,96 @@
     document.getElementById('pubCertifWrap').style.display = (this.value === 'Transformation agroalimentaire') ? 'block' : 'none';
   });
 
+  // ---- Enregistreur vocal réutilisable (annonces + forum) ----
+  function createVoiceRecorder(prefix){
+    const btnRecord = document.getElementById(prefix + 'BtnRecord');
+    const timeEl = document.getElementById(prefix + 'RecordTime');
+    const audioEl = document.getElementById(prefix + 'AudioPreview');
+    const btnReRecord = document.getElementById(prefix + 'BtnReRecord');
+    let mediaRecorder = null, chunks = [], recordedBlob = null, seconds = 0, timerInterval = null, stream = null;
+
+    function formatTime(s){ const m = Math.floor(s/60); const ss = s%60; return String(m).padStart(2,'0') + ':' + String(ss).padStart(2,'0'); }
+
+    async function start(){
+      try{
+        stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      } catch(e){
+        alert("Impossible d'accéder au micro. Vérifiez les autorisations de votre navigateur.");
+        return;
+      }
+      chunks = [];
+      seconds = 0;
+      mediaRecorder = new MediaRecorder(stream);
+      mediaRecorder.ondataavailable = (e) => { if(e.data.size > 0) chunks.push(e.data); };
+      mediaRecorder.onstop = () => {
+        recordedBlob = new Blob(chunks, { type: 'audio/webm' });
+        audioEl.src = URL.createObjectURL(recordedBlob);
+        audioEl.style.display = 'block';
+        btnReRecord.style.display = 'inline-block';
+        btnRecord.style.display = 'none';
+        timeEl.style.display = 'none';
+        stream.getTracks().forEach(t => t.stop());
+      };
+      mediaRecorder.start();
+      btnRecord.textContent = '⏹️ Arrêter l\'enregistrement';
+      btnRecord.classList.add('is-recording');
+      timeEl.style.display = 'inline-block';
+      timeEl.textContent = formatTime(0);
+      timerInterval = setInterval(() => {
+        seconds++;
+        timeEl.textContent = formatTime(seconds);
+      }, 1000);
+    }
+
+    function stop(){
+      if(mediaRecorder && mediaRecorder.state !== 'inactive') mediaRecorder.stop();
+      clearInterval(timerInterval);
+      btnRecord.classList.remove('is-recording');
+    }
+
+    btnRecord.addEventListener('click', () => {
+      if(mediaRecorder && mediaRecorder.state === 'recording'){ stop(); }
+      else { start(); }
+    });
+    btnReRecord.addEventListener('click', () => {
+      recordedBlob = null;
+      audioEl.style.display = 'none';
+      audioEl.src = '';
+      btnReRecord.style.display = 'none';
+      btnRecord.style.display = 'inline-block';
+      btnRecord.textContent = '🎙️ Démarrer l\'enregistrement';
+    });
+
+    return {
+      getBlob: () => recordedBlob,
+      reset: () => {
+        recordedBlob = null; chunks = []; seconds = 0;
+        audioEl.style.display = 'none'; audioEl.src = '';
+        btnReRecord.style.display = 'none';
+        btnRecord.style.display = 'inline-block';
+        btnRecord.textContent = '🎙️ Démarrer l\'enregistrement';
+        timeEl.style.display = 'none';
+      }
+    };
+  }
+
+  const pubVoiceRecorder = createVoiceRecorder('pub');
+  let pubDescMode = 'texte';
+  document.getElementById('pubModeTexteBtn').addEventListener('click', () => {
+    pubDescMode = 'texte';
+    document.getElementById('pubModeTexteBtn').classList.add('is-active');
+    document.getElementById('pubModeVocalBtn').classList.remove('is-active');
+    document.getElementById('pubDescTexteWrap').style.display = 'block';
+    document.getElementById('pubDescVocalWrap').style.display = 'none';
+  });
+  document.getElementById('pubModeVocalBtn').addEventListener('click', () => {
+    pubDescMode = 'vocal';
+    document.getElementById('pubModeVocalBtn').classList.add('is-active');
+    document.getElementById('pubModeTexteBtn').classList.remove('is-active');
+    document.getElementById('pubDescVocalWrap').style.display = 'block';
+    document.getElementById('pubDescTexteWrap').style.display = 'none';
+  });
+
   document.getElementById('formPublication').addEventListener('submit', async (e) => {
     e.preventDefault();
     if(!currentUser){ showMsg('msgPublication', 'Connectez-vous pour publier une annonce.', 'error'); return; }
@@ -2046,6 +2187,24 @@
       photo_url = photos[0];
     }
 
+    let audio_url = null;
+    if(pubDescMode === 'vocal'){
+      const blob = pubVoiceRecorder.getBlob();
+      if(blob){
+        btn.textContent = 'Envoi du message vocal…';
+        const path = currentUser.id + '/' + Date.now() + '_audio.webm';
+        const { error: audioError } = await sb.storage.from('photos-annonces').upload(path, blob, { contentType: 'audio/webm' });
+        if(audioError){
+          showMsg('msgPublication', 'Erreur audio : ' + audioError.message, 'error');
+          btn.disabled = false;
+          btn.textContent = "Publier l'annonce";
+          return;
+        }
+        const { data: publicAudio } = sb.storage.from('photos-annonces').getPublicUrl(path);
+        audio_url = publicAudio.publicUrl;
+      }
+    }
+
     btn.textContent = 'Publication…';
     const payload = {
       user_id: currentUser.id,
@@ -2055,7 +2214,8 @@
       quantite: document.getElementById('pubQuantite').value.trim(),
       prix: document.getElementById('pubPrix').value.trim(),
       localisation: document.getElementById('pubLocalisation').value.trim(),
-      description: document.getElementById('pubDescription').value.trim(),
+      description: pubDescMode === 'texte' ? document.getElementById('pubDescription').value.trim() : null,
+      audio_url: audio_url,
       certification: document.getElementById('pubCertif').value.trim() || null,
       eco_responsable: document.getElementById('pubEcoResponsable').checked,
       photo_url: photo_url,
@@ -2063,7 +2223,7 @@
     };
     const { error } = await sb.from('publications').insert(payload);
     if(error){ showMsg('msgPublication', error.message, 'error'); }
-    else { showMsg('msgPublication', 'Annonce publiée !', 'success'); e.target.reset(); document.getElementById('pubCertifWrap').style.display = 'none'; document.getElementById('notifPromptPublication').style.display = 'block'; await checkNotifStatus(); }
+    else { showMsg('msgPublication', 'Annonce publiée !', 'success'); e.target.reset(); document.getElementById('pubCertifWrap').style.display = 'none'; document.getElementById('notifPromptPublication').style.display = 'block'; pubVoiceRecorder.reset(); document.getElementById('pubModeTexteBtn').click(); await checkNotifStatus(); }
     btn.disabled = false;
     btn.textContent = "Publier l'annonce";
   });
@@ -2077,7 +2237,8 @@
     container.innerHTML = data.map(p => {
       const auteur = p.profiles ? (p.profiles.prenom + ' ' + p.profiles.nom + ' — ' + p.profiles.type_acteur) : 'Utilisateur';
       const photoHtml = galleryHtml(p, 220);
-      return `<div class="pub-card"><div class="pub-top"><div><span class="pub-tag">${p.categorie}</span><h3>${escapeHtml(p.titre)}</h3></div><span class="pub-statut reserve">En attente</span></div>${photoHtml}${p.description ? '<p class="desc">' + escapeHtml(p.description) + '</p>' : ''}<div class="pub-footer">Publié par ${escapeHtml(auteur)}${p.profiles && p.profiles.telephone ? ' · ' + escapeHtml(p.profiles.telephone) : ''}</div><div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap;"><button class="btn-small" onclick="approuverAnnonce('${p.id}')">Approuver et publier</button><button class="btn-outline-small" style="border-color:var(--rouge);color:var(--rouge);" onclick="rejeterAnnonce('${p.id}')">Rejeter</button></div></div>`;
+      const audioHtmlMod = p.audio_url ? `<audio src="${p.audio_url}" controls style="width:100%;margin:10px 0;"></audio>` : '';
+      return `<div class="pub-card"><div class="pub-top"><div><span class="pub-tag">${p.categorie}</span><h3>${escapeHtml(p.titre)}</h3></div><span class="pub-statut reserve">En attente</span></div>${photoHtml}${p.description ? '<p class="desc">' + escapeHtml(p.description) + '</p>' : ''}${audioHtmlMod}<div class="pub-footer">Publié par ${escapeHtml(auteur)}${p.profiles && p.profiles.telephone ? ' · ' + escapeHtml(p.profiles.telephone) : ''}</div><div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap;"><button class="btn-small" onclick="approuverAnnonce('${p.id}')">Approuver et publier</button><button class="btn-outline-small" style="border-color:var(--rouge);color:var(--rouge);" onclick="rejeterAnnonce('${p.id}')">Rejeter</button></div></div>`;
     }).join('');
   }
 
@@ -2215,20 +2376,37 @@
     container.innerHTML = data.map(s => {
       const auteur = s.profiles ? (s.profiles.prenom + ' ' + s.profiles.nom) : 'Utilisateur';
       const date = s.created_at ? new Date(s.created_at).toLocaleDateString('fr-FR') : '';
+      const audioHtmlSujet = s.audio_url ? `<audio src="${s.audio_url}" controls style="width:100%;margin:8px 0;"></audio>` : '';
       return `<div class="pub-card">
         <div class="pub-top"><div>${s.secteur ? '<span class="pub-tag">' + escapeHtml(s.secteur) + '</span>' : ''}<h3>${escapeHtml(s.titre)}</h3></div></div>
         ${s.contenu ? '<p class="desc">' + escapeHtml(s.contenu) + '</p>' : ''}
+        ${audioHtmlSujet}
         <div class="pub-footer">Par ${escapeHtml(auteur)} · ${date}</div>
         <button class="btn-outline-small" style="margin-top:12px;" onclick="toggleReponses('${s.id}')">💬 Voir les réponses</button>
         <div id="reponses-${s.id}" style="display:none;margin-top:14px;padding-top:14px;border-top:1px solid rgba(27,94,32,0.14);">
           <div id="reponsesListe-${s.id}"></div>
           <div style="margin-top:14px;">
-            <textarea id="reponseTexte-${s.id}" placeholder="Écrire une réponse…" style="width:100%;padding:10px 12px;border:1px solid rgba(27,94,32,0.22);border-radius:10px;background:#fff;min-height:60px;"></textarea>
+            <div class="desc-mode-toggle">
+              <button type="button" class="desc-mode-btn is-active" data-mode="texte" id="rep${s.id}ModeTexteBtn">✏️ Texte</button>
+              <button type="button" class="desc-mode-btn" data-mode="vocal" id="rep${s.id}ModeVocalBtn">🎙️ Vocal</button>
+            </div>
+            <div id="rep${s.id}TexteWrap">
+              <textarea id="reponseTexte-${s.id}" placeholder="Écrire une réponse…" style="width:100%;padding:10px 12px;border:1px solid rgba(27,94,32,0.22);border-radius:10px;background:#fff;min-height:60px;"></textarea>
+            </div>
+            <div id="rep${s.id}VocalWrap" style="display:none;">
+              <div class="voice-recorder">
+                <button type="button" class="voice-rec-btn" id="rep${s.id}BtnRecord">🎙️ Démarrer l'enregistrement</button>
+                <span class="voice-rec-time" id="rep${s.id}RecordTime" style="display:none;">00:00</span>
+                <audio id="rep${s.id}AudioPreview" controls style="display:none;width:100%;margin-top:10px;"></audio>
+                <button type="button" class="btn-outline-small" id="rep${s.id}BtnReRecord" style="display:none;margin-top:8px;">🔁 Recommencer</button>
+              </div>
+            </div>
             <button class="btn-small" style="margin-top:8px;" onclick="envoyerReponse('${s.id}')">Répondre</button>
           </div>
         </div>
       </div>`;
     }).join('');
+    data.forEach(s => { initReponseVoice(s.id); });
   }
 
   let reponsesOuvertes = {};
@@ -2248,43 +2426,119 @@
     liste.innerHTML = data.map(r => {
       const auteur = r.profiles ? (r.profiles.prenom + ' ' + r.profiles.nom) : 'Utilisateur';
       const date = r.created_at ? new Date(r.created_at).toLocaleDateString('fr-FR') : '';
-      return `<div style="padding:10px 0;border-bottom:1px solid rgba(27,94,32,0.08);"><p style="font-size:0.9rem;color:var(--encre);">${escapeHtml(r.contenu)}</p><p style="font-size:0.76rem;color:var(--encre-douce);margin-top:4px;font-family:'IBM Plex Mono',monospace;">${escapeHtml(auteur)} · ${date}</p></div>`;
+      const audioHtml = r.audio_url ? `<audio src="${r.audio_url}" controls style="width:100%;margin-top:6px;"></audio>` : '';
+      return `<div style="padding:10px 0;border-bottom:1px solid rgba(27,94,32,0.08);">${r.contenu ? '<p style="font-size:0.9rem;color:var(--encre);">' + escapeHtml(r.contenu) + '</p>' : ''}${audioHtml}<p style="font-size:0.76rem;color:var(--encre-douce);margin-top:4px;font-family:'IBM Plex Mono',monospace;">${escapeHtml(auteur)} · ${date}</p></div>`;
     }).join('');
+  }
+
+  const reponseVoiceRecorders = {};
+  const reponseModes = {};
+  function initReponseVoice(sujetId){
+    if(reponseVoiceRecorders[sujetId]) return; // déjà initialisé
+    reponseModes[sujetId] = 'texte';
+    reponseVoiceRecorders[sujetId] = createVoiceRecorder('rep' + sujetId);
+    document.getElementById('rep' + sujetId + 'ModeTexteBtn').addEventListener('click', () => {
+      reponseModes[sujetId] = 'texte';
+      document.getElementById('rep' + sujetId + 'ModeTexteBtn').classList.add('is-active');
+      document.getElementById('rep' + sujetId + 'ModeVocalBtn').classList.remove('is-active');
+      document.getElementById('rep' + sujetId + 'TexteWrap').style.display = 'block';
+      document.getElementById('rep' + sujetId + 'VocalWrap').style.display = 'none';
+    });
+    document.getElementById('rep' + sujetId + 'ModeVocalBtn').addEventListener('click', () => {
+      reponseModes[sujetId] = 'vocal';
+      document.getElementById('rep' + sujetId + 'ModeVocalBtn').classList.add('is-active');
+      document.getElementById('rep' + sujetId + 'ModeTexteBtn').classList.remove('is-active');
+      document.getElementById('rep' + sujetId + 'VocalWrap').style.display = 'block';
+      document.getElementById('rep' + sujetId + 'TexteWrap').style.display = 'none';
+    });
   }
 
   window.envoyerReponse = async function(sujetId){
     if(!currentUser){ alert('Connectez-vous pour répondre.'); return; }
-    const textarea = document.getElementById('reponseTexte-' + sujetId);
-    const contenu = textarea.value.trim();
-    if(!contenu) return;
-    const { error } = await sb.from('forum_reponses').insert({ sujet_id: sujetId, user_id: currentUser.id, contenu });
+    const mode = reponseModes[sujetId] || 'texte';
+    let contenu = null, audio_url = null;
+
+    if(mode === 'vocal'){
+      const rec = reponseVoiceRecorders[sujetId];
+      const blob = rec ? rec.getBlob() : null;
+      if(!blob){ alert('Enregistrez un message vocal avant d\'envoyer.'); return; }
+      const path = currentUser.id + '/' + Date.now() + '_reponse.webm';
+      const { error: audioError } = await sb.storage.from('photos-annonces').upload(path, blob, { contentType: 'audio/webm' });
+      if(audioError){ alert('Erreur audio : ' + audioError.message); return; }
+      const { data: publicAudio } = sb.storage.from('photos-annonces').getPublicUrl(path);
+      audio_url = publicAudio.publicUrl;
+    } else {
+      const textarea = document.getElementById('reponseTexte-' + sujetId);
+      contenu = textarea.value.trim();
+      if(!contenu) return;
+    }
+
+    const { error } = await sb.from('forum_reponses').insert({ sujet_id: sujetId, user_id: currentUser.id, contenu, audio_url });
     if(error){ alert(error.message); return; }
-    textarea.value = '';
+    if(mode === 'texte'){ document.getElementById('reponseTexte-' + sujetId).value = ''; }
+    else { reponseVoiceRecorders[sujetId].reset(); document.getElementById('rep' + sujetId + 'ModeTexteBtn').click(); }
     await chargerReponses(sujetId);
   };
 
   document.getElementById('filterForumSecteur').addEventListener('change', loadSujets);
   document.getElementById('btnNouveauSujet').addEventListener('click', () => showView('nouveau-sujet'));
 
+  const sujetVoiceRecorder = createVoiceRecorder('sujet');
+  let sujetMode = 'texte';
+  document.getElementById('sujetModeTexteBtn').addEventListener('click', () => {
+    sujetMode = 'texte';
+    document.getElementById('sujetModeTexteBtn').classList.add('is-active');
+    document.getElementById('sujetModeVocalBtn').classList.remove('is-active');
+    document.getElementById('sujetTexteWrap').style.display = 'block';
+    document.getElementById('sujetVocalWrap').style.display = 'none';
+  });
+  document.getElementById('sujetModeVocalBtn').addEventListener('click', () => {
+    sujetMode = 'vocal';
+    document.getElementById('sujetModeVocalBtn').classList.add('is-active');
+    document.getElementById('sujetModeTexteBtn').classList.remove('is-active');
+    document.getElementById('sujetVocalWrap').style.display = 'block';
+    document.getElementById('sujetTexteWrap').style.display = 'none';
+  });
+
   document.getElementById('formSujet').addEventListener('submit', async (e) => {
     e.preventDefault();
     if(!currentUser) return;
     const btn = e.target.querySelector('button[type="submit"]');
     btn.disabled = true;
+
+    let audio_url = null, contenu = null;
+    if(sujetMode === 'vocal'){
+      const blob = sujetVoiceRecorder.getBlob();
+      if(!blob){ showMsg('msgSujet', 'Enregistrez un message vocal avant de publier.', 'error'); btn.disabled = false; return; }
+      btn.textContent = 'Envoi du message vocal…';
+      const path = currentUser.id + '/' + Date.now() + '_sujet.webm';
+      const { error: audioError } = await sb.storage.from('photos-annonces').upload(path, blob, { contentType: 'audio/webm' });
+      if(audioError){ showMsg('msgSujet', 'Erreur audio : ' + audioError.message, 'error'); btn.disabled = false; return; }
+      const { data: publicAudio } = sb.storage.from('photos-annonces').getPublicUrl(path);
+      audio_url = publicAudio.publicUrl;
+    } else {
+      contenu = document.getElementById('sujetContenu').value.trim();
+      if(!contenu){ showMsg('msgSujet', 'Écrivez un message avant de publier.', 'error'); btn.disabled = false; return; }
+    }
+
     const payload = {
       user_id: currentUser.id,
       secteur: document.getElementById('sujetSecteur').value,
       titre: document.getElementById('sujetTitre').value.trim(),
-      contenu: document.getElementById('sujetContenu').value.trim(),
+      contenu: contenu,
+      audio_url: audio_url,
     };
     const { error } = await sb.from('forum_sujets').insert(payload);
     if(error){ showMsg('msgSujet', error.message, 'error'); }
     else {
       showMsg('msgSujet', 'Sujet publié !', 'success');
       e.target.reset();
+      sujetVoiceRecorder.reset();
+      document.getElementById('sujetModeTexteBtn').click();
       setTimeout(() => showView('forums'), 900);
     }
     btn.disabled = false;
+    btn.textContent = 'Publier le sujet';
   });
 
   window.rejeterCompte = async function(id){
