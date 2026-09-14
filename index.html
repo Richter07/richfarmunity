@@ -429,36 +429,89 @@
     });
   })();
 
-  // Animation automatique de la page "Fonctionnement du site" : indépendante du reste
-  // de l'app (Supabase, etc.) pour continuer à défiler même en cas de souci ailleurs.
+  // Animation automatique des pages "Fonctionnement" (aperçu Accueil + détail complet) :
+  // indépendante du reste de l'app (Supabase, etc.) pour continuer à défiler même en cas de souci ailleurs.
   document.addEventListener('DOMContentLoaded', function(){
-    const steps = document.querySelectorAll('.fonct-step');
-    const dotsWrap = document.getElementById('fonctDots');
-    if(!steps.length || !dotsWrap) return;
-    let current = 0;
-    let timer = null;
 
-    steps.forEach((s, i) => {
-      const dot = document.createElement('span');
-      dot.className = 'fonct-dot' + (i === 0 ? ' is-active' : '');
-      dot.addEventListener('click', () => goTo(i));
-      dotsWrap.appendChild(dot);
-    });
-    const dots = dotsWrap.querySelectorAll('.fonct-dot');
+    function initCycle(stageId, dotsId, stepClass, dotClass, intervalMs){
+      const stage = document.getElementById(stageId);
+      const dotsWrap = document.getElementById(dotsId);
+      if(!stage || !dotsWrap) return;
+      const steps = stage.querySelectorAll('.' + stepClass);
+      if(!steps.length) return;
+      let current = 0;
+      let timer = null;
 
-    function goTo(index){
-      steps[current].classList.remove('is-active');
-      dots[current].classList.remove('is-active');
-      current = index % steps.length;
-      steps[current].classList.add('is-active');
-      dots[current].classList.add('is-active');
+      steps.forEach((s, i) => {
+        const dot = document.createElement('span');
+        dot.className = dotClass + (i === 0 ? ' is-active' : '');
+        dot.addEventListener('click', () => { goTo(i); startCycle(); });
+        dotsWrap.appendChild(dot);
+      });
+      const dots = dotsWrap.querySelectorAll('.' + dotClass);
+
+      function goTo(index){
+        steps[current].classList.remove('is-active');
+        dots[current].classList.remove('is-active');
+        current = ((index % steps.length) + steps.length) % steps.length;
+        steps[current].classList.add('is-active');
+        dots[current].classList.add('is-active');
+      }
+
+      function startCycle(){
+        if(timer) clearInterval(timer);
+        timer = setInterval(() => goTo(current + 1), intervalMs);
+      }
+      startCycle();
     }
 
-    function startCycle(){
-      if(timer) clearInterval(timer);
-      timer = setInterval(() => goTo(current + 1), 4000);
-    }
-    startCycle();
+    // Aperçu rapide sur l'Accueil (6 étapes, 4s chacune)
+    initCycle('fonctStageAccueil', 'fonctDotsAccueil', 'fonct-step', 'fonct-dot', 4000);
+
+    // Page "Fonctionnement" détaillée, façon reel/story (7 étapes, 6s chacune + barre de progression segmentée)
+    (function initReel(){
+      const stage = document.getElementById('reelStage');
+      const progressWrap = document.getElementById('reelProgress');
+      const dotsWrap = document.getElementById('reelDots');
+      if(!stage || !progressWrap || !dotsWrap) return;
+      const steps = stage.querySelectorAll('.reel-step');
+      if(!steps.length) return;
+      let current = 0;
+      let timer = null;
+      const DURATION = 6000;
+
+      steps.forEach((s, i) => {
+        const seg = document.createElement('div');
+        seg.className = 'reel-progress-seg' + (i === 0 ? ' is-active' : '');
+        seg.innerHTML = '<div class="fill"></div>';
+        progressWrap.appendChild(seg);
+        const dot = document.createElement('span');
+        dot.className = 'fonct-dot' + (i === 0 ? ' is-active' : '');
+        dot.addEventListener('click', () => { goTo(i); startCycle(); });
+        dotsWrap.appendChild(dot);
+      });
+      const segs = progressWrap.querySelectorAll('.reel-progress-seg');
+      const dots = dotsWrap.querySelectorAll('.fonct-dot');
+
+      function goTo(index){
+        steps[current].classList.remove('is-active');
+        dots[current].classList.remove('is-active');
+        segs[current].classList.remove('is-active');
+        segs[current].classList.add('is-done');
+        current = ((index % steps.length) + steps.length) % steps.length;
+        if(current === 0){ segs.forEach(s => s.classList.remove('is-done', 'is-active')); }
+        steps[current].classList.add('is-active');
+        dots[current].classList.add('is-active');
+        segs[current].classList.add('is-active');
+      }
+
+      function startCycle(){
+        if(timer) clearInterval(timer);
+        timer = setInterval(() => goTo(current + 1), DURATION);
+      }
+      startCycle();
+    })();
+
   });
 </script>
 
@@ -508,6 +561,51 @@
             <text x="70" y="326" class="weave-node-label">CONSOMMATEUR</text>
             <text x="196" y="322" class="weave-node-label">COMMERÇANT</text>
           </svg>
+        </div>
+      </div>
+    </section>
+
+    <section class="apercu-fonct-section">
+      <div class="wrap">
+        <div class="section-head reveal">
+          <span class="eyebrow">Simple et rapide</span>
+          <h2>Comment fonctionne Rĩch Farm Unity ?</h2>
+        </div>
+        <div class="fonct-stage" id="fonctStageAccueil">
+          <div class="fonct-step is-active" data-step="0">
+            <div class="fonct-icon-circle">📝</div>
+            <h3>1. Inscrivez-vous gratuitement</h3>
+            <p>Créez votre compte en quelques secondes, en tant que producteur, éleveur, transformateur, commerçant, fournisseur ou consommateur.</p>
+          </div>
+          <div class="fonct-step" data-step="1">
+            <div class="fonct-icon-circle">👤</div>
+            <h3>2. Complétez votre profil</h3>
+            <p>Indiquez votre domaine d'activité et vos coordonnées pour que les autres acteurs puissent vous identifier et vous contacter facilement.</p>
+          </div>
+          <div class="fonct-step" data-step="2">
+            <div class="fonct-icon-circle">📣</div>
+            <h3>3. Publiez une annonce ou recherchez une offre</h3>
+            <p>Proposez vos produits ou services, ou parcourez les annonces des autres membres par catégorie et par département.</p>
+          </div>
+          <div class="fonct-step" data-step="3">
+            <div class="fonct-icon-circle">🔔</div>
+            <h3>4. Recevez des notifications</h3>
+            <p>Soyez alerté en temps réel dès qu'une nouvelle opportunité correspond à ce que vous cherchez ou proposez.</p>
+          </div>
+          <div class="fonct-step" data-step="4">
+            <div class="fonct-icon-circle">💬</div>
+            <h3>5. Échangez sur le forum</h3>
+            <p>Posez vos questions, partagez votre expérience et échangez directement avec les autres acteurs de la communauté.</p>
+          </div>
+          <div class="fonct-step" data-step="5">
+            <div class="fonct-icon-circle">🤝🏾</div>
+            <h3>6. Entrez directement en contact</h3>
+            <p>Contactez l'autre acteur en un clic, via WhatsApp, pour conclure votre échange en toute simplicité.</p>
+          </div>
+        </div>
+        <div class="fonct-dots" id="fonctDotsAccueil"></div>
+        <div style="text-align:center;margin-top:18px;">
+          <a href="#" class="btn-ghost" onclick="showView('fonctionnement'); return false;" style="color:var(--vert-profond);border-color:var(--vert-profond);">Voir le détail complet →</a>
         </div>
       </div>
     </section>
@@ -1132,45 +1230,66 @@
     </div>
   </div>
 
-  <!-- ==================== VUE FONCTIONNEMENT DU SITE ==================== -->
+  <!-- ==================== VUE FONCTIONNEMENT DU SITE (DÉTAILLÉ) ==================== -->
   <div class="view" id="view-fonctionnement">
     <div class="app-main">
-      <div class="page-head"><h2>Comment fonctionne Rĩch Farm Unity ?</h2><p>Découvrez en images les principales étapes pour utiliser la plateforme.</p></div>
+      <div class="page-head"><h2>Comment fonctionne Rĩch Farm Unity ?</h2><p>Le parcours complet, étape par étape, à travers un exemple concret.</p></div>
 
-      <div class="fonct-stage" id="fonctStage">
-        <div class="fonct-step is-active" data-step="0">
-          <div class="fonct-icon-circle">📝</div>
-          <h3>1. Inscrivez-vous gratuitement</h3>
-          <p>Créez votre compte en quelques secondes, en tant que producteur, éleveur, transformateur, commerçant, fournisseur ou consommateur.</p>
+      <div class="reel-progress" id="reelProgress"></div>
+
+      <div class="reel-stage" id="reelStage">
+        <div class="reel-step is-active" data-step="0">
+          <div class="reel-icon-circle">📝</div>
+          <span class="reel-tag">Étape 1 / 7</span>
+          <h3>Inscription gratuite</h3>
+          <p>Chaque utilisateur crée un compte en choisissant son profil : producteur, éleveur, transformateur, commerçant, fournisseur ou consommateur. L'inscription prend moins de 2 minutes et ne demande qu'un nom et un numéro de téléphone.</p>
+          <div class="reel-exemple"><strong>Exemple :</strong> Kofi, producteur de maïs à Parakou, s'inscrit sur Rĩch Farm Unity en tant que « Producteur ».</div>
         </div>
-        <div class="fonct-step" data-step="1">
-          <div class="fonct-icon-circle">👤</div>
-          <h3>2. Complétez votre profil</h3>
-          <p>Indiquez votre domaine d'activité et vos coordonnées pour que les autres acteurs puissent vous identifier et vous contacter facilement.</p>
+        <div class="reel-step" data-step="1">
+          <div class="reel-icon-circle">👤</div>
+          <span class="reel-tag">Étape 2 / 7</span>
+          <h3>Complétion du profil</h3>
+          <p>L'utilisateur précise son domaine d'activité, sa localisation et ses coordonnées de contact, afin d'être facilement identifiable par les autres acteurs de la plateforme.</p>
+          <div class="reel-exemple"><strong>Exemple :</strong> Kofi indique « Céréales » comme domaine, « Parakou » comme localisation, et laisse son numéro WhatsApp visible.</div>
         </div>
-        <div class="fonct-step" data-step="2">
-          <div class="fonct-icon-circle">📣</div>
-          <h3>3. Publiez une annonce ou recherchez une offre</h3>
-          <p>Proposez vos produits ou services, ou parcourez les annonces des autres membres par catégorie et par département.</p>
+        <div class="reel-step" data-step="2">
+          <div class="reel-icon-circle">📣</div>
+          <span class="reel-tag">Étape 3 / 7</span>
+          <h3>Publication d'une annonce</h3>
+          <p>Le producteur ou le fournisseur publie une annonce avec titre, quantité, prix, localisation et une photo du produit. L'annonce est visible par tous après validation.</p>
+          <div class="reel-exemple"><strong>Exemple :</strong> Kofi publie « 50 sacs de maïs disponibles — Parakou — 12 000 FCFA le sac », avec une photo de sa récolte.</div>
         </div>
-        <div class="fonct-step" data-step="3">
-          <div class="fonct-icon-circle">🔔</div>
-          <h3>4. Recevez des notifications</h3>
-          <p>Soyez alerté en temps réel dès qu'une nouvelle opportunité correspond à ce que vous cherchez ou proposez.</p>
+        <div class="reel-step" data-step="3">
+          <div class="reel-icon-circle">🔎</div>
+          <span class="reel-tag">Étape 4 / 7</span>
+          <h3>Recherche d'une offre</h3>
+          <p>De son côté, un acheteur parcourt les annonces en filtrant par catégorie, département ou mot-clé, pour trouver rapidement ce qu'il cherche.</p>
+          <div class="reel-exemple"><strong>Exemple :</strong> Adama, transformateur à Cotonou, filtre par « Céréales » et « Borgou », et trouve l'annonce de Kofi.</div>
         </div>
-        <div class="fonct-step" data-step="4">
-          <div class="fonct-icon-circle">💬</div>
-          <h3>5. Échangez sur le forum</h3>
-          <p>Posez vos questions, partagez votre expérience et échangez directement avec les autres acteurs de la communauté.</p>
+        <div class="reel-step" data-step="4">
+          <div class="reel-icon-circle">🔔</div>
+          <span class="reel-tag">Étape 5 / 7</span>
+          <h3>Notifications automatiques</h3>
+          <p>Producteurs comme acheteurs reçoivent une notification (push ou email) dès qu'une publication, une réponse ou une opportunité correspond à leur activité.</p>
+          <div class="reel-exemple"><strong>Exemple :</strong> Adama est notifié automatiquement dès qu'une nouvelle annonce de maïs est publiée près de chez lui.</div>
         </div>
-        <div class="fonct-step" data-step="5">
-          <div class="fonct-icon-circle">🤝🏾</div>
-          <h3>6. Entrez directement en contact</h3>
-          <p>Contactez l'autre acteur en un clic, via WhatsApp, pour conclure votre échange en toute simplicité.</p>
+        <div class="reel-step" data-step="5">
+          <div class="reel-icon-circle">💬</div>
+          <span class="reel-tag">Étape 6 / 7</span>
+          <h3>Échanges sur le forum</h3>
+          <p>Un espace communautaire permet de poser des questions, partager des conseils techniques et échanger avec d'autres membres du réseau agricole.</p>
+          <div class="reel-exemple"><strong>Exemple :</strong> Avant d'acheter, Adama demande sur le forum : « Quel est le meilleur moment pour stocker du maïs ? »</div>
+        </div>
+        <div class="reel-step" data-step="6">
+          <div class="reel-icon-circle">🤝🏾</div>
+          <span class="reel-tag">Étape 7 / 7</span>
+          <h3>Mise en contact directe</h3>
+          <p>Un bouton « Contacter sur WhatsApp » présent sur chaque annonce ouvre directement une conversation pré-remplie, pour conclure l'échange sans intermédiaire.</p>
+          <div class="reel-exemple"><strong>Exemple :</strong> Adama clique sur « Contacter sur WhatsApp » depuis l'annonce de Kofi. La discussion démarre immédiatement, et la vente se conclut entre eux.</div>
         </div>
       </div>
 
-      <div class="fonct-dots" id="fonctDots"></div>
+      <div class="fonct-dots" id="reelDots"></div>
     </div>
   </div>
   <style>
@@ -1192,8 +1311,41 @@
     .fonct-step h3{ font-family:'Fraunces',serif; font-size:1.3rem; color:var(--ivoire); margin-bottom:12px; }
     .fonct-step p{ color:rgba(245,239,224,0.75); font-size:0.95rem; line-height:1.6; max-width:460px; }
     .fonct-dots{ display:flex; justify-content:center; gap:9px; margin-top:20px; }
-    .fonct-dot{ width:9px; height:9px; border-radius:50%; background:var(--bordure); transition:all .4s ease; cursor:pointer; }
+    .fonct-dot{ width:9px; height:9px; border-radius:50%; background:rgba(28,26,20,0.18); transition:all .4s ease; cursor:pointer; }
     .fonct-dot.is-active{ background:var(--or); width:26px; border-radius:100px; }
+
+    .apercu-fonct-section{ padding:64px 0; }
+
+    .reel-progress{ display:flex; gap:6px; margin-top:8px; margin-bottom:10px; }
+    .reel-progress-seg{ flex:1; height:4px; border-radius:100px; background:rgba(28,26,20,0.15); overflow:hidden; position:relative; }
+    .reel-progress-seg .fill{ position:absolute; inset:0; width:0%; background:var(--or); border-radius:100px; }
+    .reel-progress-seg.is-done .fill{ width:100%; }
+    .reel-progress-seg.is-active .fill{ animation:reelFill 6s linear forwards; }
+    @keyframes reelFill{ from{ width:0%; } to{ width:100%; } }
+
+    .reel-stage{
+      position:relative; min-height:460px; background:var(--vert-profond); border-radius:20px;
+      overflow:hidden;
+    }
+    .reel-step{
+      position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center;
+      text-align:center; padding:44px 30px; opacity:0; transform:translateX(40px);
+      transition:opacity .5s ease, transform .5s ease; pointer-events:none;
+    }
+    .reel-step.is-active{ opacity:1; transform:translateX(0); pointer-events:auto; }
+    .reel-icon-circle{
+      width:72px; height:72px; border-radius:50%; background:var(--grad-or);
+      display:flex; align-items:center; justify-content:center; font-size:2rem; margin-bottom:14px;
+      box-shadow:var(--ombre-or);
+    }
+    .reel-tag{ font-size:0.72rem; letter-spacing:1.5px; text-transform:uppercase; color:var(--or); font-weight:700; margin-bottom:10px; }
+    .reel-step h3{ font-family:'Fraunces',serif; font-size:1.35rem; color:var(--ivoire); margin-bottom:12px; }
+    .reel-step p{ color:rgba(245,239,224,0.78); font-size:0.95rem; line-height:1.6; max-width:480px; margin-bottom:18px; }
+    .reel-exemple{
+      background:rgba(217,166,43,0.12); border:1px solid rgba(217,166,43,0.35); border-radius:12px;
+      padding:14px 18px; font-size:0.88rem; color:var(--or-clair); max-width:480px; line-height:1.55; text-align:left;
+    }
+    .reel-exemple strong{ color:var(--or); }
   </style>
 
   <div class="view" id="view-conditions">
@@ -2220,7 +2372,7 @@
       const statutTxt = estExpiree ? '· Expirée' : (p.actif ? '· Active' : '· Désactivée');
       const expTxt = p.date_expiration ? ` · Expire le ${p.date_expiration}` : '';
       return `
-      <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--bordure);">
+      <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid rgba(28,26,20,0.12);">
         <img src="${p.image_url}" style="width:70px;height:40px;object-fit:cover;border-radius:6px;">
         <div style="flex:1;"><strong>${escapeHtml(p.annonceur)}</strong><br><span style="font-size:0.8rem;color:${estExpiree ? 'var(--rouge)' : 'var(--encre-douce)'};">Ordre : ${p.ordre} ${statutTxt}${expTxt}</span></div>
         <button class="btn-outline-small" onclick="togglePublicite('${p.id}', ${!p.actif})">${p.actif ? 'Désactiver' : 'Activer'}</button>
