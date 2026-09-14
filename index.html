@@ -394,6 +394,7 @@
       <button data-view="forums">Forums</button>
       <button data-view="institutionnel">Ancrage institutionnel</button>
       <button data-view="apropos">À propos</button>
+      <button data-view="fonctionnement">Fonctionnement</button>
       <button data-view="moderation" id="tabModeration" style="display:none;">Modération</button>
       <button data-view="membres" id="tabMembres" style="display:none;">Membres</button>
       <button data-view="stats" id="tabStats" style="display:none;">Statistiques</button>
@@ -427,6 +428,38 @@
       btn.addEventListener('click', closeMenu);
     });
   })();
+
+  // Animation automatique de la page "Fonctionnement du site" : indépendante du reste
+  // de l'app (Supabase, etc.) pour continuer à défiler même en cas de souci ailleurs.
+  document.addEventListener('DOMContentLoaded', function(){
+    const steps = document.querySelectorAll('.fonct-step');
+    const dotsWrap = document.getElementById('fonctDots');
+    if(!steps.length || !dotsWrap) return;
+    let current = 0;
+    let timer = null;
+
+    steps.forEach((s, i) => {
+      const dot = document.createElement('span');
+      dot.className = 'fonct-dot' + (i === 0 ? ' is-active' : '');
+      dot.addEventListener('click', () => goTo(i));
+      dotsWrap.appendChild(dot);
+    });
+    const dots = dotsWrap.querySelectorAll('.fonct-dot');
+
+    function goTo(index){
+      steps[current].classList.remove('is-active');
+      dots[current].classList.remove('is-active');
+      current = index % steps.length;
+      steps[current].classList.add('is-active');
+      dots[current].classList.add('is-active');
+    }
+
+    function startCycle(){
+      if(timer) clearInterval(timer);
+      timer = setInterval(() => goTo(current + 1), 4000);
+    }
+    startCycle();
+  });
 </script>
 
 <main>
@@ -1098,7 +1131,71 @@
       </div>
     </div>
   </div>
-  <!-- ==================== VUE CONDITIONS ==================== -->
+
+  <!-- ==================== VUE FONCTIONNEMENT DU SITE ==================== -->
+  <div class="view" id="view-fonctionnement">
+    <div class="app-main">
+      <div class="page-head"><h2>Comment fonctionne Rĩch Farm Unity ?</h2><p>Découvrez en images les principales étapes pour utiliser la plateforme.</p></div>
+
+      <div class="fonct-stage" id="fonctStage">
+        <div class="fonct-step is-active" data-step="0">
+          <div class="fonct-icon-circle">📝</div>
+          <h3>1. Inscrivez-vous gratuitement</h3>
+          <p>Créez votre compte en quelques secondes, en tant que producteur, éleveur, transformateur, commerçant, fournisseur ou consommateur.</p>
+        </div>
+        <div class="fonct-step" data-step="1">
+          <div class="fonct-icon-circle">👤</div>
+          <h3>2. Complétez votre profil</h3>
+          <p>Indiquez votre domaine d'activité et vos coordonnées pour que les autres acteurs puissent vous identifier et vous contacter facilement.</p>
+        </div>
+        <div class="fonct-step" data-step="2">
+          <div class="fonct-icon-circle">📣</div>
+          <h3>3. Publiez une annonce ou recherchez une offre</h3>
+          <p>Proposez vos produits ou services, ou parcourez les annonces des autres membres par catégorie et par département.</p>
+        </div>
+        <div class="fonct-step" data-step="3">
+          <div class="fonct-icon-circle">🔔</div>
+          <h3>4. Recevez des notifications</h3>
+          <p>Soyez alerté en temps réel dès qu'une nouvelle opportunité correspond à ce que vous cherchez ou proposez.</p>
+        </div>
+        <div class="fonct-step" data-step="4">
+          <div class="fonct-icon-circle">💬</div>
+          <h3>5. Échangez sur le forum</h3>
+          <p>Posez vos questions, partagez votre expérience et échangez directement avec les autres acteurs de la communauté.</p>
+        </div>
+        <div class="fonct-step" data-step="5">
+          <div class="fonct-icon-circle">🤝🏾</div>
+          <h3>6. Entrez directement en contact</h3>
+          <p>Contactez l'autre acteur en un clic, via WhatsApp, pour conclure votre échange en toute simplicité.</p>
+        </div>
+      </div>
+
+      <div class="fonct-dots" id="fonctDots"></div>
+    </div>
+  </div>
+  <style>
+    .fonct-stage{
+      position:relative; min-height:340px; background:var(--vert-profond); border-radius:20px;
+      overflow:hidden; margin-top:8px;
+    }
+    .fonct-step{
+      position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center;
+      text-align:center; padding:40px 32px; opacity:0; transform:translateX(40px);
+      transition:opacity .6s ease, transform .6s ease; pointer-events:none;
+    }
+    .fonct-step.is-active{ opacity:1; transform:translateX(0); pointer-events:auto; }
+    .fonct-icon-circle{
+      width:76px; height:76px; border-radius:50%; background:var(--grad-or);
+      display:flex; align-items:center; justify-content:center; font-size:2.1rem; margin-bottom:20px;
+      box-shadow:var(--ombre-or);
+    }
+    .fonct-step h3{ font-family:'Fraunces',serif; font-size:1.3rem; color:var(--ivoire); margin-bottom:12px; }
+    .fonct-step p{ color:rgba(245,239,224,0.75); font-size:0.95rem; line-height:1.6; max-width:460px; }
+    .fonct-dots{ display:flex; justify-content:center; gap:9px; margin-top:20px; }
+    .fonct-dot{ width:9px; height:9px; border-radius:50%; background:var(--bordure); transition:all .4s ease; cursor:pointer; }
+    .fonct-dot.is-active{ background:var(--or); width:26px; border-radius:100px; }
+  </style>
+
   <div class="view" id="view-conditions">
     <div class="app-main">
       <div class="page-head">
