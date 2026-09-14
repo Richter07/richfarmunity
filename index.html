@@ -751,8 +751,17 @@
   <div class="view" id="view-formations">
     <div class="app-main">
       <div id="pubBandeauWrap" style="display:none;margin-bottom:24px;">
-        <div class="pub-scroll-track" id="pubScrollTrack"></div>
+        <div class="bandeau-pub-track" id="bandeauPubTrack"></div>
       </div>
+      <a href="https://wa.me/2290146471497?text=Bonjour%2C%20je%20souhaite%20faire%20de%20la%20publicit%C3%A9%20sur%20R%C4%A9ch%20Farm%20Unity." target="_blank" id="bandeauPubCTA" style="display:none;margin-bottom:24px;text-decoration:none;">
+        <div style="background:linear-gradient(90deg, var(--vert-profond), var(--vert-rich));border:1px dashed var(--or); border-radius:14px;padding:16px 20px;display:flex;align-items:center;gap:14px;">
+          <span style="font-size:1.6rem;">📣</span>
+          <div>
+            <p style="color:var(--or-clair);font-weight:700;margin:0;">Faites votre publicité ici !</p>
+            <p style="color:rgba(245,239,224,0.8);font-size:0.85rem;margin:2px 0 0;">Touchez tous les acteurs agricoles de Rĩch Farm Unity. Contactez-nous sur WhatsApp →</p>
+          </div>
+        </div>
+      </a>
       <div class="toolbar">
         <div class="page-head" style="margin-bottom:0;"><h2>Formations &amp; astuces</h2><p>Conseils de production et actualités publiés par Rĩch Farm Unity.</p></div>
         <button class="btn-small" id="btnNouvelleFormation" style="display:none;">+ Nouvelle formation</button>
@@ -764,7 +773,10 @@
             <div class="field"><label for="pubAnnonceur">Nom de l'annonceur</label><input type="text" id="pubAnnonceur" required placeholder="Ex : Agro-Intrants Bénin"></div>
             <div class="field"><label for="pubOrdre">Ordre d'affichage</label><input type="number" id="pubOrdre" value="0"></div>
           </div>
-          <div class="field"><label for="pubImageUrl">Lien de l'image (URL)</label><input type="text" id="pubImageUrl" required placeholder="https://..."></div>
+          <div class="field-row">
+            <div class="field"><label for="pubImageUrl">Lien de l'image (URL)</label><input type="text" id="pubImageUrl" required placeholder="https://..."></div>
+            <div class="field"><label for="pubDateExpiration">Expire le (optionnel)</label><input type="date" id="pubDateExpiration"></div>
+          </div>
           <div class="field"><label for="pubLien">Lien de destination (optionnel)</label><input type="text" id="pubLien" placeholder="https://... ou https://wa.me/..."></div>
           <button type="submit" class="btn-main" style="margin-top:10px;">Ajouter la publicité</button>
         </form>
@@ -774,17 +786,17 @@
     </div>
   </div>
   <style>
-    .pub-scroll-track{
+    .bandeau-pub-track{
       display:flex; gap:16px; overflow:hidden; position:relative;
       -webkit-mask-image:linear-gradient(90deg,transparent,#000 4%,#000 96%,transparent);
       mask-image:linear-gradient(90deg,transparent,#000 4%,#000 96%,transparent);
     }
-    .pub-scroll-inner{ display:flex; gap:16px; flex-shrink:0; animation:pubScrollLoop 30s linear infinite; }
-    .pub-scroll-track:hover .pub-scroll-inner{ animation-play-state:paused; }
-    .pub-card{ flex-shrink:0; width:220px; height:120px; border-radius:14px; overflow:hidden; box-shadow:0 8px 20px rgba(15,44,19,0.15); }
+    .bandeau-pub-inner{ display:flex; gap:16px; flex-shrink:0; animation:bandeauPubScrollLoop 30s linear infinite; }
+    .bandeau-pub-track:hover .bandeau-pub-inner{ animation-play-state:paused; }
+    .bandeau-pub-card{ flex-shrink:0; width:220px; height:120px; border-radius:14px; overflow:hidden; box-shadow:0 8px 20px rgba(15,44,19,0.15); }
     .pub-card img{ width:100%; height:100%; object-fit:cover; display:block; }
-    @keyframes pubScrollLoop{ from{ transform:translateX(0); } to{ transform:translateX(-50%); } }
-    @media (max-width:600px){ .pub-card{ width:180px; height:100px; } }
+    @keyframes bandeauPubScrollLoop{ from{ transform:translateX(0); } to{ transform:translateX(-50%); } }
+    @media (max-width:600px){ .bandeau-pub-card{ width:180px; height:100px; } }
   </style>
 
   <!-- ==================== VUE ANCRAGE INSTITUTIONNEL ==================== -->
@@ -2051,8 +2063,9 @@
       } else if(f.media_url){
         mediaHtml = `<img src="${f.media_url}" alt="${escapeHtml(f.titre)}" style="width:100%;height:auto;max-height:420px;object-fit:contain;background:var(--ivoire-2);border-radius:10px;margin-top:12px;">`;
       }
-      const shareText = `🌾 ${f.titre}\n\n${f.contenu}\n\nVoir plus sur Rĩch Farm Unity : https://richfarmunity.com/?view=formations`;
-      const shareBtn = `<a href="https://wa.me/?text=${encodeURIComponent(shareText)}" target="_blank" class="btn-outline-small" style="display:inline-block;margin-top:12px;">Partager sur WhatsApp</a>`;
+      const shareUrl = `https://richfarmunity.com/share?type=formation&id=${f.id}`;
+      const shareText = `🌾 ${f.titre}\n\n${f.contenu}\n\nVoir plus sur Rĩch Farm Unity :\n${shareUrl}`;
+      const shareBtn = `<a href="https://wa.me/?text=${encodeURIComponent(shareText)}" target="_blank" class="btn-outline-small" style="display:inline-block;margin-top:12px;">📤 Partager sur WhatsApp</a>`;
       const adminBtns = (currentProfile && currentProfile.is_admin) ? `<div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap;"><button class="btn-outline-small" onclick="modifierFormation('${f.id}')">Modifier</button><button class="btn-outline-small" style="border-color:var(--rouge);color:var(--rouge);" onclick="supprimerFormation('${f.id}')">Supprimer</button></div>` : '';
       return `<div class="formation-card"><span class="eyebrow">Rĩch Farm Unity</span><h3>${escapeHtml(f.titre)}</h3><p>${escapeHtml(f.contenu)}</p>${mediaHtml}${shareBtn}${adminBtns}</div>`;
     }).join('');
@@ -2077,18 +2090,25 @@
 
   // ---- Bannière publicitaire défilante ----
   async function loadPublicites(){
-    const { data, error } = await sb.from('publicites').select('*').eq('actif', true).order('ordre', { ascending: true });
+    const aujourdHui = new Date().toISOString().slice(0,10);
+    const { data, error } = await sb.from('publicites').select('*').eq('actif', true).or(`date_expiration.is.null,date_expiration.gte.${aujourdHui}`).order('ordre', { ascending: true });
     const wrap = document.getElementById('pubBandeauWrap');
-    const track = document.getElementById('pubScrollTrack');
-    if(error || !data || data.length === 0){ wrap.style.display = 'none'; track.innerHTML = ''; }
+    const track = document.getElementById('bandeauPubTrack');
+    const cta = document.getElementById('bandeauPubCTA');
+    if(error || !data || data.length === 0){
+      wrap.style.display = 'none';
+      track.innerHTML = '';
+      cta.style.display = 'block';
+    }
     else{
       const cardsHtml = data.map(p => {
-        const img = `<div class="pub-card"><img src="${p.image_url}" alt="${escapeHtml(p.annonceur)}"></div>`;
+        const img = `<div class="bandeau-pub-card"><img src="${p.image_url}" alt="${escapeHtml(p.annonceur)}"></div>`;
         return p.lien ? `<a href="${p.lien}" target="_blank" rel="noopener">${img}</a>` : img;
       }).join('');
       // Le contenu est dupliqué une fois pour permettre une boucle visuelle continue (translateX -50%).
-      track.innerHTML = `<div class="pub-scroll-inner">${cardsHtml}${cardsHtml}</div>`;
+      track.innerHTML = `<div class="bandeau-pub-inner">${cardsHtml}${cardsHtml}</div>`;
       wrap.style.display = 'block';
+      cta.style.display = 'none';
     }
     if(currentProfile && currentProfile.is_admin) loadPublicitesAdmin();
   }
@@ -2097,14 +2117,20 @@
     const { data, error } = await sb.from('publicites').select('*').order('ordre', { ascending: true });
     const list = document.getElementById('listePublicitesAdmin');
     if(error || !data || data.length === 0){ list.innerHTML = '<p style="color:var(--encre-douce);font-size:0.9rem;">Aucune publicité pour le moment.</p>'; return; }
-    list.innerHTML = data.map(p => `
+    const aujourdHui = new Date().toISOString().slice(0,10);
+    list.innerHTML = data.map(p => {
+      const estExpiree = p.date_expiration && p.date_expiration < aujourdHui;
+      const statutTxt = estExpiree ? '· Expirée' : (p.actif ? '· Active' : '· Désactivée');
+      const expTxt = p.date_expiration ? ` · Expire le ${p.date_expiration}` : '';
+      return `
       <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--bordure);">
         <img src="${p.image_url}" style="width:70px;height:40px;object-fit:cover;border-radius:6px;">
-        <div style="flex:1;"><strong>${escapeHtml(p.annonceur)}</strong><br><span style="font-size:0.8rem;color:var(--encre-douce);">Ordre : ${p.ordre} ${p.actif ? '· Active' : '· Désactivée'}</span></div>
+        <div style="flex:1;"><strong>${escapeHtml(p.annonceur)}</strong><br><span style="font-size:0.8rem;color:${estExpiree ? 'var(--rouge)' : 'var(--encre-douce)'};">Ordre : ${p.ordre} ${statutTxt}${expTxt}</span></div>
         <button class="btn-outline-small" onclick="togglePublicite('${p.id}', ${!p.actif})">${p.actif ? 'Désactiver' : 'Activer'}</button>
         <button class="btn-outline-small" style="border-color:var(--rouge);color:var(--rouge);" onclick="supprimerPublicite('${p.id}')">Supprimer</button>
       </div>
-    `).join('');
+    `;
+    }).join('');
   }
 
   window.togglePublicite = async function(id, nouvelEtat){
@@ -2124,6 +2150,7 @@
       image_url: document.getElementById('pubImageUrl').value.trim(),
       lien: document.getElementById('pubLien').value.trim() || null,
       ordre: parseInt(document.getElementById('pubOrdre').value) || 0,
+      date_expiration: document.getElementById('pubDateExpiration').value || null,
       actif: true
     };
     const { error } = await sb.from('publicites').insert(payload);
