@@ -316,6 +316,22 @@
   @media (max-width:600px){ .field-row{ grid-template-columns:1fr; } }
 
   .desc-mode-toggle{ display:flex; gap:8px; margin-bottom:10px; }
+
+  .avis-modal-backdrop{
+    display:none; position:fixed; inset:0; background:rgba(0,0,0,0.55); z-index:300;
+    align-items:center; justify-content:center; padding:20px;
+  }
+  .avis-modal-backdrop.is-open{ display:flex; }
+  .avis-modal{
+    background:#fff; border-radius:18px; padding:28px; max-width:420px; width:100%; position:relative;
+    box-shadow:0 24px 60px rgba(0,0,0,0.3);
+  }
+  .avis-modal h3{ font-size:1.1rem; margin-bottom:16px; padding-right:20px; }
+  .avis-modal-close{ position:absolute; top:16px; right:16px; background:none; border:none; font-size:1.1rem; cursor:pointer; color:var(--encre-douce); }
+  .avis-stars{ display:flex; gap:6px; font-size:2rem; }
+  .avis-stars span{ cursor:pointer; color:rgba(184,134,11,0.25); transition:color .15s ease; }
+  .avis-stars span.is-active{ color:var(--or); }
+  .stars-display{ color:var(--or); font-size:0.85rem; letter-spacing:1px; }
   .desc-mode-btn{
     flex:1; padding:9px 12px; border-radius:10px; border:1.5px solid rgba(27,94,32,0.22);
     background:#fff; color:var(--encre-douce); font-size:0.85rem; font-weight:600; cursor:pointer; transition:all .2s ease;
@@ -412,6 +428,7 @@
       <button data-view="apropos">À propos</button>
       <button data-view="fonctionnement">Fonctionnement</button>
       <button data-view="moderation" id="tabModeration" style="display:none;">Modération</button>
+      <button data-view="suggestions" id="tabSuggestions" style="display:none;">Suggestions</button>
       <button data-view="membres" id="tabMembres" style="display:none;">Membres</button>
       <button data-view="stats" id="tabStats" style="display:none;">Statistiques</button>
       <button data-view="compte">Mon compte</button>
@@ -421,6 +438,19 @@
     <button class="menu-toggle" id="menuToggle" aria-label="Ouvrir le menu">☰</button>
   </nav>
   <div class="menu-backdrop" id="menuBackdrop"></div>
+
+  <div class="avis-modal-backdrop" id="avisModalBackdrop">
+    <div class="avis-modal">
+      <button type="button" class="avis-modal-close" id="avisModalClose">✕</button>
+      <h3>Laisser un avis à <span id="avisModalNom"></span></h3>
+      <div class="avis-stars" id="avisStars">
+        <span data-val="1">★</span><span data-val="2">★</span><span data-val="3">★</span><span data-val="4">★</span><span data-val="5">★</span>
+      </div>
+      <textarea id="avisCommentaire" placeholder="Commentaire (optionnel)" style="width:100%;margin-top:14px;min-height:80px;padding:12px 14px;border-radius:10px;border:1px solid rgba(27,94,32,0.22);"></textarea>
+      <button type="button" class="btn-main" id="avisSubmitBtn" style="margin-top:14px;width:100%;">Envoyer l'avis</button>
+      <div class="msg" id="msgAvisModal"></div>
+    </div>
+  </div>
 </header>
 
 
@@ -834,6 +864,51 @@
           <input type="checkbox" id="filterEco" style="width:auto;"> 🌱 Éco-responsable
         </label>
       </div>
+      <div style="margin-bottom:20px;">
+        <button type="button" class="btn-outline-small" id="btnOuvrirAlerte">🔔 Créer une alerte pour cette recherche</button>
+        <div class="card" id="carteAlerte" style="display:none;margin-top:14px;">
+          <h3 style="margin-bottom:6px;">Créer une alerte de recherche</h3>
+          <p style="color:var(--encre-douce);font-size:0.86rem;margin-bottom:16px;">Soyez notifié dès qu'une annonce correspond à ces critères. Laissez un champ vide pour ne pas filtrer dessus.</p>
+          <form id="formAlerte">
+            <div class="field"><label for="alerteMotCle">Mot-clé</label><input type="text" id="alerteMotCle" placeholder="Ex : maïs, tracteur, semences..."></div>
+            <div class="field-row">
+              <div class="field">
+                <label for="alerteCategorie">Catégorie</label>
+                <select id="alerteCategorie">
+                  <option value="">Toutes les catégories</option>
+                  <option value="Production végétale">Production végétale</option>
+                  <option value="Production animale">Production animale</option>
+                  <option value="Transformation agroalimentaire">Transformation agroalimentaire</option>
+                  <option value="Agroforesterie / Foresterie">Agroforesterie / Foresterie</option>
+                  <option value="Intrants">Intrants</option>
+                  <option value="Foncier">Foncier</option>
+                  <option value="Autre">Autre</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="alerteDepartement">Département</label>
+                <select id="alerteDepartement">
+                  <option value="">Tous les départements</option>
+                  <option value="Alibori">Alibori</option>
+                  <option value="Atacora">Atacora</option>
+                  <option value="Atlantique">Atlantique</option>
+                  <option value="Borgou">Borgou</option>
+                  <option value="Collines">Collines</option>
+                  <option value="Couffo">Couffo</option>
+                  <option value="Donga">Donga</option>
+                  <option value="Littoral">Littoral</option>
+                  <option value="Mono">Mono</option>
+                  <option value="Ouémé">Ouémé</option>
+                  <option value="Plateau">Plateau</option>
+                  <option value="Zou">Zou</option>
+                </select>
+              </div>
+            </div>
+            <button type="submit" class="btn-main">Activer l'alerte</button>
+            <div class="msg" id="msgAlerte"></div>
+          </form>
+        </div>
+      </div>
       <div id="pubListContainer" class="pub-list"><div class="empty"><h3>Chargement…</h3></div></div>
     </div>
   </div>
@@ -1141,6 +1216,20 @@
         </div>
         <div class="card" style="margin-bottom:20px;display:none;" id="carteNotifsActives">
           <p style="font-size:0.9rem;color:var(--vert-rich);margin:0;">🔔 Notifications activées sur cet appareil.</p>
+        </div>
+        <div class="card" style="margin-bottom:20px;">
+          <h3 style="margin-bottom:14px;">🔔 Mes alertes de recherche</h3>
+          <p style="color:var(--encre-douce);font-size:0.86rem;margin-bottom:14px;">Créez une alerte depuis la page Annonces pour être notifié dès qu'une offre correspond.</p>
+          <div id="listeMesAlertes"></div>
+        </div>
+        <div class="card" style="margin-bottom:20px;">
+          <h3 style="margin-bottom:14px;">💡 Proposer une suggestion</h3>
+          <p style="color:var(--encre-douce);font-size:0.86rem;margin-bottom:14px;">Une idée pour améliorer Rĩch Farm Unity ? Partagez-la avec nous.</p>
+          <form id="formSuggestion">
+            <textarea id="suggestionContenu" required placeholder="Votre suggestion..." style="width:100%;min-height:90px;padding:12px 14px;border-radius:10px;border:1px solid rgba(27,94,32,0.22);"></textarea>
+            <button type="submit" class="btn-main" style="margin-top:12px;">Envoyer la suggestion</button>
+            <div class="msg" id="msgSuggestion"></div>
+          </form>
         </div>
         <div class="card" style="margin-bottom:20px;">
           <h3 style="margin-bottom:14px;">Modifier mon profil</h3>
@@ -1464,6 +1553,16 @@
       <div id="moderationContainer" class="pub-list"><div class="empty"><h3>Chargement…</h3></div></div>
     </div>
   </div>
+  <!-- ==================== VUE SUGGESTIONS (ADMIN) ==================== -->
+  <div class="view" id="view-suggestions">
+    <div class="app-main">
+      <div class="page-head">
+        <h2>💡 Suggestions des utilisateurs</h2>
+        <p>Idées et retours envoyés par la communauté.</p>
+      </div>
+      <div id="suggestionsContainer"><div class="empty"><h3>Chargement…</h3></div></div>
+    </div>
+  </div>
   <!-- ==================== VUE COMPTES (ADMIN) ==================== -->
   <!-- ==================== VUE MEMBRES (ADMIN) ==================== -->
   <div class="view" id="view-membres">
@@ -1650,10 +1749,12 @@
     if(name === 'publications') loadPublications();
     if(name === 'formations'){ loadFormations(); loadPublicites(); }
     if(name === 'moderation'){ loadModeration(); }
+    if(name === 'suggestions'){ loadSuggestions(); }
     if(name === 'forums') loadSujets();
     if(name === 'institutionnel') loadContactsInstitutionnels();
     if(name === 'membres') loadMembres();
     if(name === 'stats') loadStats();
+    if(name === 'compte' && currentUser) loadMesAlertes();
   }
   tabButtons.forEach(btn => btn.addEventListener('click', () => showView(btn.dataset.view)));
 
@@ -1837,6 +1938,7 @@
         document.getElementById('compteConnecte').style.display = 'none';
         document.getElementById('compteNonConnecte').style.display = 'block';
         document.getElementById('tabModeration').style.display = 'none';
+        document.getElementById('tabSuggestions').style.display = 'none';
         document.getElementById('tabMembres').style.display = 'none';
         document.getElementById('tabStats').style.display = 'none';
         return;
@@ -1857,6 +1959,7 @@
       }
       document.getElementById('btnNouvelleFormation').style.display = (profile && profile.is_admin) ? 'inline-block' : 'none';
       document.getElementById('tabModeration').style.display = (profile && profile.is_admin) ? 'inline-block' : 'none';
+      document.getElementById('tabSuggestions').style.display = (profile && profile.is_admin) ? 'inline-block' : 'none';
       document.getElementById('btnNouveauSujet').style.display = (profile && profile.compte_approuve) ? 'inline-block' : 'none';
       document.getElementById('tabMembres').style.display = (profile && profile.is_admin) ? 'inline-block' : 'none';
       document.getElementById('tabStats').style.display = (profile && profile.is_admin) ? 'inline-block' : 'none';
@@ -1938,8 +2041,29 @@
       const isOwner = currentUser && p.user_id === currentUser.id;
       const deleteBtn = isOwner ? `<button class="btn-outline-small" style="margin-top:12px;margin-left:8px;border-color:var(--rouge);color:var(--rouge);" onclick="supprimerAnnonce('${p.id}')">Supprimer mon annonce</button>` : '';
       const audioHtml = p.audio_url ? `<audio src="${p.audio_url}" controls style="width:100%;margin:10px 0;"></audio>` : '';
-      return `<div class="pub-card"><div class="pub-top"><div><span class="pub-tag">${p.categorie}</span><h3>${escapeHtml(p.titre)}</h3></div><span class="pub-statut ${statutClass}">${statutLabel}</span>${ecoBadge}</div>${photoHtml}${p.description ? '<p class="desc">' + escapeHtml(p.description) + '</p>' : ''}${audioHtml}<div class="pub-meta">${p.quantite ? '<span><strong>Quantité :</strong> ' + escapeHtml(p.quantite) + '</span>' : ''}${p.prix ? '<span><strong>Prix :</strong> ' + escapeHtml(p.prix) + '</span>' : ''}${p.localisation ? '<span><strong>Lieu :</strong> ' + escapeHtml(p.localisation) + '</span>' : ''}</div><div class="pub-footer">Publié par ${escapeHtml(auteur)}${contact ? ' · ' + escapeHtml(contact) : ''}${certifBadge}</div>${contactBtn}${shareBtn}${deleteBtn}</div>`;
+      const avisBtn = (currentUser && !isOwner) ? `<button class="btn-outline-small" style="margin-top:12px;margin-left:8px;" onclick="ouvrirAvisModal('${p.user_id}', '${escapeHtml(auteur).replace(/'/g, "\\'")}')">⭐ Laisser un avis</button>` : '';
+      return `<div class="pub-card"><div class="pub-top"><div><span class="pub-tag">${p.categorie}</span><h3>${escapeHtml(p.titre)}</h3></div><span class="pub-statut ${statutClass}">${statutLabel}</span>${ecoBadge}</div>${photoHtml}${p.description ? '<p class="desc">' + escapeHtml(p.description) + '</p>' : ''}${audioHtml}<div class="pub-meta">${p.quantite ? '<span><strong>Quantité :</strong> ' + escapeHtml(p.quantite) + '</span>' : ''}${p.prix ? '<span><strong>Prix :</strong> ' + escapeHtml(p.prix) + '</span>' : ''}${p.localisation ? '<span><strong>Lieu :</strong> ' + escapeHtml(p.localisation) + '</span>' : ''}</div><div class="pub-footer">Publié par ${escapeHtml(auteur)}${contact ? ' · ' + escapeHtml(contact) : ''}${certifBadge}<br><span id="avisBadge-${p.user_id}" class="stars-display"></span></div>${contactBtn}${shareBtn}${avisBtn}${deleteBtn}</div>`;
     }).join('');
+    renderAvisBadges([...new Set(data.map(p => p.user_id))]);
+  }
+
+  async function renderAvisBadges(userIds){
+    if(!userIds || userIds.length === 0) return;
+    const { data, error } = await sb.from('avis_utilisateurs').select('evalue_id, note').in('evalue_id', userIds);
+    if(error || !data) return;
+    const parNote = {};
+    data.forEach(a => {
+      if(!parNote[a.evalue_id]) parNote[a.evalue_id] = [];
+      parNote[a.evalue_id].push(a.note);
+    });
+    userIds.forEach(uid => {
+      const el = document.getElementById('avisBadge-' + uid);
+      if(!el) return;
+      const notes = parNote[uid];
+      if(!notes || notes.length === 0){ el.textContent = ''; return; }
+      const moyenne = notes.reduce((s, n) => s + n, 0) / notes.length;
+      el.textContent = starsHtml(moyenne) + ' (' + notes.length + ')';
+    });
   }
 
   async function loadContactsInstitutionnels(){
@@ -2063,6 +2187,166 @@
     searchTimeout = setTimeout(loadPublications, 400);
   });
   document.getElementById('searchMembres').addEventListener('input', renderMembres);
+
+  document.getElementById('btnOuvrirAlerte').addEventListener('click', () => {
+    const carte = document.getElementById('carteAlerte');
+    const ouverture = carte.style.display === 'none';
+    carte.style.display = ouverture ? 'block' : 'none';
+    if(ouverture){
+      document.getElementById('alerteMotCle').value = document.getElementById('searchAnnonces').value.trim();
+      document.getElementById('alerteCategorie').value = document.getElementById('filterCategorie').value;
+    }
+  });
+
+  document.getElementById('formAlerte').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if(!currentUser){ showMsg('msgAlerte', 'Connectez-vous pour créer une alerte.', 'error'); return; }
+    const payload = {
+      user_id: currentUser.id,
+      mot_cle: document.getElementById('alerteMotCle').value.trim() || null,
+      categorie: document.getElementById('alerteCategorie').value || null,
+      departement: document.getElementById('alerteDepartement').value || null,
+      actif: true
+    };
+    if(!payload.mot_cle && !payload.categorie && !payload.departement){
+      showMsg('msgAlerte', 'Renseignez au moins un critère (mot-clé, catégorie ou département).', 'error');
+      return;
+    }
+    const { error } = await sb.from('alertes_recherche').insert(payload);
+    if(error){ showMsg('msgAlerte', error.message, 'error'); }
+    else {
+      showMsg('msgAlerte', 'Alerte activée ! Vous serez notifié dès qu\'une annonce correspond.', 'success');
+      e.target.reset();
+      if(currentProfile) loadMesAlertes();
+    }
+  });
+
+  async function loadMesAlertes(){
+    const wrap = document.getElementById('listeMesAlertes');
+    if(!wrap || !currentUser) return;
+    const { data, error } = await sb.from('alertes_recherche').select('*').eq('user_id', currentUser.id).order('created_at', { ascending: false });
+    if(error || !data || data.length === 0){ wrap.innerHTML = '<p style="color:var(--encre-douce);font-size:0.9rem;">Aucune alerte active.</p>'; return; }
+    wrap.innerHTML = data.map(a => {
+      const criteres = [a.mot_cle ? '« ' + escapeHtml(a.mot_cle) + ' »' : null, a.categorie, a.departement].filter(Boolean).join(' · ') || 'Toutes les annonces';
+      return `<div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid rgba(28,26,20,0.1);">
+        <div style="flex:1;"><strong style="font-size:0.9rem;">${criteres}</strong><br><span style="font-size:0.78rem;color:${a.actif ? 'var(--vert-rich)' : 'var(--encre-douce)'};">${a.actif ? 'Active' : 'Désactivée'}</span></div>
+        <button class="btn-outline-small" onclick="toggleAlerte('${a.id}', ${!a.actif})">${a.actif ? 'Désactiver' : 'Activer'}</button>
+        <button class="btn-outline-small" style="border-color:var(--rouge);color:var(--rouge);" onclick="supprimerAlerte('${a.id}')">Supprimer</button>
+      </div>`;
+    }).join('');
+  }
+  window.toggleAlerte = async function(id, nouvelEtat){
+    await sb.from('alertes_recherche').update({ actif: nouvelEtat }).eq('id', id);
+    loadMesAlertes();
+  };
+  window.supprimerAlerte = async function(id){
+    if(!confirm('Supprimer définitivement cette alerte ?')) return;
+    await sb.from('alertes_recherche').delete().eq('id', id);
+    loadMesAlertes();
+  };
+
+  // ---- Avis entre utilisateurs (sur le profil général) ----
+  let avisCibleId = null;
+  let avisNoteChoisie = 0;
+  const avisCache = {}; // { userId: { moyenne, nombre } }
+
+  function ouvrirAvisModal(userId, userNom){
+    if(!currentUser){ alert('Connectez-vous pour laisser un avis.'); return; }
+    if(userId === currentUser.id){ alert('Vous ne pouvez pas vous auto-évaluer.'); return; }
+    avisCibleId = userId;
+    avisNoteChoisie = 0;
+    document.getElementById('avisModalNom').textContent = userNom;
+    document.getElementById('avisCommentaire').value = '';
+    document.getElementById('msgAvisModal').innerHTML = '';
+    document.querySelectorAll('#avisStars span').forEach(s => s.classList.remove('is-active'));
+    document.getElementById('avisModalBackdrop').classList.add('is-open');
+  }
+  window.ouvrirAvisModal = ouvrirAvisModal;
+
+  document.getElementById('avisModalClose').addEventListener('click', () => {
+    document.getElementById('avisModalBackdrop').classList.remove('is-open');
+  });
+  document.getElementById('avisModalBackdrop').addEventListener('click', (e) => {
+    if(e.target.id === 'avisModalBackdrop') document.getElementById('avisModalBackdrop').classList.remove('is-open');
+  });
+  document.querySelectorAll('#avisStars span').forEach(star => {
+    star.addEventListener('click', () => {
+      avisNoteChoisie = parseInt(star.dataset.val);
+      document.querySelectorAll('#avisStars span').forEach(s => {
+        s.classList.toggle('is-active', parseInt(s.dataset.val) <= avisNoteChoisie);
+      });
+    });
+  });
+  document.getElementById('avisSubmitBtn').addEventListener('click', async () => {
+    if(!avisNoteChoisie){ showMsg('msgAvisModal', 'Choisissez une note (étoiles).', 'error'); return; }
+    const payload = {
+      evaluateur_id: currentUser.id,
+      evalue_id: avisCibleId,
+      note: avisNoteChoisie,
+      commentaire: document.getElementById('avisCommentaire').value.trim() || null
+    };
+    const { error } = await sb.from('avis_utilisateurs').upsert(payload, { onConflict: 'evaluateur_id,evalue_id' });
+    if(error){ showMsg('msgAvisModal', error.message, 'error'); return; }
+    showMsg('msgAvisModal', 'Avis enregistré, merci !', 'success');
+    delete avisCache[avisCibleId];
+    setTimeout(() => { document.getElementById('avisModalBackdrop').classList.remove('is-open'); }, 900);
+  });
+
+  async function getAvisUtilisateur(userId){
+    if(avisCache[userId]) return avisCache[userId];
+    const { data, error } = await sb.from('avis_utilisateurs').select('note').eq('evalue_id', userId);
+    if(error || !data || data.length === 0){ avisCache[userId] = { moyenne: 0, nombre: 0 }; return avisCache[userId]; }
+    const moyenne = data.reduce((sum, a) => sum + a.note, 0) / data.length;
+    avisCache[userId] = { moyenne, nombre: data.length };
+    return avisCache[userId];
+  }
+
+  function starsHtml(moyenne){
+    const pleines = Math.round(moyenne);
+    return '★'.repeat(pleines) + '☆'.repeat(5 - pleines);
+  }
+
+  // ---- Boîte à suggestions ----
+  document.getElementById('formSuggestion').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if(!currentUser){ showMsg('msgSuggestion', 'Connectez-vous pour envoyer une suggestion.', 'error'); return; }
+    const contenu = document.getElementById('suggestionContenu').value.trim();
+    if(!contenu) return;
+    const { error } = await sb.from('suggestions').insert({ user_id: currentUser.id, contenu });
+    if(error){ showMsg('msgSuggestion', error.message, 'error'); }
+    else { showMsg('msgSuggestion', 'Merci pour votre suggestion !', 'success'); e.target.reset(); }
+  });
+
+  async function loadSuggestions(){
+    const container = document.getElementById('suggestionsContainer');
+    container.innerHTML = '<div class="empty"><h3>Chargement…</h3></div>';
+    const { data, error } = await sb.from('suggestions').select('*, profiles(prenom, nom, telephone)').order('created_at', { ascending: false });
+    if(error){ container.innerHTML = '<div class="empty"><h3>Erreur</h3><p>' + error.message + '</p></div>'; return; }
+    if(!data || data.length === 0){ container.innerHTML = '<div class="empty"><h3>Aucune suggestion pour le moment</h3></div>'; return; }
+    container.innerHTML = data.map(s => {
+      const auteur = s.profiles ? (s.profiles.prenom + ' ' + s.profiles.nom) : 'Utilisateur';
+      const date = s.created_at ? new Date(s.created_at).toLocaleDateString('fr-FR') : '';
+      const statutColor = s.statut === 'traite' ? 'var(--vert-rich)' : (s.statut === 'lu' ? 'var(--or)' : 'var(--encre-douce)');
+      return `<div class="pub-card">
+        <p class="desc">${escapeHtml(s.contenu)}</p>
+        <div class="pub-footer">Par ${escapeHtml(auteur)}${s.profiles && s.profiles.telephone ? ' · ' + escapeHtml(s.profiles.telephone) : ''} · ${date} · <span style="color:${statutColor};font-weight:600;">${s.statut}</span></div>
+        <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;">
+          <button class="btn-outline-small" onclick="changerStatutSuggestion('${s.id}', 'lu')">Marquer comme lu</button>
+          <button class="btn-outline-small" onclick="changerStatutSuggestion('${s.id}', 'traite')">Marquer comme traité</button>
+          <button class="btn-outline-small" style="border-color:var(--rouge);color:var(--rouge);" onclick="supprimerSuggestion('${s.id}')">Supprimer</button>
+        </div>
+      </div>`;
+    }).join('');
+  }
+  window.changerStatutSuggestion = async function(id, statut){
+    await sb.from('suggestions').update({ statut }).eq('id', id);
+    loadSuggestions();
+  };
+  window.supprimerSuggestion = async function(id){
+    if(!confirm('Supprimer définitivement cette suggestion ?')) return;
+    await sb.from('suggestions').delete().eq('id', id);
+    loadSuggestions();
+  };
 
   document.getElementById('pubCategorie').addEventListener('change', function(){
     document.getElementById('pubCertifWrap').style.display = (this.value === 'Transformation agroalimentaire') ? 'block' : 'none';
