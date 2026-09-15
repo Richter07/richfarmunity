@@ -3165,6 +3165,7 @@
         <img src="${p.image_url}" style="width:70px;height:40px;object-fit:cover;border-radius:6px;">
         <div style="flex:1;"><strong>${escapeHtml(p.annonceur)}</strong><br><span style="font-size:0.8rem;color:${estExpiree ? 'var(--rouge)' : 'var(--encre-douce)'};">Ordre : ${p.ordre} ${statutTxt}${expTxt}</span></div>
         <button class="btn-outline-small" onclick="togglePublicite('${p.id}', ${!p.actif})">${p.actif ? 'Désactiver' : 'Activer'}</button>
+        <button class="btn-outline-small" onclick="copierLienPublicite('${p.id}')">📤 Lien</button>
         <button class="btn-outline-small" style="border-color:var(--rouge);color:var(--rouge);" onclick="supprimerPublicite('${p.id}')">Supprimer</button>
       </div>
     `;
@@ -3174,6 +3175,14 @@
   window.togglePublicite = async function(id, nouvelEtat){
     await sb.from('publicites').update({ actif: nouvelEtat }).eq('id', id);
     loadPublicites();
+  };
+  window.copierLienPublicite = function(id){
+    const lien = `https://richfarmunity.com/share?type=publicite&id=${id}`;
+    if(navigator.clipboard){
+      navigator.clipboard.writeText(lien).then(() => alert('Lien copié : ' + lien));
+    } else {
+      prompt('Copiez ce lien :', lien);
+    }
   };
   window.supprimerPublicite = async function(id){
     if(!confirm('Supprimer définitivement cette publicité ?')) return;
