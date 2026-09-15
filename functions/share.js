@@ -12,24 +12,28 @@ function escapeHtml(str) {
 export async function onRequestGet(context) {
   const url = new URL(context.request.url);
   const id = url.searchParams.get("id") || "";
-  const type = url.searchParams.get("type") === "formation" ? "formation" : "publication";
+  const typeParam = url.searchParams.get("type");
+  const type = (typeParam === "formation" || typeParam === "publicite") ? typeParam : "publication";
 
-  const view = type === "formation" ? "formations" : "publications";
+  const view = type === "formation" ? "formations" : (type === "publicite" ? "formations" : "publications");
   const destination = id ? `${SITE_URL}/?view=${view}&id=${id}` : `${SITE_URL}/?view=${view}`;
 
   let titre = "Rĩch Farm Unity";
-  let description = type === "formation"
-    ? "Découvre cette formation sur Rĩch Farm Unity, la plateforme agricole béninoise."
-    : "Découvre cette annonce sur Rĩch Farm Unity, la plateforme agricole béninoise.";
+  let description = "Découvre Rĩch Farm Unity, la plateforme agricole béninoise.";
+  if (type === "formation") description = "Découvre cette formation sur Rĩch Farm Unity, la plateforme agricole béninoise.";
+  if (type === "publication") description = "Découvre cette annonce sur Rĩch Farm Unity, la plateforme agricole béninoise.";
+  if (type === "publicite") description = "Une publicité partenaire sur Rĩch Farm Unity, la plateforme agricole béninoise.";
   let image = DEFAULT_IMAGE;
 
   if (id) {
     try {
-      const table = type === "formation" ? "formations" : "publications";
+      const table = type === "formation" ? "formations" : (type === "publicite" ? "publicites" : "publications");
       const selectFields = type === "formation"
         ? "titre,contenu,media_url,media_type"
+        : type === "publicite"
+        ? "annonceur,image_url,lien"
         : "titre,description,prix,localisation,photos,photo_url";
-      const filtre = type === "formation" ? "" : "&approuve=is.true";
+      const filtre = type === "publicite" ? "&actif=is.true" : (type === "formation" ? "" : "&approuve=is.true");
 
       const res = await fetch(
         `${SUPABASE_URL}/rest/v1/${table}?id=eq.${encodeURIComponent(id)}&select=${selectFields}${filtre}`,
@@ -39,11 +43,15 @@ export async function onRequestGet(context) {
         const rows = await res.json();
         const p = rows && rows[0];
         if (p) {
-          titre = p.titre || titre;
           if (type === "formation") {
+            titre = p.titre || titre;
             if (p.contenu) description = p.contenu.slice(0, 200);
             if (p.media_url && p.media_type !== "video") image = p.media_url;
+          } else if (type === "publicite") {
+            titre = p.annonceur || titre;
+            if (p.image_url) image = p.image_url;
           } else {
+            titre = p.titre || titre;
             const bits = [];
             if (p.prix) bits.push(`Prix : ${p.prix}`);
             if (p.localisation) bits.push(`Lieu : ${p.localisation}`);
@@ -84,4 +92,5 @@ export async function onRequestGet(context) {
   return new Response(html, {
     headers: { "Content-Type": "text/html; charset=UTF-8", "Cache-Control": "public, max-age=300" }
   });
-  }
+              }
+
