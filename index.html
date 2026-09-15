@@ -422,6 +422,7 @@
       <button class="menu-close" id="menuClose" aria-label="Fermer le menu">✕</button>
       <button data-view="accueil" class="active">Accueil</button>
       <button data-view="publications">Annonces</button>
+      <button data-view="prixmarche">Prix du marché</button>
       <button data-view="formations">Formations</button>
       <button data-view="forums">Forums</button>
       <button data-view="institutionnel">Ancrage institutionnel</button>
@@ -910,6 +911,108 @@
         </div>
       </div>
       <div id="pubListContainer" class="pub-list"><div class="empty"><h3>Chargement…</h3></div></div>
+    </div>
+  </div>
+
+  <!-- ==================== VUE PRIX DU MARCHÉ ==================== -->
+  <div class="view" id="view-prixmarche">
+    <div class="app-main">
+      <div class="page-head"><h2>Prix du marché</h2><p>Prix indicatifs constatés par la communauté et l'équipe Rĩch Farm Unity.</p></div>
+
+      <div style="margin-bottom:20px;">
+        <button type="button" class="btn-main" id="btnOuvrirProposerPrix">+ Proposer un prix</button>
+        <div class="card" id="cartePrixForm" style="display:none;margin-top:14px;">
+          <h3 style="margin-bottom:14px;">Proposer un prix</h3>
+          <p style="color:var(--encre-douce);font-size:0.86rem;margin-bottom:16px;">Votre proposition sera vérifiée avant publication.</p>
+          <form id="formPrixMarche">
+            <div class="field-row">
+              <div class="field">
+                <label for="prixFiliere">Filière</label>
+                <select id="prixFiliere" required>
+                  <option value="">Choisir…</option>
+                  <option value="Production végétale">Production végétale</option>
+                  <option value="Production animale">Production animale</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="prixCategorie">Catégorie</label>
+                <select id="prixCategorie" required disabled><option value="">Choisir d'abord une filière</option></select>
+              </div>
+            </div>
+            <div class="field">
+              <label for="prixProduit">Produit</label>
+              <input type="text" id="prixProduit" list="listeProduits" required placeholder="Tapez pour rechercher…" disabled>
+              <datalist id="listeProduits"></datalist>
+            </div>
+            <div class="field-row">
+              <div class="field"><label for="prixMin">Prix minimum (FCFA)</label><input type="number" id="prixMin" required min="0"></div>
+              <div class="field"><label for="prixMax">Prix maximum (FCFA, optionnel)</label><input type="number" id="prixMax" min="0"></div>
+            </div>
+            <div class="field-row">
+              <div class="field">
+                <label for="prixUnite">Unité</label>
+                <select id="prixUnite" required>
+                  <option value="">Choisir…</option>
+                  <option value="Tas">Tas</option>
+                  <option value="Panier">Panier</option>
+                  <option value="Bassine">Bassine</option>
+                  <option value="Planche">Planche</option>
+                  <option value="Sac">Sac</option>
+                  <option value="Plateau">Plateau</option>
+                  <option value="Tête">Tête</option>
+                  <option value="Pièce">Pièce</option>
+                  <option value="Kg">Kg</option>
+                  <option value="Litre">Litre</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="prixDepartement">Département</label>
+                <select id="prixDepartement" required>
+                  <option value="">Choisir…</option>
+                  <option value="Alibori">Alibori</option>
+                  <option value="Atacora">Atacora</option>
+                  <option value="Atlantique">Atlantique</option>
+                  <option value="Borgou">Borgou</option>
+                  <option value="Collines">Collines</option>
+                  <option value="Couffo">Couffo</option>
+                  <option value="Donga">Donga</option>
+                  <option value="Littoral">Littoral</option>
+                  <option value="Mono">Mono</option>
+                  <option value="Ouémé">Ouémé</option>
+                  <option value="Plateau">Plateau</option>
+                  <option value="Zou">Zou</option>
+                </select>
+              </div>
+            </div>
+            <button type="submit" class="btn-main">Envoyer la proposition</button>
+            <div class="msg" id="msgPrixMarche"></div>
+          </form>
+        </div>
+      </div>
+
+      <div class="filters">
+        <select id="filterPrixFiliere">
+          <option value="">Toutes les filières</option>
+          <option value="Production végétale">Production végétale</option>
+          <option value="Production animale">Production animale</option>
+        </select>
+        <select id="filterPrixDepartement">
+          <option value="">Tous les départements</option>
+          <option value="Alibori">Alibori</option>
+          <option value="Atacora">Atacora</option>
+          <option value="Atlantique">Atlantique</option>
+          <option value="Borgou">Borgou</option>
+          <option value="Collines">Collines</option>
+          <option value="Couffo">Couffo</option>
+          <option value="Donga">Donga</option>
+          <option value="Littoral">Littoral</option>
+          <option value="Mono">Mono</option>
+          <option value="Ouémé">Ouémé</option>
+          <option value="Plateau">Plateau</option>
+          <option value="Zou">Zou</option>
+        </select>
+      </div>
+      <div id="prixMarcheContainer"><div class="empty"><h3>Chargement…</h3></div></div>
     </div>
   </div>
 
@@ -1551,6 +1654,10 @@
         <p>Ces annonces sont en attente de validation avant publication.</p>
       </div>
       <div id="moderationContainer" class="pub-list"><div class="empty"><h3>Chargement…</h3></div></div>
+      <div class="page-head" style="margin-top:36px;">
+        <h2>Prix en attente de validation</h2>
+      </div>
+      <div id="moderationPrixContainer" class="pub-list"><div class="empty"><h3>Chargement…</h3></div></div>
     </div>
   </div>
   <!-- ==================== VUE SUGGESTIONS (ADMIN) ==================== -->
@@ -1747,8 +1854,9 @@
     tabButtons.forEach(b => b.classList.toggle('active', b.dataset.view === name));
     window.scrollTo({top:0, behavior:'instant'});
     if(name === 'publications') loadPublications();
+    if(name === 'prixmarche') loadPrixMarche();
     if(name === 'formations'){ loadFormations(); loadPublicites(); }
-    if(name === 'moderation'){ loadModeration(); }
+    if(name === 'moderation'){ loadModeration(); loadModerationPrix(); }
     if(name === 'suggestions'){ loadSuggestions(); }
     if(name === 'forums') loadSujets();
     if(name === 'institutionnel') loadContactsInstitutionnels();
@@ -2186,7 +2294,123 @@
     clearTimeout(searchTimeout);
     searchTimeout = setTimeout(loadPublications, 400);
   });
+  // ---- Prix du marché : taxonomie des produits ----
   document.getElementById('searchMembres').addEventListener('input', renderMembres);
+
+  const TAXONOMIE_PRODUITS = {
+    "Production végétale": {
+      "Céréales": ["Maïs","Riz","Sorgho","Mil"],
+      "Racines et tubercules": ["Manioc","Igname","Patate douce","Taro"],
+      "Légumineuses": ["Niébé","Soja","Arachide"],
+      "Cultures maraîchères": ["Tomate","Piment","Oignon","Carotte","Chou","Laitue","Gombo","Grande morelle (Gboma)","Amarante","Basilic africain (Tchayo)","Concombre","Aubergine","Poivron","Corète potagère (Crincrin)","Menthe","Vernonia (Amanvivê)","Cornichon","Pastèque"],
+      "Cultures de rente": ["Coton","Anacarde","Ananas","Palmier à huile","Karité"],
+      "Fruits": ["Banane","Banane plantain","Mangue","Orange","Papaye","Avocat","Noix de coco"],
+      "Huiles": ["Huile d'arachide","Huile rouge","Huile de coco"]
+    },
+    "Production animale": {
+      "Gros bétail": ["Bœuf","Porc"],
+      "Petits ruminants": ["Mouton","Chèvre"],
+      "Volailles": ["Poulet","Canard","Pintade","Dindon","Pigeon"],
+      "Autres élevages": ["Lapin","Aulacode"],
+      "Produits d'élevage": ["Œufs","Lait","Miel"],
+      "Pêche / Pisciculture": ["Poisson","Crevette"]
+    }
+  };
+
+  document.getElementById('btnOuvrirProposerPrix').addEventListener('click', () => {
+    const carte = document.getElementById('cartePrixForm');
+    carte.style.display = (carte.style.display === 'none') ? 'block' : 'none';
+  });
+
+  document.getElementById('prixFiliere').addEventListener('change', function(){
+    const catSelect = document.getElementById('prixCategorie');
+    const produitInput = document.getElementById('prixProduit');
+    const filiere = this.value;
+    produitInput.value = '';
+    produitInput.disabled = true;
+    document.getElementById('listeProduits').innerHTML = '';
+    if(!filiere){
+      catSelect.innerHTML = '<option value="">Choisir d\'abord une filière</option>';
+      catSelect.disabled = true;
+      return;
+    }
+    const categories = Object.keys(TAXONOMIE_PRODUITS[filiere]);
+    catSelect.innerHTML = '<option value="">Choisir…</option>' + categories.map(c => `<option value="${c}">${c}</option>`).join('');
+    catSelect.disabled = false;
+  });
+
+  document.getElementById('prixCategorie').addEventListener('change', function(){
+    const filiere = document.getElementById('prixFiliere').value;
+    const produitInput = document.getElementById('prixProduit');
+    const datalist = document.getElementById('listeProduits');
+    const categorie = this.value;
+    if(!categorie || !filiere){
+      produitInput.disabled = true;
+      datalist.innerHTML = '';
+      return;
+    }
+    const produits = TAXONOMIE_PRODUITS[filiere][categorie];
+    datalist.innerHTML = produits.map(p => `<option value="${p}">`).join('');
+    produitInput.disabled = false;
+    produitInput.value = '';
+  });
+
+  document.getElementById('formPrixMarche').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if(!currentUser){ showMsg('msgPrixMarche', 'Connectez-vous pour proposer un prix.', 'error'); return; }
+    const filiere = document.getElementById('prixFiliere').value;
+    const categorie = document.getElementById('prixCategorie').value;
+    const produit = document.getElementById('prixProduit').value.trim();
+    const produitsValides = (TAXONOMIE_PRODUITS[filiere] && TAXONOMIE_PRODUITS[filiere][categorie]) || [];
+    if(!produitsValides.includes(produit)){
+      showMsg('msgPrixMarche', 'Veuillez choisir un produit dans la liste proposée.', 'error');
+      return;
+    }
+    const payload = {
+      user_id: currentUser.id,
+      filiere: filiere,
+      categorie: categorie,
+      produit: produit,
+      prix_min: parseFloat(document.getElementById('prixMin').value),
+      prix_max: document.getElementById('prixMax').value ? parseFloat(document.getElementById('prixMax').value) : null,
+      unite: document.getElementById('prixUnite').value,
+      departement: document.getElementById('prixDepartement').value,
+      approuve: false
+    };
+    const { error } = await sb.from('prix_marche').insert(payload);
+    if(error){ showMsg('msgPrixMarche', error.message, 'error'); }
+    else {
+      showMsg('msgPrixMarche', 'Merci ! Votre proposition sera vérifiée avant publication.', 'success');
+      e.target.reset();
+      document.getElementById('prixCategorie').innerHTML = '<option value="">Choisir d\'abord une filière</option>';
+      document.getElementById('prixCategorie').disabled = true;
+      document.getElementById('prixProduit').disabled = true;
+    }
+  });
+
+  async function loadPrixMarche(){
+    const container = document.getElementById('prixMarcheContainer');
+    container.innerHTML = '<div class="empty"><h3>Chargement…</h3></div>';
+    let query = sb.from('prix_marche').select('*').eq('approuve', true).order('produit', { ascending: true });
+    const filiere = document.getElementById('filterPrixFiliere').value;
+    const departement = document.getElementById('filterPrixDepartement').value;
+    if(filiere) query = query.eq('filiere', filiere);
+    if(departement) query = query.eq('departement', departement);
+    const { data, error } = await query;
+    if(error){ container.innerHTML = '<div class="empty"><h3>Erreur</h3><p>' + error.message + '</p></div>'; return; }
+    if(!data || data.length === 0){ container.innerHTML = '<div class="empty"><h3>Aucun prix disponible pour ces critères</h3></div>'; return; }
+    container.innerHTML = data.map(p => {
+      const date = p.created_at ? new Date(p.created_at).toLocaleDateString('fr-FR') : '';
+      const fourchette = p.prix_max ? `${p.prix_min} - ${p.prix_max} FCFA` : `${p.prix_min} FCFA`;
+      return `<div class="pub-card">
+        <div class="pub-top"><div><span class="pub-tag">${escapeHtml(p.categorie)}</span><h3>${escapeHtml(p.produit)}</h3></div></div>
+        <div class="pub-meta"><span><strong>Prix :</strong> ${fourchette} / ${escapeHtml(p.unite)}</span><span><strong>Lieu :</strong> ${escapeHtml(p.departement)}</span></div>
+        <div class="pub-footer">Mis à jour le ${date}</div>
+      </div>`;
+    }).join('');
+  }
+  document.getElementById('filterPrixFiliere').addEventListener('change', loadPrixMarche);
+  document.getElementById('filterPrixDepartement').addEventListener('change', loadPrixMarche);
 
   document.getElementById('btnOuvrirAlerte').addEventListener('click', () => {
     const carte = document.getElementById('carteAlerte');
@@ -2526,6 +2750,33 @@
     }).join('');
   }
 
+  async function loadModerationPrix(){
+    const container = document.getElementById('moderationPrixContainer');
+    if(!container) return;
+    container.innerHTML = '<div class="empty"><h3>Chargement…</h3></div>';
+    const { data, error } = await sb.from('prix_marche').select('*, profiles(prenom, nom, telephone)').eq('approuve', false).eq('rejete', false).order('created_at', { ascending: true });
+    if(error){ container.innerHTML = '<div class="empty"><h3>Erreur</h3><p>' + error.message + '</p></div>'; return; }
+    if(!data || data.length === 0){ container.innerHTML = '<div class="empty"><h3>Aucun prix en attente</h3></div>'; return; }
+    container.innerHTML = data.map(p => {
+      const auteur = p.profiles ? (p.profiles.prenom + ' ' + p.profiles.nom) : 'Utilisateur';
+      const fourchette = p.prix_max ? `${p.prix_min} - ${p.prix_max} FCFA` : `${p.prix_min} FCFA`;
+      return `<div class="pub-card">
+        <div class="pub-top"><div><span class="pub-tag">${escapeHtml(p.categorie)}</span><h3>${escapeHtml(p.produit)}</h3></div><span class="pub-statut reserve">En attente</span></div>
+        <div class="pub-meta"><span><strong>Prix :</strong> ${fourchette} / ${escapeHtml(p.unite)}</span><span><strong>Lieu :</strong> ${escapeHtml(p.departement)}</span></div>
+        <div class="pub-footer">Proposé par ${escapeHtml(auteur)}${p.profiles && p.profiles.telephone ? ' · ' + escapeHtml(p.profiles.telephone) : ''}</div>
+        <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap;"><button class="btn-small" onclick="approuverPrix('${p.id}')">Approuver</button><button class="btn-outline-small" style="border-color:var(--rouge);color:var(--rouge);" onclick="rejeterPrix('${p.id}')">Rejeter</button></div>
+      </div>`;
+    }).join('');
+  }
+  window.approuverPrix = async function(id){
+    const { error } = await sb.from('prix_marche').update({ approuve: true }).eq('id', id);
+    if(!error){ loadModerationPrix(); }
+  };
+  window.rejeterPrix = async function(id){
+    if(!confirm('Rejeter et supprimer cette proposition de prix ?')) return;
+    const { error } = await sb.from('prix_marche').delete().eq('id', id);
+    if(!error){ loadModerationPrix(); }
+  };
   window.approuverAnnonce = async function(id){
     const { error } = await sb.from('publications').update({ approuve: true }).eq('id', id);
     if(!error){ loadModeration(); }
