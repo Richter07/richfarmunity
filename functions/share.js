@@ -11,6 +11,7 @@ function escapeHtml(str) {
 
 export async function onRequestGet(context) {
   const url = new URL(context.request.url);
+  const shareUrl = url.toString();
   const id = url.searchParams.get("id") || "";
   const typeParam = url.searchParams.get("type");
   const type = (typeParam === "formation" || typeParam === "publicite") ? typeParam : "publication";
@@ -76,7 +77,7 @@ export async function onRequestGet(context) {
 <meta property="og:title" content="${escapeHtml(titre)} — Rĩch Farm Unity">
 <meta property="og:description" content="${escapeHtml(description)}">
 <meta property="og:image" content="${escapeHtml(image)}">
-<meta property="og:url" content="${escapeHtml(destination)}">
+<meta property="og:url" content="${escapeHtml(shareUrl)}">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="${escapeHtml(titre)} — Rĩch Farm Unity">
 <meta name="twitter:description" content="${escapeHtml(description)}">
