@@ -81,7 +81,6 @@ export async function onRequestGet(context) {
 <meta name="twitter:title" content="${escapeHtml(titre)} — Rĩch Farm Unity">
 <meta name="twitter:description" content="${escapeHtml(description)}">
 <meta name="twitter:image" content="${escapeHtml(image)}">
-<meta http-equiv="refresh" content="0; url=${escapeHtml(destination)}">
 <script>window.location.replace(${JSON.stringify(destination)});</script>
 </head>
 <body>
@@ -92,5 +91,4 @@ export async function onRequestGet(context) {
   return new Response(html, {
     headers: { "Content-Type": "text/html; charset=UTF-8", "Cache-Control": "public, max-age=300" }
   });
-              }
-
+}
