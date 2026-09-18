@@ -1848,23 +1848,50 @@
 
   // ---- Navigation entre vues ----
   const tabButtons = document.querySelectorAll('nav.tabs button');
+  let autoRefreshTimer = null;
+  function demarrerAutoRefresh(fn){
+    if(autoRefreshTimer) clearInterval(autoRefreshTimer);
+    autoRefreshTimer = setInterval(fn, 30000); // toutes les 30 secondes
+  }
+  function arreterAutoRefresh(){
+    if(autoRefreshTimer){ clearInterval(autoRefreshTimer); autoRefreshTimer = null; }
+  }
+
   function showView(name){
     document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
     document.getElementById('view-' + name).classList.add('active');
     tabButtons.forEach(b => b.classList.toggle('active', b.dataset.view === name));
     window.scrollTo({top:0, behavior:'instant'});
-    if(name === 'publications') loadPublications();
+    arreterAutoRefresh();
+    if(name === 'publications'){ loadPublications(); demarrerAutoRefresh(loadPublications); }
     if(name === 'prixmarche') loadPrixMarche();
-    if(name === 'formations'){ loadFormations(); loadPublicites(); }
+    if(name === 'formations'){ loadFormations(); loadPublicites(); demarrerAutoRefresh(loadFormations); }
     if(name === 'moderation'){ loadModeration(); loadModerationPrix(); }
     if(name === 'suggestions'){ loadSuggestions(); }
-    if(name === 'forums') loadSujets();
+    if(name === 'forums'){ loadSujets(); demarrerAutoRefresh(loadSujets); }
     if(name === 'institutionnel') loadContactsInstitutionnels();
     if(name === 'membres') loadMembres();
     if(name === 'stats') loadStats();
     if(name === 'compte' && currentUser) loadMesAlertes();
   }
   tabButtons.forEach(btn => btn.addEventListener('click', () => showView(btn.dataset.view)));
+
+  // ---- Actualisation automatique des annonces et formations ----
+  // Rafraîchit les données en arrière-plan pour que les nouveautés des autres utilisateurs
+  // apparaissent sans que la personne n'ait besoin de recharger la page manuellement.
+  function getActiveViewName(){
+    const active = document.querySelector('.view.active');
+    return active ? active.id.replace('view-', '') : null;
+  }
+  function rafraichirVueActive(){
+    const nom = getActiveViewName();
+    if(nom === 'publications') loadPublications();
+    if(nom === 'formations') loadFormations();
+  }
+  setInterval(rafraichirVueActive, 40000); // toutes les 40 secondes
+  document.addEventListener('visibilitychange', () => {
+    if(document.visibilityState === 'visible') rafraichirVueActive();
+  });
 
   // ---- Auth : bascule inscription / connexion ----
   document.getElementById('toLogin').addEventListener('click', () => {
@@ -2119,9 +2146,9 @@
   }
 
   let typeAnnonceActuel = 'vente';
-  async function loadPublications(){
+  async function loadPublications(silencieux){
     const container = document.getElementById('pubListContainer');
-    container.innerHTML = '<div class="empty"><h3>Chargement…</h3></div>';
+    if(!silencieux) container.innerHTML = '<div class="empty"><h3>Chargement…</h3></div>';
     let query = sb.from('publications').select('*, profiles(prenom, nom, telephone, type_acteur)').eq('type_annonce', typeAnnonceActuel).order('created_at', { ascending: false });
     const cat = document.getElementById('filterCategorie').value;
     const statut = document.getElementById('filterStatut').value;
@@ -2926,9 +2953,9 @@
   }
 
   // ---- Forums ----
-  async function loadSujets(){
+  async function loadSujets(silencieux){
     const container = document.getElementById('sujetsContainer');
-    container.innerHTML = '<div class="empty"><h3>Chargement…</h3></div>';
+    if(!silencieux) container.innerHTML = '<div class="empty"><h3>Chargement…</h3></div>';
     let query = sb.from('forum_sujets').select('*, profiles(prenom, nom)').order('created_at', { ascending: false });
     const secteur = document.getElementById('filterForumSecteur').value;
     if(secteur) query = query.eq('secteur', secteur);
