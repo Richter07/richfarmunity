@@ -510,10 +510,22 @@
         timer = setInterval(() => goTo(current + 1), intervalMs);
       }
       startCycle();
+
+      // Balayage tactile (swipe) pour naviguer manuellement entre les étapes
+      let touchStartX = 0;
+      stage.addEventListener('touchstart', (e) => { touchStartX = e.changedTouches[0].screenX; }, { passive: true });
+      stage.addEventListener('touchend', (e) => {
+        const touchEndX = e.changedTouches[0].screenX;
+        const diff = touchStartX - touchEndX;
+        if(Math.abs(diff) > 40){
+          if(diff > 0) goTo(current + 1); else goTo(current - 1);
+          startCycle();
+        }
+      }, { passive: true });
     }
 
     // Aperçu rapide sur l'Accueil (6 étapes, 4s chacune)
-    initCycle('fonctStageAccueil', 'fonctDotsAccueil', 'fonct-step', 'fonct-dot', 4000);
+    initCycle('fonctStageAccueil', 'fonctDotsAccueil', 'fonct-step', 'fonct-dot', 5000);
 
     // Page "Fonctionnement" détaillée, façon reel/story (7 étapes, 6s chacune + barre de progression segmentée)
     (function initReel(){
@@ -557,6 +569,18 @@
         timer = setInterval(() => goTo(current + 1), DURATION);
       }
       startCycle();
+
+      // Balayage tactile (swipe) pour naviguer manuellement entre les étapes
+      let touchStartX = 0;
+      stage.addEventListener('touchstart', (e) => { touchStartX = e.changedTouches[0].screenX; }, { passive: true });
+      stage.addEventListener('touchend', (e) => {
+        const touchEndX = e.changedTouches[0].screenX;
+        const diff = touchStartX - touchEndX;
+        if(Math.abs(diff) > 40){
+          if(diff > 0) goTo(current + 1); else goTo(current - 1);
+          startCycle();
+        }
+      }, { passive: true });
     })();
 
   });
