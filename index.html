@@ -3434,9 +3434,28 @@
     }
   };
 
+  const ILLUSTRATIONS_CATEGORIE = {
+    "Production végétale": "illu-production-vegetale.jpg",
+    "Production animale": "illu-production-animale.jpg",
+    "Transformation agroalimentaire": "illu-transformation.jpg",
+    "Agroforesterie / Foresterie": "illu-agroforesterie.jpg",
+    "Intrants": "illu-intrants.jpg",
+    "Foncier": "illu-foncier.jpg",
+    "Autre": "illu-autre.jpg",
+  };
+
   function galleryHtml(p, maxH){
     const list = (p.photos && p.photos.length > 0) ? p.photos : (p.photo_url ? [p.photo_url] : []);
-    if(list.length === 0) return '';
+    if(list.length === 0){
+      // Pas de photo : pour une annonce de vente, on affiche une illustration de la catégorie (jamais pour un achat)
+      if(p.type_annonce !== 'achat'){
+        const illu = ILLUSTRATIONS_CATEGORIE[p.categorie];
+        if(illu){
+          return `<div style="position:relative;margin-top:12px;"><img src="https://richfarmunity.com/${illu}" alt="Illustration : ${escapeHtml(p.categorie)}" style="width:100%;height:auto;max-height:${maxH}px;object-fit:cover;border-radius:10px;display:block;"><span style="position:absolute;bottom:8px;right:8px;background:rgba(15,44,19,0.75);color:#fff;font-size:0.68rem;padding:3px 9px;border-radius:100px;">Photo d'illustration</span></div>`;
+        }
+      }
+      return '';
+    }
     if(list.length === 1){
       return `<img src="${list[0]}" alt="${escapeHtml(p.titre)}" style="width:100%;height:auto;max-height:${maxH}px;object-fit:contain;background:var(--ivoire-2);border-radius:10px;margin-top:12px;">`;
     }
