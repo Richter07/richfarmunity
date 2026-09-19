@@ -1044,11 +1044,11 @@
                 <option value="Autre">Autre (outils, services)</option>
               </select>
             </div>
-            <div class="field"><label for="pubQuantite">Quantité</label><input type="text" id="pubQuantite" placeholder="Ex : 200 kg, 10 unités"></div>
+            <div class="field"><label for="pubQuantite">Quantité</label><input type="text" id="pubQuantite" required placeholder="Ex : 200 kg, 10 unités"></div>
           </div>
           <div class="field-row">
-            <div class="field"><label for="pubPrix">Prix</label><input type="text" id="pubPrix" placeholder="Ex : 15 000 FCFA, à négocier"></div>
-            <div class="field"><label for="pubLocalisation">Localisation</label><input type="text" id="pubLocalisation" placeholder="Ex : Abomey-Calavi, Atlantique"></div>
+            <div class="field"><label for="pubPrix">Prix</label><input type="text" id="pubPrix" required placeholder="Ex : 15 000 FCFA, à négocier"></div>
+            <div class="field"><label for="pubLocalisation">Localisation</label><input type="text" id="pubLocalisation" required placeholder="Ex : Abomey-Calavi, Atlantique"></div>
           </div>
           <div class="field" id="pubCertifWrap" style="display:none;">
             <label for="pubCertif">Certification(s) du produit ou de l'unité de transformation</label>
@@ -1393,7 +1393,7 @@
                   <option value="Membre d'institution">Membre d'institution (recherche, ONG, État…)</option>
                 </select>
               </div>
-              <div class="field"><label for="regDomaine">Domaine / filière</label><input type="text" id="regDomaine" placeholder="Ex : maraîchage, aviculture, foresterie…"></div>
+              <div class="field"><label for="regDomaine">Domaine / filière</label><input type="text" id="regDomaine" required placeholder="Ex : maraîchage, aviculture, foresterie…"></div>
             </div>
             <div class="field"><label for="regPassword">Mot de passe</label><input type="password" id="regPassword" required minlength="6"></div>
             <div class="field" style="display:flex;align-items:flex-start;gap:10px;">
@@ -2174,7 +2174,10 @@
       const shareText = `🌾 ${p.titre}\n${p.prix ? 'Prix : ' + p.prix + '\n' : ''}${p.localisation ? 'Lieu : ' + p.localisation + '\n' : ''}\nVu sur Rĩch Farm Unity, la plateforme agricole béninoise 🇧🇯\n👉 ${shareUrl}`;
       const shareBtn = `<a href="https://wa.me/?text=${encodeURIComponent(shareText)}" target="_blank" class="btn-outline-small" style="display:inline-block;margin-top:12px;margin-left:8px;">📤 Partager</a>`;
       const isOwner = currentUser && p.user_id === currentUser.id;
-      const deleteBtn = isOwner ? `<button class="btn-outline-small" style="margin-top:12px;margin-left:8px;border-color:var(--rouge);color:var(--rouge);" onclick="supprimerAnnonce('${p.id}')">Supprimer mon annonce</button>` : '';
+      const isAdmin = currentProfile && currentProfile.is_admin;
+      const deleteBtn = isOwner
+        ? `<button class="btn-outline-small" style="margin-top:12px;margin-left:8px;border-color:var(--rouge);color:var(--rouge);" onclick="supprimerAnnonce('${p.id}')">Supprimer mon annonce</button>`
+        : (isAdmin ? `<button class="btn-outline-small" style="margin-top:12px;margin-left:8px;border-color:var(--rouge);color:var(--rouge);" onclick="supprimerAnnonce('${p.id}')">🛡️ Supprimer (admin)</button>` : '');
       const audioHtml = p.audio_url ? `<audio src="${p.audio_url}" controls style="width:100%;margin:10px 0;"></audio>` : '';
       const avisBtn = (currentUser && !isOwner) ? `<button class="btn-outline-small" style="margin-top:12px;margin-left:8px;" onclick="ouvrirAvisModal('${p.user_id}', '${escapeHtml(auteur).replace(/'/g, "\\'")}')">⭐ Laisser un avis</button>` : '';
       return `<div class="pub-card"><div class="pub-top"><div><span class="pub-tag">${p.categorie}</span><h3>${escapeHtml(p.titre)}</h3></div><span class="pub-statut ${statutClass}">${statutLabel}</span>${ecoBadge}</div>${photoHtml}${p.description ? '<p class="desc">' + escapeHtml(p.description) + '</p>' : ''}${audioHtml}<div class="pub-meta">${p.quantite ? '<span><strong>Quantité :</strong> ' + escapeHtml(p.quantite) + '</span>' : ''}${p.prix ? '<span><strong>Prix :</strong> ' + escapeHtml(p.prix) + '</span>' : ''}${p.localisation ? '<span><strong>Lieu :</strong> ' + escapeHtml(p.localisation) + '</span>' : ''}</div><div class="pub-footer">Publié par ${escapeHtml(auteur)}${contact ? ' · ' + escapeHtml(contact) : ''}${certifBadge}<br><span id="avisBadge-${p.user_id}" class="stars-display"></span></div>${contactBtn}${shareBtn}${avisBtn}${deleteBtn}</div>`;
