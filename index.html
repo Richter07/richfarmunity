@@ -1071,7 +1071,7 @@
             <div class="field"><label for="pubQuantite">Quantité</label><input type="text" id="pubQuantite" required placeholder="Ex : 200 kg, 10 unités"></div>
           </div>
           <div class="field-row">
-            <div class="field"><label for="pubPrix">Prix</label><input type="text" id="pubPrix" required placeholder="Ex : 15 000 FCFA, à négocier"></div>
+            <div class="field" id="pubPrixWrap"><label for="pubPrix">Prix</label><input type="text" id="pubPrix" required placeholder="Ex : 15 000 FCFA, à négocier"></div>
             <div class="field"><label for="pubLocalisation">Localisation</label><input type="text" id="pubLocalisation" required placeholder="Ex : Abomey-Calavi, Atlantique"></div>
           </div>
           <div class="field" id="pubCertifWrap" style="display:none;">
@@ -2195,7 +2195,15 @@
       const waNumber = contact ? contact.replace(/[^0-9]/g, '') : '';
       const contactBtn = waNumber ? `<a href="https://wa.me/${waNumber}?text=${encodeURIComponent('Bonjour, je vous contacte au sujet de votre annonce "' + p.titre + '" sur Rĩch Farm Unity.')}" target="_blank" class="btn-small" style="display:inline-block;margin-top:12px;">Contacter sur WhatsApp</a>` : '';
       const shareUrl = `https://richfarmunity.com/share?id=${p.id}`;
-      const shareText = `🌾 ${p.titre}\n${p.prix ? 'Prix : ' + p.prix + '\n' : ''}${p.localisation ? 'Lieu : ' + p.localisation + '\n' : ''}\nVu sur Rĩch Farm Unity, la plateforme agricole béninoise 🇧🇯\n👉 ${shareUrl}`;
+      const estAchat = p.type_annonce === 'achat';
+      const ficheEntete = estAchat ? "🛒 FICHE D'ACHAT (Je veux acheter)" : "🌾 FICHE DE VENTE (Je vends)";
+      const lignesFiche = [
+        `Produit : ${p.titre}`,
+        p.quantite ? `Quantité : ${p.quantite}` : null,
+        (!estAchat && p.prix) ? `Prix : ${p.prix}` : null,
+        p.localisation ? `Lieu : ${p.localisation}` : null,
+      ].filter(Boolean).join('\n');
+      const shareText = `${ficheEntete}\n${p.titre}\n\n${lignesFiche}\n\nVu sur Rĩch Farm Unity, la plateforme agricole béninoise 🇧🇯\n👉 ${shareUrl}`;
       const shareBtn = `<a href="https://wa.me/?text=${encodeURIComponent(shareText)}" target="_blank" class="btn-outline-small" style="display:inline-block;margin-top:12px;margin-left:8px;">📤 Partager</a>`;
       const isOwner = currentUser && p.user_id === currentUser.id;
       const isAdmin = currentProfile && currentProfile.is_admin;
@@ -2331,12 +2339,19 @@
     document.getElementById('pubTypeAnnonce').value = type;
     const btnVente = document.getElementById('btnTypeVente');
     const btnAchat = document.getElementById('btnTypeAchat');
+    const prixWrap = document.getElementById('pubPrixWrap');
+    const prixInput = document.getElementById('pubPrix');
     if(type === 'vente'){
       btnVente.className = 'btn-main'; btnVente.style.cssText = 'flex:1;opacity:1;';
       btnAchat.className = 'btn-outline-small'; btnAchat.style.cssText = 'flex:1;padding:14px;font-size:0.92rem;';
+      prixWrap.style.display = 'block';
+      prixInput.required = true;
     } else {
       btnAchat.className = 'btn-main'; btnAchat.style.cssText = 'flex:1;opacity:1;';
       btnVente.className = 'btn-outline-small'; btnVente.style.cssText = 'flex:1;padding:14px;font-size:0.92rem;';
+      prixWrap.style.display = 'none';
+      prixInput.required = false;
+      prixInput.value = '';
     }
   };
 
