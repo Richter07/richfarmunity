@@ -412,6 +412,8 @@
   }
 </style>
 
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 </head>
 <body>
 
@@ -423,6 +425,8 @@
       <button data-view="accueil" class="active">Accueil</button>
       <button data-view="publications">Annonces</button>
       <button data-view="prixmarche">Prix du marché</button>
+      <button data-view="calendrier">Calendrier cultural</button>
+      <button data-view="carte">Carte</button>
       <button data-view="formations">Formations</button>
       <button data-view="forums">Forums</button>
       <button data-view="institutionnel">Ancrage institutionnel</button>
@@ -1040,6 +1044,47 @@
     </div>
   </div>
 
+  <!-- ==================== VUE CALENDRIER CULTURAL ==================== -->
+  <div class="view" id="view-calendrier">
+    <div class="app-main">
+      <div class="page-head"><h2>Calendrier cultural agricole</h2><p>Périodes indicatives de préparation, semis, entretien et récolte au Bénin.</p></div>
+
+      <div class="field">
+        <label for="calProduit">Choisir une culture</label>
+        <select id="calProduit"></select>
+      </div>
+
+      <div id="calendrierAffichage"></div>
+
+      <div class="card" style="margin-top:20px;background:var(--ivoire-2);">
+        <p style="font-size:0.82rem;color:var(--encre-douce);line-height:1.6;margin:0;">
+          ⚠️ Ces périodes sont <strong>indicatives</strong>, basées sur des données agronomiques générales (FAO, Ministère de l'Agriculture du Bénin) et peuvent varier selon la zone climatique, l'année et les conditions locales. Elles ne remplacent pas les conseils d'un technicien agricole.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== VUE CARTE INTERACTIVE ==================== -->
+  <div class="view" id="view-carte">
+    <div class="app-main">
+      <div class="page-head"><h2>Carte des annonces</h2><p>Retrouvez les annonces publiées autour de vous.</p></div>
+      <div class="filters">
+        <select id="filterCarteCategorie">
+          <option value="">Toutes les catégories</option>
+          <option value="Production végétale">Production végétale</option>
+          <option value="Production animale">Production animale</option>
+          <option value="Transformation agroalimentaire">Transformation agroalimentaire</option>
+          <option value="Agroforesterie / Foresterie">Agroforesterie / Foresterie</option>
+          <option value="Intrants">Intrants</option>
+          <option value="Foncier">Foncier</option>
+          <option value="Autre">Autre</option>
+        </select>
+      </div>
+      <div id="carteInteractive" style="height:60vh;min-height:420px;border-radius:14px;overflow:hidden;background:var(--ivoire-2);"></div>
+      <p id="carteInfo" style="font-size:0.82rem;color:var(--encre-douce);margin-top:10px;text-align:center;"></p>
+    </div>
+  </div>
+
   <!-- ==================== VUE NOUVELLE PUBLICATION ==================== -->
   <div class="view" id="view-nouvelle-pub">
     <div class="app-main">
@@ -1072,7 +1117,14 @@
           </div>
           <div class="field-row">
             <div class="field" id="pubPrixWrap"><label for="pubPrix">Prix</label><input type="text" id="pubPrix" required placeholder="Ex : 15 000 FCFA, à négocier"></div>
-            <div class="field"><label for="pubLocalisation">Localisation</label><input type="text" id="pubLocalisation" required placeholder="Ex : Abomey-Calavi, Atlantique"></div>
+            <div class="field">
+              <label for="pubLocalisation">Localisation</label>
+              <input type="text" id="pubLocalisation" required placeholder="Ex : Abomey-Calavi, Atlantique">
+              <input type="hidden" id="pubLatitude">
+              <input type="hidden" id="pubLongitude">
+              <button type="button" class="btn-outline-small" id="btnGeoloc" style="margin-top:8px;">📍 Utiliser ma position actuelle</button>
+              <span id="geolocStatus" style="font-size:0.78rem;color:var(--vert-rich);margin-left:8px;"></span>
+            </div>
           </div>
           <div class="field" id="pubCertifWrap" style="display:none;">
             <label for="pubCertif">Certification(s) du produit ou de l'unité de transformation</label>
@@ -1612,6 +1664,15 @@
       padding:14px 18px; font-size:0.88rem; color:var(--or-clair); max-width:480px; line-height:1.55; text-align:left;
     }
     .reel-exemple strong{ color:var(--or); }
+
+    .cal-barre{ display:flex; gap:2px; border-radius:8px; overflow:hidden; }
+    .cal-mois{ flex:1; height:36px; cursor:help; }
+    .cal-mois-labels{ display:flex; gap:2px; margin-top:4px; }
+    .cal-mois-labels span{ flex:1; text-align:center; font-size:0.62rem; color:var(--encre-douce); }
+    .cal-continu{ background:var(--vert-nuit); color:var(--ivoire); padding:16px; border-radius:10px; text-align:center; font-weight:600; }
+    .cal-legende{ display:flex; flex-wrap:wrap; gap:14px; margin-top:16px; }
+    .cal-legende span{ display:flex; align-items:center; gap:6px; font-size:0.78rem; color:var(--encre-douce); }
+    .cal-legende i{ width:12px; height:12px; border-radius:3px; display:inline-block; }
   </style>
 
   <div class="view" id="view-conditions">
@@ -1889,6 +1950,8 @@
     arreterAutoRefresh();
     if(name === 'publications'){ loadPublications(); demarrerAutoRefresh(loadPublications); }
     if(name === 'prixmarche') loadPrixMarche();
+    if(name === 'calendrier'){ remplirMenuCalendrier(); afficherCalendrier(); }
+    if(name === 'carte'){ initOrRafraichirCarte(); }
     if(name === 'formations'){ loadFormations(); loadPublicites(); demarrerAutoRefresh(loadFormations); }
     if(name === 'moderation'){ loadModeration(); loadModerationPrix(); }
     if(name === 'suggestions'){ loadSuggestions(); }
@@ -2386,10 +2449,162 @@
     }
   };
 
+  // ---- Calendrier cultural agricole ----
+  // Codes : P=Préparation du sol, S=Semis/Plantation, E=Entretien/Croissance, R=Récolte
+  // Sources : FAO GIEWS Country Brief Bénin, MAEP/APIDSA (méthodes de collecte cultures pérennes),
+  // études agronomiques (Banikoara), FAO Covid crop calendars. Périodes indicatives (voir avertissement affiché).
+  const CALENDRIER_CULTURAL = {
+    "Maïs": {
+      variantes: {
+        "Sud / Centre (2 saisons)": ["-","-","P","S","E","R","R","S","E","E","E","R"],
+        "Nord (1 saison)": ["-","-","P","S","S","E","E","E","E","R","R","-"]
+      }
+    },
+    "Riz": { mois: ["-","-","P","S","S","E","E","E","R","-","-","-"] },
+    "Sorgho": { mois: ["-","-","-","-","P","S","E","E","E","R","R","-"] },
+    "Mil": { mois: ["-","-","-","-","P","S","E","E","E","E","R","-"] },
+    "Igname": { mois: ["S","S","S","S","E","E","R","R","R","R","R","-"] },
+    "Manioc": { continu: true, note: "Culture flexible : plantation et récolte possibles presque toute l'année (cycle de 8 à 14 mois selon la variété)." },
+    "Patate douce": { mois: ["-","-","-","-","-","S","E","E","R","R","-","-"], note: "Estimation générale (cycle court, ~4 mois), aligné sur la saison des pluies." },
+    "Taro": { mois: ["S","S","E","E","E","E","E","E","R","R","-","-"], note: "Estimation générale, cycle long similaire à l'igname." },
+    "Niébé": { mois: ["-","-","-","-","-","S","E","E","R","R","-","-"] },
+    "Soja": { mois: ["-","-","-","-","-","-","S","E","E","E","E","R"] },
+    "Arachide": { mois: ["-","-","-","-","S","S","E","E","E","R","R","-"] },
+    "Coton": { mois: ["R","-","-","-","-","S","E","E","E","E","R","R"] },
+    "Anacarde": { mois: ["R","R","R","R","-","-","-","-","-","E","E","E"], note: "Floraison octobre-décembre, récolte janvier à avril." },
+    "Palmier à huile": { continu: true, note: "Récolte toute l'année, avec un pic de production en juin." },
+    "Karité": { mois: ["-","-","-","R","R","R","-","-","-","-","-","-"] },
+    "Ananas": { continu: true, note: "Production quasi continue au Bénin grâce aux techniques de floraison induite ; saison naturelle principale autour de mars à juillet." },
+    "Banane": { mois: ["-","-","-","-","-","R","R","R","R","R","R","R"] },
+    "Banane plantain": { mois: ["-","-","-","-","-","R","R","R","R","R","R","R"], note: "Estimation alignée sur le bananier." },
+    "Mangue": { mois: ["-","-","-","R","R","R","R","R","-","-","-","-"] },
+    "Orange": { mois: ["-","-","-","-","R","R","R","R","-","R","R","-"] },
+    "Papaye": { continu: true, note: "Production quasi continue toute l'année, avec des pics autour de mai et décembre." },
+    "Avocat": { mois: ["-","-","-","-","-","R","R","R","-","-","-","-"], note: "Estimation générale pour la sous-région." },
+    "Noix de coco": { continu: true, note: "Production continue toute l'année une fois le cocotier mature." },
+    "Tomate": { mois: ["R","R","-","-","-","-","-","-","-","-","S","S"], note: "Estimation générale : culture de saison sèche avec irrigation (semis nov-jan, récolte fév-mars)." },
+    "Oignon": { mois: ["R","R","-","-","-","-","-","-","-","-","S","S"], note: "Estimation générale, culture de saison sèche irriguée." },
+    "Carotte": { mois: ["R","R","-","-","-","-","-","-","-","-","S","S"], note: "Estimation générale, culture de saison sèche irriguée." },
+    "Chou": { mois: ["R","R","-","-","-","-","-","-","-","-","S","S"], note: "Estimation générale, culture de saison sèche irriguée." },
+    "Laitue": { mois: ["R","-","-","-","-","-","-","-","-","-","S","S"], note: "Estimation générale, cycle court, saison sèche irriguée." },
+    "Concombre": { mois: ["R","-","-","-","-","-","-","-","-","-","S","S"], note: "Estimation générale, saison sèche irriguée." },
+    "Poivron": { mois: ["R","R","-","-","-","-","-","-","-","-","S","S"], note: "Estimation générale, saison sèche irriguée." },
+    "Cornichon": { mois: ["R","-","-","-","-","-","-","-","-","-","S","S"], note: "Estimation générale, saison sèche irriguée." },
+    "Piment": { mois: ["-","-","-","-","-","S","E","R","R","R","-","-"], note: "Estimation générale : culture de saison des pluies." },
+    "Gombo": { mois: ["-","-","-","-","-","S","E","R","R","R","-","-"], note: "Estimation générale, culture de saison des pluies." },
+    "Aubergine": { mois: ["-","-","-","-","-","S","E","R","R","R","-","-"], note: "Estimation générale, culture de saison des pluies." },
+    "Grande morelle (Gboma)": { mois: ["-","-","-","-","-","S","E","R","R","R","-","-"], note: "Estimation générale, culture de saison des pluies." },
+    "Amarante": { mois: ["-","-","-","-","-","S","R","R","R","R","-","-"], note: "Estimation générale, cycle court de saison des pluies." },
+    "Basilic africain (Tchayo)": { mois: ["-","-","-","-","-","S","E","R","R","R","-","-"], note: "Estimation générale, culture de saison des pluies." },
+    "Corète potagère (Crincrin)": { mois: ["-","-","-","-","-","S","E","R","R","R","-","-"], note: "Estimation générale, culture de saison des pluies." },
+    "Vernonia (Amanvivê)": { mois: ["-","-","-","-","-","S","E","R","R","R","-","-"], note: "Estimation générale, culture de saison des pluies." },
+    "Menthe": { continu: true, note: "Plante vivace généralement récoltée toute l'année en petite quantité." },
+    "Pastèque": { mois: ["-","-","-","-","-","S","E","E","R","R","-","-"], note: "Estimation générale, culture de saison des pluies." },
+  };
+
   document.getElementById('btnOuvrirProposerPrix').addEventListener('click', () => {
     const carte = document.getElementById('cartePrixForm');
     carte.style.display = (carte.style.display === 'none') ? 'block' : 'none';
   });
+
+  // ---- Calendrier cultural : remplissage du menu et affichage ----
+  const MOIS_LABELS = ["Jan","Fév","Mar","Avr","Mai","Jun","Jul","Aoû","Sep","Oct","Nov","Déc"];
+  const CAL_COULEURS = { P: '#B8860B', S: '#3F8B44', E: '#D9A62B', R: '#0F2C13', '-': '#E4DCC7' };
+  const CAL_LABELS = { P: 'Préparation du sol', S: 'Semis / Plantation', E: 'Entretien / Croissance', R: 'Récolte' };
+
+  function remplirMenuCalendrier(){
+    const select = document.getElementById('calProduit');
+    if(!select || select.options.length > 0) return;
+    let html = '';
+    Object.entries(TAXONOMIE_PRODUITS).forEach(([filiere, categories]) => {
+      Object.entries(categories).forEach(([categorie, produits]) => {
+        produits.forEach(p => {
+          if(CALENDRIER_CULTURAL[p]) html += `<option value="${p}">${p}</option>`;
+        });
+      });
+    });
+    select.innerHTML = html;
+  }
+
+  function dessinerBarre(mois){
+    return `<div class="cal-barre">${mois.map((m,i) => `<div class="cal-mois" style="background:${CAL_COULEURS[m]};" title="${MOIS_LABELS[i]} : ${CAL_LABELS[m] || 'Aucune opération'}"></div>`).join('')}</div>
+      <div class="cal-mois-labels">${MOIS_LABELS.map(m => `<span>${m}</span>`).join('')}</div>`;
+  }
+
+  function afficherCalendrier(){
+    const produit = document.getElementById('calProduit').value;
+    const data = CALENDRIER_CULTURAL[produit];
+    const zone = document.getElementById('calendrierAffichage');
+    if(!data){ zone.innerHTML = ''; return; }
+
+    let html = `<div class="card" style="margin-top:16px;"><h3 style="margin-bottom:14px;">${produit}</h3>`;
+
+    if(data.continu){
+      html += `<div class="cal-continu">🔁 Production continue toute l'année</div>`;
+    } else if(data.variantes){
+      Object.entries(data.variantes).forEach(([zoneNom, mois]) => {
+        html += `<p style="font-weight:600;font-size:0.85rem;color:var(--vert-rich);margin:14px 0 6px;">${zoneNom}</p>${dessinerBarre(mois)}`;
+      });
+    } else {
+      html += dessinerBarre(data.mois);
+    }
+
+    if(data.note){
+      html += `<p style="font-size:0.8rem;color:var(--encre-douce);margin-top:14px;font-style:italic;">${data.note}</p>`;
+    }
+
+    html += `<div class="cal-legende">
+      <span><i style="background:${CAL_COULEURS.P}"></i> Préparation</span>
+      <span><i style="background:${CAL_COULEURS.S}"></i> Semis</span>
+      <span><i style="background:${CAL_COULEURS.E}"></i> Entretien</span>
+      <span><i style="background:${CAL_COULEURS.R}"></i> Récolte</span>
+    </div></div>`;
+
+    zone.innerHTML = html;
+  }
+
+  document.getElementById('calProduit').addEventListener('change', afficherCalendrier);
+
+  // ---- Carte interactive ----
+  let carteLeaflet = null;
+  let carteMarqueurs = [];
+  async function initOrRafraichirCarte(){
+    const conteneur = document.getElementById('carteInteractive');
+    const infoEl = document.getElementById('carteInfo');
+    if(!carteLeaflet){
+      carteLeaflet = L.map(conteneur).setView([9.3, 2.3], 7); // Centré sur le Bénin
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap',
+        maxZoom: 18
+      }).addTo(carteLeaflet);
+    }
+    carteMarqueurs.forEach(m => carteLeaflet.removeLayer(m));
+    carteMarqueurs = [];
+
+    const categorie = document.getElementById('filterCarteCategorie').value;
+    let query = sb.from('publications').select('id,titre,prix,localisation,categorie,latitude,longitude,photo_url,photos').eq('approuve', true).not('latitude', 'is', null).not('longitude', 'is', null);
+    if(categorie) query = query.eq('categorie', categorie);
+    const { data, error } = await query;
+
+    if(error){ infoEl.textContent = 'Erreur de chargement de la carte.'; return; }
+    if(!data || data.length === 0){
+      infoEl.textContent = "Aucune annonce géolocalisée pour l'instant. Les vendeurs peuvent activer leur position lors de la publication.";
+      return;
+    }
+    infoEl.textContent = `${data.length} annonce(s) géolocalisée(s) affichée(s).`;
+
+    data.forEach(p => {
+      const marker = L.marker([p.latitude, p.longitude]).addTo(carteLeaflet);
+      const photo = (p.photos && p.photos[0]) || p.photo_url;
+      const imgHtml = photo ? `<img src="${photo}" style="width:100%;height:90px;object-fit:cover;border-radius:6px;margin-bottom:6px;">` : '';
+      marker.bindPopup(`<div style="min-width:160px;">${imgHtml}<strong>${escapeHtml(p.titre)}</strong><br><span style="font-size:0.8rem;color:#666;">${escapeHtml(p.localisation || '')}${p.prix ? ' · ' + escapeHtml(p.prix) : ''}</span><br><a href="#" onclick="showView('publications');return false;" style="font-size:0.8rem;">Voir les annonces →</a></div>`);
+      carteMarqueurs.push(marker);
+    });
+
+    setTimeout(() => carteLeaflet.invalidateSize(), 200);
+  }
+  document.getElementById('filterCarteCategorie').addEventListener('change', initOrRafraichirCarte);
+
 
   document.getElementById('prixFiliere').addEventListener('change', function(){
     const catSelect = document.getElementById('prixCategorie');
@@ -2762,6 +2977,21 @@
     });
   }
 
+  document.getElementById('btnGeoloc').addEventListener('click', () => {
+    const statusEl = document.getElementById('geolocStatus');
+    if(!navigator.geolocation){ statusEl.textContent = "Géolocalisation non supportée par ce navigateur."; return; }
+    statusEl.textContent = "Recherche de votre position…";
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        document.getElementById('pubLatitude').value = pos.coords.latitude;
+        document.getElementById('pubLongitude').value = pos.coords.longitude;
+        statusEl.textContent = "✅ Position enregistrée";
+      },
+      (err) => { statusEl.textContent = "Impossible d'obtenir votre position (autorisez l'accès à la localisation)."; },
+      { enableHighAccuracy: true, timeout: 10000 }
+    );
+  });
+
   document.getElementById('formPublication').addEventListener('submit', async (e) => {
     e.preventDefault();
     if(!currentUser){ showMsg('msgPublication', 'Connectez-vous pour publier une annonce.', 'error'); return; }
@@ -2823,11 +3053,13 @@
       certification: document.getElementById('pubCertif').value.trim() || null,
       eco_responsable: document.getElementById('pubEcoResponsable').checked,
       photo_url: photo_url,
-      photos: photos
+      photos: photos,
+      latitude: document.getElementById('pubLatitude').value ? parseFloat(document.getElementById('pubLatitude').value) : null,
+      longitude: document.getElementById('pubLongitude').value ? parseFloat(document.getElementById('pubLongitude').value) : null
     };
     const { error } = await sb.from('publications').insert(payload);
     if(error){ showMsg('msgPublication', error.message, 'error'); }
-    else { showMsg('msgPublication', 'Annonce publiée !', 'success'); e.target.reset(); document.getElementById('pubCertifWrap').style.display = 'none'; document.getElementById('notifPromptPublication').style.display = 'block'; pubVoiceRecorder.reset(); document.getElementById('pubModeTexteBtn').click(); await checkNotifStatus(); }
+    else { showMsg('msgPublication', 'Annonce publiée !', 'success'); e.target.reset(); document.getElementById('pubCertifWrap').style.display = 'none'; document.getElementById('notifPromptPublication').style.display = 'block'; pubVoiceRecorder.reset(); document.getElementById('pubModeTexteBtn').click(); document.getElementById('geolocStatus').textContent = ''; await checkNotifStatus(); }
     btn.disabled = false;
     btn.textContent = "Publier l'annonce";
   });
