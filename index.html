@@ -1056,6 +1056,26 @@
 
       <div id="calendrierAffichage"></div>
 
+      <div class="meteo-widget">
+        <p style="font-weight:600;margin-bottom:10px;">🌦️ Météo actuelle par département</p>
+        <select id="meteoDepartement">
+          <option value="">Choisir un département…</option>
+          <option value="Alibori">Alibori</option>
+          <option value="Atacora">Atacora</option>
+          <option value="Atlantique">Atlantique</option>
+          <option value="Borgou">Borgou</option>
+          <option value="Collines">Collines</option>
+          <option value="Couffo">Couffo</option>
+          <option value="Donga">Donga</option>
+          <option value="Littoral">Littoral</option>
+          <option value="Mono">Mono</option>
+          <option value="Ouémé">Ouémé</option>
+          <option value="Plateau">Plateau</option>
+          <option value="Zou">Zou</option>
+        </select>
+        <div id="meteoResultat"></div>
+      </div>
+
       <div class="card" style="margin-top:20px;background:var(--ivoire-2);">
         <p style="font-size:0.82rem;color:var(--encre-douce);line-height:1.6;margin:0;">
           ⚠️ Ces périodes sont <strong>indicatives</strong>, basées sur des données agronomiques générales (FAO, Ministère de l'Agriculture du Bénin) et peuvent varier selon la zone climatique, l'année et les conditions locales. Elles ne remplacent pas les conseils d'un technicien agricole.
@@ -1673,6 +1693,18 @@
     .cal-legende{ display:flex; flex-wrap:wrap; gap:14px; margin-top:16px; }
     .cal-legende span{ display:flex; align-items:center; gap:6px; font-size:0.78rem; color:var(--encre-douce); }
     .cal-legende i{ width:12px; height:12px; border-radius:3px; display:inline-block; }
+    .cal-rendement{ background:var(--ivoire-2); border-radius:10px; padding:14px; margin-top:16px; }
+    .cal-rendement-row{ display:flex; justify-content:space-between; gap:10px; padding:6px 0; font-size:0.82rem; color:var(--encre); border-top:1px solid rgba(27,94,32,0.1); }
+    .cal-rendement-row:first-of-type{ border-top:none; }
+    .cal-rendement-row span{ color:var(--encre-douce); flex-shrink:0; }
+    .cal-rendement-row strong{ text-align:right; color:var(--vert-rich); }
+
+    .meteo-widget{ background:var(--vert-nuit); border-radius:14px; padding:18px; margin-top:20px; color:var(--ivoire); }
+    .meteo-widget select{ width:100%; margin-bottom:12px; }
+    .meteo-grid{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+    .meteo-item{ background:rgba(247,241,227,0.08); border-radius:10px; padding:12px; text-align:center; }
+    .meteo-item .val{ font-size:1.3rem; font-weight:700; color:var(--or-clair); }
+    .meteo-item .lbl{ font-size:0.7rem; color:rgba(247,241,227,0.7); margin-top:2px; }
   </style>
 
   <div class="view" id="view-conditions">
@@ -2458,22 +2490,74 @@
       variantes: {
         "Sud / Centre (2 saisons)": ["-","-","P","S","E","R","R","S","E","E","E","R"],
         "Nord (1 saison)": ["-","-","P","S","S","E","E","E","E","R","R","-"]
-      }
+      },
+      rendement: { traditionnel: "700 – 1 200 kg/ha (moyenne nationale ≈ 1 209 kg/ha)", ameliore: "2 000 – 4 000 kg/ha, jusqu'à 5 t/ha avec bonnes pratiques" }
     },
-    "Riz": { mois: ["-","-","P","S","S","E","E","E","R","-","-","-"] },
-    "Sorgho": { mois: ["-","-","-","-","P","S","E","E","E","R","R","-"] },
-    "Mil": { mois: ["-","-","-","-","P","S","E","E","E","E","R","-"] },
-    "Igname": { mois: ["S","S","S","S","E","E","R","R","R","R","R","-"] },
-    "Manioc": { continu: true, note: "Culture flexible : plantation et récolte possibles presque toute l'année (cycle de 8 à 14 mois selon la variété)." },
-    "Patate douce": { mois: ["-","-","-","-","-","S","E","E","R","R","-","-"], note: "Estimation générale (cycle court, ~4 mois), aligné sur la saison des pluies." },
-    "Taro": { mois: ["S","S","E","E","E","E","E","E","R","R","-","-"], note: "Estimation générale, cycle long similaire à l'igname." },
-    "Niébé": { mois: ["-","-","-","-","-","S","E","E","R","R","-","-"] },
-    "Soja": { mois: ["-","-","-","-","-","-","S","E","E","E","E","R"] },
-    "Arachide": { mois: ["-","-","-","-","S","S","E","E","E","R","R","-"] },
-    "Coton": { mois: ["R","-","-","-","-","S","E","E","E","E","R","R"] },
-    "Anacarde": { mois: ["R","R","R","R","-","-","-","-","-","E","E","E"], note: "Floraison octobre-décembre, récolte janvier à avril." },
-    "Palmier à huile": { continu: true, note: "Récolte toute l'année, avec un pic de production en juin." },
-    "Karité": { mois: ["-","-","-","R","R","R","-","-","-","-","-","-"] },
+    "Riz": {
+      mois: ["-","-","P","S","S","E","E","E","R","-","-","-"],
+      note: "Riz pluvial (bas-fonds) : cycle unique présenté ici. Riz irrigué (vallées du Niger, de l'Ouémé) : jusqu'à 2 cycles par an possibles selon la disponibilité en eau.",
+      rendement: { traditionnel: "1,5 – 2,5 t/ha (pluvial)", ameliore: "moyenne nationale ≈ 3 t/ha, jusqu'à 10 t/ha en irrigué avec bonnes pratiques" }
+    },
+    "Sorgho": {
+      mois: ["-","-","-","-","P","S","E","E","E","R","R","-"],
+      note: "Culture quasi exclusivement pratiquée dans le Nord et le Centre du Bénin (zones soudano-guinéennes) ; peu présente au Sud.",
+      rendement: { traditionnel: "700 – 900 kg/ha", ameliore: "1,2 – 1,8 t/ha" }
+    },
+    "Mil": {
+      mois: ["-","-","-","-","P","S","E","E","E","E","R","-"],
+      note: "Culture quasi exclusivement pratiquée dans le Nord du Bénin ; peu présente au Sud.",
+      rendement: { traditionnel: "700 – 1 000 kg/ha", ameliore: "1,2 – 1,5 t/ha" }
+    },
+    "Igname": {
+      mois: ["S","S","S","S","E","E","R","R","R","R","R","-"],
+      note: "Culture historiquement concentrée dans le Centre du Bénin (Zou, Collines — considéré comme le « grenier à igname » du pays), mais pratiquée dans d'autres régions aussi.",
+      rendement: { traditionnel: "6 – 10 t/ha (≈ 8,6 t/ha observé en zone Nord-Zou)", ameliore: "jusqu'à 15 t/ha selon variété et fertilité du sol" }
+    },
+    "Manioc": {
+      continu: true,
+      note: "Culture flexible : plantation et récolte possibles presque toute l'année (cycle de 8 à 14 mois selon la variété). Pratiquée sur tout le territoire.",
+      rendement: { traditionnel: "moyenne nationale ≈ 15 – 16 t/ha", ameliore: "jusqu'à 45 t/ha avec variétés améliorées en conditions optimales" }
+    },
+    "Patate douce": {
+      mois: ["-","-","-","-","-","S","E","E","R","R","-","-"],
+      note: "Estimation générale (cycle court, ~4 mois), alignée sur la saison des pluies. Donnée de rendement fiable non disponible pour le Bénin."
+    },
+    "Taro": {
+      mois: ["S","S","E","E","E","E","E","E","R","R","-","-"],
+      note: "Estimation générale, cycle long similaire à l'igname. Donnée de rendement fiable non disponible pour le Bénin."
+    },
+    "Niébé": {
+      variantes: {
+        "Sud / Centre": ["-","-","-","-","S","E","E","R","R","-","-","-"],
+        "Nord": ["-","-","-","-","-","S","E","E","R","R","-","-"]
+      },
+      note: "Souvent cultivé en association avec le maïs (Sud/Centre) ou le sorgho/mil (Nord). Un second cycle est possible au Sud, aligné sur la 2ᵉ saison du maïs.",
+      rendement: { traditionnel: "≈ 800 kg/ha", ameliore: "1 000 – 1 500 kg/ha" }
+    },
+    "Soja": {
+      mois: ["-","-","-","-","-","-","S","E","E","E","E","R"],
+      note: "Culture historiquement concentrée dans le Nord du Bénin (Borgou, Alibori, Donga).",
+      rendement: { traditionnel: "500 – 890 kg/ha", ameliore: "1 100 – 2 000 kg/ha" }
+    },
+    "Arachide": {
+      variantes: {
+        "Sud / Centre": ["-","-","-","S","S","E","E","R","R","-","-","-"],
+        "Nord": ["-","-","-","-","S","S","E","E","E","R","R","-"]
+      },
+      rendement: { traditionnel: "≈ 1 000 kg/ha", ameliore: "1 500 – 2 000 kg/ha" }
+    },
+    "Coton": {
+      mois: ["R","-","-","-","-","S","E","E","E","E","R","R"],
+      note: "Culture concentrée dans le Nord et le Centre du Bénin (zone cotonnière : Borgou, Alibori, Atacora, Donga, Zou).",
+      rendement: { traditionnel: "1 000 – 1 200 kg/ha (moyenne nationale, variable selon la campagne)", ameliore: null }
+    },
+    "Anacarde": {
+      mois: ["R","R","R","R","-","-","-","-","-","E","E","E"],
+      note: "Floraison octobre-décembre, récolte janvier à avril.",
+      rendement: { traditionnel: "Nord ≈ 436 kg/ha, Sud ≈ 294 kg/ha (données officielles 2018)", ameliore: null }
+    },
+    "Palmier à huile": { continu: true, note: "Récolte toute l'année, avec un pic de production en juin. Rendement très variable selon la densité de plantation et l'âge des palmiers — donnée fiable non disponible." },
+    "Karité": { mois: ["-","-","-","R","R","R","-","-","-","-","-","-"], note: "Essentiellement de cueillette (arbre spontané, non planté) — la notion de rendement à l'hectare s'applique mal à cette culture." },
     "Ananas": { continu: true, note: "Production quasi continue au Bénin grâce aux techniques de floraison induite ; saison naturelle principale autour de mars à juillet." },
     "Banane": { mois: ["-","-","-","-","-","R","R","R","R","R","R","R"] },
     "Banane plantain": { mois: ["-","-","-","-","-","R","R","R","R","R","R","R"], note: "Estimation alignée sur le bananier." },
@@ -2490,7 +2574,7 @@
     "Concombre": { mois: ["R","-","-","-","-","-","-","-","-","-","S","S"], note: "Estimation générale, saison sèche irriguée." },
     "Poivron": { mois: ["R","R","-","-","-","-","-","-","-","-","S","S"], note: "Estimation générale, saison sèche irriguée." },
     "Cornichon": { mois: ["R","-","-","-","-","-","-","-","-","-","S","S"], note: "Estimation générale, saison sèche irriguée." },
-    "Piment": { mois: ["-","-","-","-","-","S","E","R","R","R","-","-"], note: "Estimation générale : culture de saison des pluies." },
+    "Piment": { mois: ["-","-","-","-","-","S","E","R","R","R","-","-"], note: "Estimation générale : culture de saison des pluies. Donnée de rendement fiable non disponible pour le Bénin." },
     "Gombo": { mois: ["-","-","-","-","-","S","E","R","R","R","-","-"], note: "Estimation générale, culture de saison des pluies." },
     "Aubergine": { mois: ["-","-","-","-","-","S","E","R","R","R","-","-"], note: "Estimation générale, culture de saison des pluies." },
     "Grande morelle (Gboma)": { mois: ["-","-","-","-","-","S","E","R","R","R","-","-"], note: "Estimation générale, culture de saison des pluies." },
@@ -2501,6 +2585,7 @@
     "Menthe": { continu: true, note: "Plante vivace généralement récoltée toute l'année en petite quantité." },
     "Pastèque": { mois: ["-","-","-","-","-","S","E","E","R","R","-","-"], note: "Estimation générale, culture de saison des pluies." },
   };
+
 
   document.getElementById('btnOuvrirProposerPrix').addEventListener('click', () => {
     const carte = document.getElementById('cartePrixForm');
@@ -2553,6 +2638,14 @@
       html += `<p style="font-size:0.8rem;color:var(--encre-douce);margin-top:14px;font-style:italic;">${data.note}</p>`;
     }
 
+    if(data.rendement){
+      html += `<div class="cal-rendement">
+        <p style="font-weight:600;font-size:0.85rem;color:var(--vert-rich);margin-bottom:8px;">🌾 Rendement à l'hectare (indicatif)</p>
+        <div class="cal-rendement-row"><span>Traditionnel</span><strong>${data.rendement.traditionnel}</strong></div>
+        ${data.rendement.ameliore ? `<div class="cal-rendement-row"><span>Amélioré</span><strong>${data.rendement.ameliore}</strong></div>` : ''}
+      </div>`;
+    }
+
     html += `<div class="cal-legende">
       <span><i style="background:${CAL_COULEURS.P}"></i> Préparation</span>
       <span><i style="background:${CAL_COULEURS.S}"></i> Semis</span>
@@ -2564,6 +2657,39 @@
   }
 
   document.getElementById('calProduit').addEventListener('change', afficherCalendrier);
+
+  // ---- Météo en temps réel par département (Open-Meteo, gratuit, sans clé, données live) ----
+  const COORDS_DEPARTEMENTS = {
+    "Alibori": [11.13, 2.94], "Atacora": [10.30, 1.38], "Atlantique": [6.67, 2.15],
+    "Borgou": [9.34, 2.63], "Collines": [7.93, 1.98], "Couffo": [6.93, 1.68],
+    "Donga": [9.71, 1.67], "Littoral": [6.37, 2.43], "Mono": [6.64, 1.72],
+    "Ouémé": [6.50, 2.60], "Plateau": [6.97, 2.67], "Zou": [7.18, 1.99]
+  };
+  document.getElementById('meteoDepartement').addEventListener('change', async function(){
+    const dep = this.value;
+    const zone = document.getElementById('meteoResultat');
+    if(!dep){ zone.innerHTML = ''; return; }
+    zone.innerHTML = '<p style="font-size:0.85rem;opacity:0.7;">Chargement des données météo en direct…</p>';
+    const [lat, lon] = COORDS_DEPARTEMENTS[dep];
+    try{
+      const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,precipitation,relative_humidity_2m&daily=precipitation_sum&past_days=7&forecast_days=3&timezone=Africa%2FLagos`;
+      const res = await fetch(url);
+      const data = await res.json();
+      const pluie7j = data.daily.precipitation_sum.slice(0,7).reduce((a,b) => a + (b||0), 0);
+      const pluiePrevue = data.daily.precipitation_sum.slice(7).reduce((a,b) => a + (b||0), 0);
+      zone.innerHTML = `
+        <div class="meteo-grid">
+          <div class="meteo-item"><div class="val">${Math.round(data.current.temperature_2m)}°C</div><div class="lbl">Température actuelle</div></div>
+          <div class="meteo-item"><div class="val">${Math.round(data.current.relative_humidity_2m)}%</div><div class="lbl">Humidité</div></div>
+          <div class="meteo-item"><div class="val">${pluie7j.toFixed(0)} mm</div><div class="lbl">Pluie (7 derniers jours)</div></div>
+          <div class="meteo-item"><div class="val">${pluiePrevue.toFixed(0)} mm</div><div class="lbl">Pluie prévue (3 prochains jours)</div></div>
+        </div>
+        <p style="font-size:0.7rem;opacity:0.6;margin-top:10px;text-align:center;">Données en direct via Open-Meteo, mises à jour à chaque consultation.</p>
+      `;
+    } catch(e){
+      zone.innerHTML = '<p style="font-size:0.85rem;color:#e0a0a0;">Impossible de récupérer la météo pour le moment. Réessayez plus tard.</p>';
+    }
+  });
 
   // ---- Carte interactive ----
   let carteLeaflet = null;
