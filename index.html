@@ -330,6 +330,12 @@
   .page-head h2{ font-size:1.9rem; }
   .page-head p{ margin-top:8px; color:var(--encre-douce); }
   .card{ background:var(--creme); border:1px solid rgba(27,94,32,0.12); border-radius:18px; padding:30px; box-shadow:var(--ombre-douce); }
+  .account-status{ padding:20px 24px; border-left:4px solid var(--or); }
+  .account-status[data-state="active"]{ border-left-color:var(--vert-rich); }
+  .account-status h3{ font-size:1rem; letter-spacing:0.03em; }
+  .account-status p{ margin-top:6px; color:var(--encre-douce); line-height:1.55; }
+  .account-status-actions{ display:flex; flex-wrap:wrap; gap:10px; margin-top:14px; }
+  @media (max-width:600px){ .account-status{ padding:18px; } .account-status-actions > button{ width:100%; } }
   form .field{ margin-bottom:16px; }
   form label{ display:block; font-size:0.84rem; font-weight:600; margin-bottom:6px; color:var(--vert-nuit); }
   form input, form select, form textarea{ width:100%; padding:12px 14px; border:1px solid rgba(27,94,32,0.22); border-radius:10px; background:#fff; transition:border-color .2s ease, box-shadow .2s ease; }
@@ -1418,8 +1424,14 @@
     <div class="app-main">
       <div id="compteConnecte" style="display:none;">
         <div class="page-head"><h2>Mon compte</h2><p id="compteResume"></p></div>
-        <div id="compteEnAttente" class="card" style="margin-bottom:20px;display:none;background:#FBF0DC;border-color:var(--or);">
-          <p style="color:var(--encre);line-height:1.6;"><strong>Votre compte est en cours de vérification.</strong><br>Nous allons vous contacter pour quelques informations avant de valider votre accès à la publication d'annonces. Merci de votre patience.</p>
+        <div id="compteEnAttente" class="card account-status" style="margin-bottom:20px;display:none;" aria-live="polite">
+          <h3 id="compteStatusTitre"></h3>
+          <p id="compteStatusDescription"></p>
+          <div class="account-status-actions">
+            <button type="button" class="btn-main" id="btnStatusCompleter" style="display:none;">Compléter mon profil</button>
+            <button type="button" class="btn-main" id="btnStatusPublier" style="display:none;">Publier une annonce</button>
+            <button type="button" class="btn-outline-small" id="btnStatusAnnonces" style="display:none;">Voir les annonces</button>
+          </div>
         </div>
         <div id="carteCompleterProfil" class="card" style="margin-bottom:20px;display:none;background:#FBF0DC;border-color:var(--or);">
           <p style="color:var(--encre);line-height:1.6;margin-bottom:14px;"><strong>Encore une étape !</strong><br>Complétez ces informations pour pouvoir publier des annonces et être contacté(e).</p>
@@ -2147,6 +2159,14 @@
     showView('accueil');
   });
   document.getElementById('btnAllerPublier').addEventListener('click', () => { choisirTypeAnnonce('vente'); showView('nouvelle-pub'); });
+  document.getElementById('btnStatusCompleter').addEventListener('click', () => {
+    document.getElementById('carteCompleterProfil').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    document.getElementById('cpPrenom').focus();
+  });
+  document.getElementById('btnStatusPublier').addEventListener('click', () => {
+    document.getElementById('btnAllerPublier').click();
+  });
+  document.getElementById('btnStatusAnnonces').addEventListener('click', () => showView('publications'));
   document.getElementById('btnPublierDepuisAnnonces').addEventListener('click', () => {
     if(currentUser && currentProfile && currentProfile.type_acteur && currentProfile.compte_approuve && !currentProfile.compte_rejete){
       document.getElementById('btnAllerPublier').click();
@@ -2267,13 +2287,33 @@
       const pendingMsg = document.getElementById('compteEnAttente');
       const completeCard = document.getElementById('carteCompleterProfil');
       const publierBtn = document.getElementById('btnAllerPublier');
+      const statusTitle = document.getElementById('compteStatusTitre');
+      const statusDescription = document.getElementById('compteStatusDescription');
+      const statusCompleteBtn = document.getElementById('btnStatusCompleter');
+      const statusPublishBtn = document.getElementById('btnStatusPublier');
+      const statusAnnouncementsBtn = document.getElementById('btnStatusAnnonces');
+      pendingMsg.style.display = 'none';
+      pendingMsg.style.background = '';
+      pendingMsg.style.borderColor = '';
+      pendingMsg.dataset.state = '';
+      statusTitle.textContent = '';
+      statusDescription.textContent = '';
+      statusCompleteBtn.style.display = 'none';
+      statusPublishBtn.style.display = 'none';
+      statusAnnouncementsBtn.style.display = 'none';
       if(profile && !profile.type_acteur){
+        pendingMsg.dataset.state = 'incomplete';
+        pendingMsg.style.display = 'block';
+        statusTitle.textContent = 'PROFIL À COMPLÉTER';
+        statusDescription.textContent = 'Ajoutez vos informations de profil pour pouvoir publier des annonces et être contacté(e).';
+        statusCompleteBtn.style.display = 'inline-block';
+        statusPublishBtn.style.display = 'none';
+        statusAnnouncementsBtn.style.display = 'none';
         if(completeCard){
           completeCard.style.display = 'block';
           document.getElementById('cpPrenom').value = profile.prenom || '';
           document.getElementById('cpNom').value = profile.nom || '';
         }
-        if(pendingMsg) pendingMsg.style.display = 'none';
         if(publierBtn) publierBtn.style.display = 'none';
       } else if(profile && profile.compte_rejete){
         if(completeCard) completeCard.style.display = 'none';
@@ -2287,6 +2327,12 @@
       } else if(profile && !profile.compte_approuve){
         if(completeCard) completeCard.style.display = 'none';
         if(pendingMsg) pendingMsg.style.display = 'block';
+        pendingMsg.dataset.state = 'pending';
+        statusTitle.textContent = 'EN ATTENTE DE VÉRIFICATION';
+        statusDescription.textContent = 'Votre profil est en cours de vérification. Nous vous contacterons si des informations complémentaires sont nécessaires. En attendant, vous pouvez consulter les annonces.';
+        statusCompleteBtn.style.display = 'none';
+        statusPublishBtn.style.display = 'none';
+        statusAnnouncementsBtn.style.display = 'inline-block';
         if(publierBtn) publierBtn.style.display = 'none';
       } else if(!profile){
         if(completeCard) completeCard.style.display = 'none';
@@ -2294,12 +2340,21 @@
           pendingMsg.style.display = 'block';
           pendingMsg.style.background = '#FBE9E7';
           pendingMsg.style.borderColor = 'var(--rouge)';
-          pendingMsg.innerHTML = '<p style="color:var(--encre);line-height:1.6;"><strong>Ton profil est introuvable.</strong><br>Il y a eu un problème lors de la création de ton compte. Contacte-nous sur WhatsApp pour le corriger.</p>';
+          pendingMsg.dataset.state = 'missing';
+          statusTitle.textContent = 'PROFIL INTROUVABLE';
+          statusDescription.textContent = 'Ton profil est introuvable. Il y a eu un problème lors de la création de ton compte. Contacte-nous sur WhatsApp pour le corriger.';
         }
         if(publierBtn) publierBtn.style.display = 'none';
       } else {
         if(completeCard) completeCard.style.display = 'none';
         if(pendingMsg) pendingMsg.style.display = 'none';
+        pendingMsg.dataset.state = 'active';
+        pendingMsg.style.display = 'block';
+        statusTitle.textContent = 'COMPTE ACTIF / APPROUVÉ';
+        statusDescription.textContent = 'Votre compte est approuvé. Vous pouvez publier des annonces et contacter les acteurs agricoles.';
+        statusCompleteBtn.style.display = 'none';
+        statusPublishBtn.style.display = 'inline-block';
+        statusAnnouncementsBtn.style.display = 'none';
         if(publierBtn) publierBtn.style.display = 'inline-block';
       }
     } else {
