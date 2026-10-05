@@ -144,7 +144,7 @@
       radial-gradient(ellipse 1000px 560px at 84% -8%, rgba(217,166,43,0.22), transparent 60%),
       radial-gradient(ellipse 700px 500px at -5% 105%, rgba(63,139,68,0.25), transparent 55%),
       var(--grad-vert);
-    color:var(--ivoire); padding:64px 32px 118px; position:relative; overflow:hidden;
+    color:var(--ivoire); padding:64px 32px 96px; position:relative; overflow:hidden;
   }
   .hero-grain{
     position:absolute; inset:0; pointer-events:none;
@@ -163,8 +163,8 @@
     font-style:italic; font-weight:400;
     background:var(--grad-or); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;
   }
-  .hero p.lede{ margin-top:28px; font-size:1.14rem; line-height:1.68; color:rgba(245,239,224,0.82); max-width:46ch; }
-  .hero-actions{ margin-top:40px; display:flex; gap:16px; flex-wrap:wrap; }
+  .hero p.lede{ margin-top:22px; font-size:1.08rem; line-height:1.65; color:rgba(245,239,224,0.88); max-width:54ch; }
+  .hero-actions{ margin-top:32px; display:flex; align-items:center; gap:12px 16px; flex-wrap:wrap; }
 
   .btn-primary{
     position:relative; overflow:hidden;
@@ -184,8 +184,13 @@
     padding:15.5px 26px; border-radius:100px; transition:border-color .25s ease, background .25s ease, transform .25s ease; display:inline-block;
   }
   .btn-ghost:hover{ border-color:var(--or-clair); background:rgba(217,166,43,0.1); transform:translateY(-2px); }
+  .hero-whatsapp{
+    display:inline-flex; align-items:center; min-height:44px; padding:8px 4px;
+    color:rgba(245,239,224,0.8); font-size:0.88rem; text-decoration:underline; text-underline-offset:4px;
+  }
+  .hero-whatsapp:hover{ color:var(--or-clair); }
 
-  .hero-stats{ margin-top:52px; display:flex; gap:14px; flex-wrap:wrap; }
+  .hero-stats{ margin-top:38px; display:flex; gap:12px; flex-wrap:wrap; }
   .hero-stat{
     background:rgba(245,239,224,0.07); border:1px solid rgba(217,166,43,0.28); backdrop-filter:blur(6px);
     border-radius:16px; padding:14px 20px; min-width:120px;
@@ -196,11 +201,29 @@
   .hero-weave{ position:relative; aspect-ratio:1/1.05; filter:drop-shadow(0 20px 40px rgba(0,0,0,0.35)); }
   .hero-weave svg{ width:100%; height:100%; }
   .weave-node-label{ font-family:'IBM Plex Mono',monospace; font-size:0.62rem; fill:rgba(245,239,224,0.7); letter-spacing:0.05em; }
-  @media (max-width:880px){ .hero-inner{ grid-template-columns:1fr; } .hero-weave{ max-width:320px; margin:0 auto; } }
+  @media (max-width:880px){
+    .hero{ padding:48px 24px 72px; }
+    .hero-inner{ grid-template-columns:1fr; gap:32px; }
+    .hero-weave{ max-width:280px; margin:0 auto; }
+  }
+  @media (max-width:560px){
+    .hero{ padding:38px 20px 56px; }
+    .hero-inner{ gap:26px; }
+    .hero-eyebrow{ margin-bottom:16px; }
+    .hero h1{ font-size:clamp(2.35rem, 11vw, 3.2rem); }
+    .hero p.lede{ margin-top:18px; font-size:1rem; line-height:1.6; }
+    .hero-actions{ margin-top:26px; flex-direction:column; align-items:stretch; gap:8px; }
+    .hero-actions .btn-primary, .hero-actions .btn-ghost{ width:100%; text-align:center; }
+    .hero-whatsapp{ justify-content:center; }
+    .hero-stats{ margin-top:28px; display:grid; grid-template-columns:repeat(auto-fit, minmax(min(100%, 130px), 1fr)); gap:10px; }
+    .hero-stat{ min-width:0; padding:12px 14px; }
+    .hero-weave{ max-width:240px; }
+  }
 
   section{ padding:96px 0; position:relative; }
   .section-head{ max-width:640px; margin-bottom:58px; }
   .section-head .eyebrow{ margin-bottom:16px; display:block; color:var(--or); }
+  #view-accueil .section-head .eyebrow{ color:var(--or-fonce); }
   .section-head h2{ font-size:clamp(1.9rem, 3.4vw, 2.6rem); line-height:1.14; font-weight:500; }
   .section-head p{ margin-top:18px; font-size:1.03rem; color:var(--encre-douce); line-height:1.62; }
   .reveal{ opacity:0; transform:translateY(26px) scale(0.985); transition:opacity .75s cubic-bezier(.2,.7,.2,1), transform .75s cubic-bezier(.2,.7,.2,1); }
@@ -606,10 +629,11 @@
         <div>
           <div class="hero-eyebrow"><span class="line"></span><span class="eyebrow">Plateforme numérique agricole — Bénin</span></div>
           <h1>Bénin,<br><em>terre connectée</em>.</h1>
-          <p class="lede">Rĩch Farm Unity relie sur une seule plateforme semenciers, vendeurs d'outils agricoles, producteurs, éleveurs, transformateurs, commerçants et consommateurs — pour que chaque récolte trouve son marché, et que chaque marché trouve sa récolte, partout au Bénin.</p>
+          <p class="lede">Rĩch Farm Unity met en relation semenciers, fournisseurs d’outils et d’intrants, producteurs, éleveurs, transformateurs, commerçants et consommateurs. Publiez vos offres, trouvez des partenaires et échangez directement, partout au Bénin.</p>
           <div class="hero-actions">
             <a href="#" class="btn-primary" onclick="showView('compte'); return false;">Créer mon compte</a>
-            <a href="https://whatsapp.com/channel/0029VaqhsG3B4hdYsix5ZO0I" target="_blank" class="btn-ghost">Rejoindre sur WhatsApp</a>
+            <a href="#" class="btn-ghost" onclick="showView('publications'); return false;">Découvrir les annonces</a>
+            <a href="https://whatsapp.com/channel/0029VaqhsG3B4hdYsix5ZO0I" target="_blank" class="hero-whatsapp">Rejoindre sur WhatsApp</a>
           </div>
           <div class="hero-stats">
             <div class="hero-stat"><div class="num">8</div><div class="label">maillons réunis sur une plateforme</div></div>
