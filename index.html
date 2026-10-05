@@ -393,13 +393,18 @@
   .pub-top{ display:flex; justify-content:space-between; align-items:flex-start; gap:12px; flex-wrap:wrap; }
   .pub-card h3{ font-size:1.06rem; }
   .pub-tag{ font-family:'IBM Plex Mono',monospace; font-size:0.68rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--terre); margin-bottom:6px; display:block; font-weight:600; }
+  .pub-type{ display:inline-block; margin-bottom:8px; padding:6px 11px; border-radius:100px; background:#E6F1E6; color:var(--vert-rich); font-size:0.72rem; font-weight:700; letter-spacing:0.04em; }
+  .pub-type.achat{ background:#FBF0DC; color:var(--or-fonce); }
   .pub-statut{ font-size:0.72rem; font-weight:700; padding:5px 12px; border-radius:100px; background:var(--ivoire-2); color:var(--vert-rich); white-space:nowrap; }
   .pub-statut.reserve{ background:#FBF0DC; color:var(--or-fonce); }
   .pub-statut.ecoule{ background:#F0E8E0; color:var(--encre-douce); }
   .pub-card p.desc{ margin-top:10px; font-size:0.9rem; color:var(--encre-douce); line-height:1.5; }
   .pub-meta{ margin-top:14px; display:flex; gap:16px; flex-wrap:wrap; font-size:0.82rem; color:var(--encre-douce); }
+  .pub-meta-priority{ margin:14px 0 4px; padding:12px 14px; border-radius:12px; background:var(--ivoire-2); gap:10px 20px; }
   .pub-meta strong{ color:var(--vert-nuit); }
   .pub-footer{ margin-top:12px; font-size:0.78rem; color:var(--encre-douce); font-family:'IBM Plex Mono',monospace; }
+  .pub-contact-btn{ display:inline-flex; align-items:center; justify-content:center; margin-top:16px !important; padding:11px 20px; font-size:0.9rem; }
+  @media (max-width:600px){ .pub-contact-btn{ width:100%; } }
   .empty{ text-align:center; padding:54px 20px; color:var(--encre-douce); }
   .empty h3{ margin-bottom:8px; color:var(--vert-nuit); }
   .formation-card{ background:var(--creme); border:1px solid rgba(184,134,11,0.28); border-radius:16px; padding:26px; margin-bottom:18px; box-shadow:var(--ombre-douce); }
@@ -2312,9 +2317,11 @@
       const photoHtml = galleryHtml(p, 300);
       const ecoBadge = p.eco_responsable ? '<span class="pub-statut" style="background:#E6F1E6;color:var(--vert-rich);margin-left:6px;">🌱 Éco-responsable</span>' : '';
       const waNumber = contact ? contact.replace(/[^0-9]/g, '') : '';
-      const contactBtn = waNumber ? `<a href="https://wa.me/${waNumber}?text=${encodeURIComponent('Bonjour, je vous contacte au sujet de votre annonce "' + p.titre + '" sur Rĩch Farm Unity.')}" target="_blank" class="btn-small" style="display:inline-block;margin-top:12px;">Contacter sur WhatsApp</a>` : '';
+      const contactBtn = waNumber ? `<a href="https://wa.me/${waNumber}?text=${encodeURIComponent('Bonjour, je vous contacte au sujet de votre annonce "' + p.titre + '" sur Rĩch Farm Unity.')}" target="_blank" class="btn-small pub-contact-btn">Contacter sur WhatsApp</a>` : '';
       const shareUrl = `https://richfarmunity.com/share?id=${p.id}`;
       const estAchat = p.type_annonce === 'achat';
+      const typeAnnonceLabel = estAchat ? 'JE CHERCHE À ACHETER' : 'JE VENDS';
+      const typeAnnonceClass = estAchat ? 'achat' : 'vente';
       const ficheEntete = estAchat ? "🛒 FICHE D'ACHAT (Je veux acheter)" : "🌾 FICHE DE VENTE (Je vends)";
       const lignesFiche = [
         `Produit : ${p.titre}`,
@@ -2331,7 +2338,7 @@
         : (isAdmin ? `<button class="btn-outline-small" style="margin-top:12px;margin-left:8px;border-color:var(--rouge);color:var(--rouge);" onclick="supprimerAnnonce('${p.id}')">🛡️ Supprimer (admin)</button>` : '');
       const audioHtml = p.audio_url ? `<audio src="${p.audio_url}" controls style="width:100%;margin:10px 0;"></audio>` : '';
       const avisBtn = (currentUser && !isOwner) ? `<button class="btn-outline-small" style="margin-top:12px;margin-left:8px;" onclick="ouvrirAvisModal('${p.user_id}', '${escapeHtml(auteur).replace(/'/g, "\\'")}')">⭐ Laisser un avis</button>` : '';
-      return `<div class="pub-card"><div class="pub-top"><div><span class="pub-tag">${p.categorie}</span><h3>${escapeHtml(p.titre)}</h3></div><span class="pub-statut ${statutClass}">${statutLabel}</span>${ecoBadge}</div>${photoHtml}${p.description ? '<p class="desc">' + escapeHtml(p.description) + '</p>' : ''}${audioHtml}<div class="pub-meta">${p.quantite ? '<span><strong>Quantité :</strong> ' + escapeHtml(p.quantite) + '</span>' : ''}${p.prix ? '<span><strong>Prix :</strong> ' + escapeHtml(p.prix) + '</span>' : ''}${p.localisation ? '<span><strong>Lieu :</strong> ' + escapeHtml(p.localisation) + '</span>' : ''}</div><div class="pub-footer">Publié par ${escapeHtml(auteur)}${contact ? ' · ' + escapeHtml(contact) : ''}${certifBadge}<br><span id="avisBadge-${p.user_id}" class="stars-display"></span></div>${contactBtn}${shareBtn}${avisBtn}${deleteBtn}</div>`;
+      return `<div class="pub-card"><div class="pub-top"><div><span class="pub-type ${typeAnnonceClass}">${typeAnnonceLabel}</span><span class="pub-tag">${p.categorie}</span><h3>${escapeHtml(p.titre)}</h3></div><span class="pub-statut ${statutClass}">${statutLabel}</span>${ecoBadge}</div><div class="pub-meta pub-meta-priority">${p.quantite ? '<span><strong>Quantité :</strong> ' + escapeHtml(p.quantite) + '</span>' : ''}${p.prix ? '<span><strong>Prix :</strong> ' + escapeHtml(p.prix) + '</span>' : ''}${p.localisation ? '<span><strong>Lieu :</strong> ' + escapeHtml(p.localisation) + '</span>' : ''}</div>${photoHtml}${p.description ? '<p class="desc">' + escapeHtml(p.description) + '</p>' : ''}${audioHtml}<div class="pub-footer">Publié par ${escapeHtml(auteur)}${contact ? ' · ' + escapeHtml(contact) : ''}${certifBadge}<br><span id="avisBadge-${p.user_id}" class="stars-display"></span></div>${contactBtn}${shareBtn}${avisBtn}${deleteBtn}</div>`;
     }).join('');
     renderAvisBadges([...new Set(data.map(p => p.user_id))]);
   }
