@@ -405,6 +405,10 @@
   .pub-footer{ margin-top:12px; font-size:0.78rem; color:var(--encre-douce); font-family:'IBM Plex Mono',monospace; }
   .pub-contact-btn{ display:inline-flex; align-items:center; justify-content:center; margin-top:16px !important; padding:11px 20px; font-size:0.9rem; }
   @media (max-width:600px){ .pub-contact-btn{ width:100%; } }
+  .annonces-publish-cta{ display:flex; align-items:center; justify-content:space-between; gap:16px; margin-bottom:18px; padding:18px 22px; }
+  .annonces-publish-cta h3{ font-size:1rem; }
+  .annonces-publish-cta p{ margin-top:4px; color:var(--encre-douce); font-size:0.88rem; }
+  @media (max-width:600px){ .annonces-publish-cta{ align-items:stretch; flex-direction:column; gap:12px; padding:18px; } }
   .empty{ text-align:center; padding:54px 20px; color:var(--encre-douce); }
   .empty h3{ margin-bottom:8px; color:var(--vert-nuit); }
   .formation-card{ background:var(--creme); border:1px solid rgba(184,134,11,0.28); border-radius:16px; padding:26px; margin-bottom:18px; box-shadow:var(--ombre-douce); }
@@ -966,6 +970,13 @@
             <div class="msg" id="msgAlerte"></div>
           </form>
         </div>
+      </div>
+      <div class="card annonces-publish-cta">
+        <div>
+          <h3>Vous avez un produit ou un besoin à partager ?</h3>
+          <p>Publiez votre annonce et trouvez des partenaires agricoles.</p>
+        </div>
+        <button type="button" class="btn-main" id="btnPublierDepuisAnnonces">+ Publier une annonce</button>
       </div>
       <div id="pubListContainer" class="pub-list"><div class="empty"><h3>Chargement…</h3></div></div>
     </div>
@@ -2136,6 +2147,13 @@
     showView('accueil');
   });
   document.getElementById('btnAllerPublier').addEventListener('click', () => { choisirTypeAnnonce('vente'); showView('nouvelle-pub'); });
+  document.getElementById('btnPublierDepuisAnnonces').addEventListener('click', () => {
+    if(currentUser && currentProfile && currentProfile.type_acteur && currentProfile.compte_approuve && !currentProfile.compte_rejete){
+      document.getElementById('btnAllerPublier').click();
+    } else {
+      showView('compte');
+    }
+  });
 
   // ---- Mot de passe oublié ----
   document.getElementById('formForgotPassword').addEventListener('submit', async (e) => {
