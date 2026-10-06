@@ -393,6 +393,12 @@
   .msg.success{ background:#E6F1E6; color:var(--vert-rich); display:block; }
   .filters{ display:flex; gap:10px; flex-wrap:wrap; margin-bottom:22px; }
   .filters select{ padding:9px 14px; border-radius:100px; border:1px solid rgba(27,94,32,0.25); background:#fff; font-size:0.84rem; }
+  .pub-type-filters{ display:flex; gap:12px; margin-bottom:20px; }
+  .pub-type-filters button{ flex:1; min-width:0; min-height:44px; padding:12px 8px; font-size:0.92rem; }
+  @media (max-width:600px){
+    #view-publications .filters select{ flex:1 1 100%; width:100%; min-width:0; min-height:44px; }
+    #view-publications .filters label{ max-width:100%; }
+  }
   .pub-list{ display:flex; flex-direction:column; gap:16px; }
   .pub-card{ background:var(--creme); border:1px solid rgba(27,94,32,0.12); border-radius:16px; padding:24px; box-shadow:var(--ombre-douce); transition:transform .25s ease, box-shadow .25s ease; }
   .pub-card:hover{ transform:translateY(-3px); box-shadow:0 20px 40px rgba(15,44,19,0.14); }
@@ -904,9 +910,10 @@
           <p>Semences, outils, récoltes, bétail, produits transformés — tout ce qui se propose au Bénin.</p>
         </div>
       </div>
-      <div style="display:flex;gap:12px;margin-bottom:20px;">
-        <button type="button" id="btnFiltreVentes" class="btn-main" style="flex:1;" onclick="filtrerTypeAnnonce('vente')">🌾 Ventes</button>
-        <button type="button" id="btnFiltreAchats" class="btn-outline-small" style="flex:1;padding:14px;font-size:0.92rem;" onclick="filtrerTypeAnnonce('achat')">🛒 Achats</button>
+      <div class="pub-type-filters">
+        <button type="button" id="btnFiltreToutes" class="btn-main" aria-pressed="true" onclick="filtrerTypeAnnonce('toutes')">Toutes</button>
+        <button type="button" id="btnFiltreVentes" class="btn-outline-small" aria-pressed="false" onclick="filtrerTypeAnnonce('vente')">Ventes</button>
+        <button type="button" id="btnFiltreAchats" class="btn-outline-small" aria-pressed="false" onclick="filtrerTypeAnnonce('achat')">Achats</button>
       </div>
       <div class="field" style="margin-bottom:16px;">
         <input type="text" id="searchAnnonces" placeholder="Rechercher (ex : maïs, tracteur, semences...)" style="width:100%;padding:13px 16px;border-radius:100px;border:1px solid rgba(27,94,32,0.3);background:#fff;">
@@ -1444,9 +1451,15 @@
             <div class="field"><label for="cpType">Je suis…</label>
               <select id="cpType" required>
                 <option value="">Choisir un rôle</option>
-                <option value="Producteur">Producteur</option>
+                <option value="Semencier">Semencier</option>
+                <option value="Vendeur d'outils agricoles">Vendeur d'outils agricoles</option>
+                <option value="Fournisseur d'intrants">Fournisseur d'intrants (engrais, pesticides, produits vétérinaires…)</option>
+                <option value="Propriétaire foncier">Propriétaire foncier (terres à louer, vendre, disposer)</option>
+                <option value="Producteur (végétal)">Producteur végétal</option>
+                <option value="Éleveur (animal)">Éleveur (animal)</option>
+                <option value="Agroforesterie / Foresterie">Agroforesterie / Foresterie</option>
                 <option value="Transformateur">Transformateur</option>
-                <option value="Distributeur">Distributeur / commerçant</option>
+                <option value="Commerçant">Distributeur / commerçant</option>
                 <option value="Consommateur">Consommateur</option>
                 <option value="Membre d'institution">Membre d'institution (recherche, ONG, État…)</option>
               </select>
@@ -2366,7 +2379,7 @@
     }
   }
 
-  let typeAnnonceActuel = 'vente';
+  let typeAnnonceActuel = 'toutes';
   async function loadPublications(silencieux){
     const container = document.getElementById('pubListContainer');
     if(!container.dataset.avisHandlerAttached){
@@ -2377,7 +2390,8 @@
       container.dataset.avisHandlerAttached = 'true';
     }
     if(!silencieux) container.innerHTML = '<div class="empty"><h3>Chargement…</h3></div>';
-    let query = sb.from('publications').select('*, profiles(prenom, nom, telephone, type_acteur)').eq('type_annonce', typeAnnonceActuel).order('created_at', { ascending: false });
+    let query = sb.from('publications').select('*, profiles(prenom, nom, telephone, type_acteur)').order('created_at', { ascending: false });
+    if(typeAnnonceActuel !== 'toutes') query = query.eq('type_annonce', typeAnnonceActuel);
     const cat = document.getElementById('filterCategorie').value;
     const statut = document.getElementById('filterStatut').value;
     const search = document.getElementById('searchAnnonces').value.trim();
@@ -2529,15 +2543,16 @@
 
   window.filtrerTypeAnnonce = function(type){
     typeAnnonceActuel = type;
-    const btnVentes = document.getElementById('btnFiltreVentes');
-    const btnAchats = document.getElementById('btnFiltreAchats');
-    if(type === 'vente'){
-      btnVentes.className = 'btn-main'; btnVentes.style.cssText = 'flex:1;';
-      btnAchats.className = 'btn-outline-small'; btnAchats.style.cssText = 'flex:1;padding:14px;font-size:0.92rem;';
-    } else {
-      btnAchats.className = 'btn-main'; btnAchats.style.cssText = 'flex:1;';
-      btnVentes.className = 'btn-outline-small'; btnVentes.style.cssText = 'flex:1;padding:14px;font-size:0.92rem;';
-    }
+    const boutons = {
+      toutes: document.getElementById('btnFiltreToutes'),
+      vente: document.getElementById('btnFiltreVentes'),
+      achat: document.getElementById('btnFiltreAchats')
+    };
+    Object.entries(boutons).forEach(([valeur, bouton]) => {
+      const actif = valeur === type;
+      bouton.className = actif ? 'btn-main' : 'btn-outline-small';
+      bouton.setAttribute('aria-pressed', String(actif));
+    });
     loadPublications();
   };
 
