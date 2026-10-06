@@ -415,6 +415,9 @@
   .pub-meta-priority{ margin:14px 0 4px; padding:12px 14px; border-radius:12px; background:var(--ivoire-2); gap:10px 20px; }
   .pub-meta strong{ color:var(--vert-nuit); }
   .pub-footer{ margin-top:12px; font-size:0.78rem; color:var(--encre-douce); font-family:'IBM Plex Mono',monospace; }
+  .mes-annonce-status{ display:flex; flex-direction:column; gap:6px; min-width:0; margin-top:12px; }
+  .mes-annonce-status select{ box-sizing:border-box; width:100%; max-width:100%; min-width:0; min-height:44px; padding:9px 12px; border:1px solid rgba(27,94,32,0.25); border-radius:10px; background:#fff; color:var(--vert-nuit); font:inherit; }
+  .mes-annonce-status-message{ margin-top:10px; padding:10px 12px; border-radius:10px; background:#FBE9E7; color:var(--rouge); font-size:0.86rem; }
   .pub-contact-btn{ display:inline-flex; align-items:center; justify-content:center; margin-top:16px !important; padding:11px 20px; font-size:0.9rem; }
   @media (max-width:600px){ .pub-contact-btn{ width:100%; } }
   .annonces-publish-cta{ display:flex; align-items:center; justify-content:space-between; gap:16px; margin-bottom:18px; padding:18px 22px; }
@@ -2523,22 +2526,65 @@
     if(mesAnnoncesVisible) await loadMesAnnonces();
   };
 
-  async function loadMesAnnonces(){
+  async function loadMesAnnonces(messageAnnonceId, messageStatut){
     if(!currentUser) return;
     const container = document.getElementById('mesAnnoncesContainer');
     container.innerHTML = '<div class="empty"><h3>Chargement…</h3></div>';
     const { data, error } = await sb.from('publications').select('*').eq('user_id', currentUser.id).order('created_at', { ascending: false });
-    if(error){ container.innerHTML = '<div class="empty"><h3>Erreur</h3><p>' + error.message + '</p></div>'; return; }
+    if(error){
+      const message = messageStatut ? '<p>' + escapeHtml(messageStatut) + ' La valeur enregistrée n’a pas pu être rechargée.</p>' : '';
+      container.innerHTML = '<div class="empty"><h3>Erreur</h3>' + message + '<p>' + escapeHtml(error.message) + '</p></div>';
+      return;
+    }
     if(!data || data.length === 0){ container.innerHTML = '<div class="empty"><h3>Vous n\'avez encore rien publié</h3></div>'; return; }
+    if(!container.dataset.statutHandlerAttached){
+      container.addEventListener('change', event => {
+        const select = event.target.closest('select[data-annonce-statut]');
+        if(select) changerStatutAnnonce(select.dataset.annonceId, select.value);
+      });
+      container.dataset.statutHandlerAttached = 'true';
+    }
     container.innerHTML = data.map(p => {
       let statutLabel, statutClass;
       if(p.rejete){ statutLabel = 'Rejetée'; statutClass = 'ecoule'; }
       else if(!p.approuve){ statutLabel = 'En attente de validation'; statutClass = 'reserve'; }
-      else { statutLabel = p.statut === 'reserve' ? 'Réservé' : (p.statut === 'ecoule' ? 'Écoulé' : 'Disponible'); statutClass = p.statut === 'reserve' ? 'reserve' : (p.statut === 'ecoule' ? 'ecoule' : ''); }
+      else if(p.statut === 'disponible' || p.statut === 'reserve' || p.statut === 'ecoule') { statutLabel = p.statut === 'reserve' ? 'Réservé' : (p.statut === 'ecoule' ? 'Écoulé' : 'Disponible'); statutClass = p.statut === 'reserve' ? 'reserve' : (p.statut === 'ecoule' ? 'ecoule' : ''); }
+      else { statutLabel = 'Statut commercial non reconnu'; statutClass = 'reserve'; }
       const date = p.created_at ? new Date(p.created_at).toLocaleDateString('fr-FR') : '';
       const photoHtml = galleryHtml(p, 220);
-      return `<div class="pub-card"><div class="pub-top"><div><span class="pub-tag">${escapeHtml(p.categorie)}</span><h3>${escapeHtml(p.titre)}</h3></div><span class="pub-statut ${statutClass}">${statutLabel}</span></div>${photoHtml}<div class="pub-footer">Publié le ${date}</div><button class="btn-outline-small" style="margin-top:12px;border-color:var(--rouge);color:var(--rouge);" onclick="supprimerAnnonce('${p.id}')">Supprimer</button></div>`;
+      const statutControl = p.approuve && !p.rejete && (p.statut === 'disponible' || p.statut === 'reserve' || p.statut === 'ecoule')
+        ? `<label class="mes-annonce-status"><span>Statut commercial</span><select data-annonce-statut data-annonce-id="${escapeHtml(p.id)}" aria-label="Statut commercial de ${escapeHtml(p.titre)}"><option value="disponible"${p.statut === 'disponible' ? ' selected' : ''}>Disponible</option><option value="reserve"${p.statut === 'reserve' ? ' selected' : ''}>Réservé</option><option value="ecoule"${p.statut === 'ecoule' ? ' selected' : ''}>Écoulé</option></select></label>`
+        : (!p.rejete && p.approuve && statutLabel === 'Statut commercial non reconnu' ? `<div class="mes-annonce-status"><span>${statutLabel} : ${escapeHtml(String(p.statut))}</span></div>` : '');
+      const statutMessage = messageStatut && p.id === messageAnnonceId ? `<p class="mes-annonce-status-message" role="alert">${escapeHtml(messageStatut)}</p>` : '';
+      return `<div class="pub-card"><div class="pub-top"><div><span class="pub-tag">${escapeHtml(p.categorie)}</span><h3>${escapeHtml(p.titre)}</h3></div><span class="pub-statut ${statutClass}">${statutLabel}</span></div>${photoHtml}<div class="pub-footer">Publié le ${date}</div>${statutControl}${statutMessage}<button class="btn-outline-small" style="margin-top:12px;border-color:var(--rouge);color:var(--rouge);" onclick="supprimerAnnonce('${p.id}')">Supprimer</button></div>`;
     }).join('');
+  }
+
+  async function changerStatutAnnonce(id, statut){
+    const statutsAutorises = ['disponible', 'reserve', 'ecoule'];
+    if(!currentUser || !statutsAutorises.includes(statut)) return;
+    const container = document.getElementById('mesAnnoncesContainer');
+    const select = [...container.querySelectorAll('select[data-annonce-statut]')].find(element => element.dataset.annonceId === id);
+    if(select) select.disabled = true;
+    let updateError = null;
+    let annonceModifiee = null;
+    try{
+      const result = await sb.from('publications').update({ statut }).eq('id', id).eq('user_id', currentUser.id).select('id').maybeSingle();
+      updateError = result.error;
+      annonceModifiee = result.data;
+    } catch(error){
+      updateError = error;
+    }
+    if(updateError || !annonceModifiee){
+      const detail = updateError && updateError.message ? ' ' + updateError.message : '';
+      const message = updateError
+        ? 'Le statut n’a pas pu être modifié.' + detail
+        : 'Aucune annonce correspondante n’a été modifiée. Vérifiez vos droits ou rechargez la page.';
+      await loadMesAnnonces(id, message);
+      return;
+    }
+    await loadMesAnnonces();
+    if(getActiveViewName() === 'publications') loadPublications();
   }
 
   window.filtrerTypeAnnonce = function(type){
