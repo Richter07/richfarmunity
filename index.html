@@ -1598,6 +1598,13 @@
           </form>
         </div>
       </div>
+      <div id="compteErreurTechnique" class="card account-status" style="margin-bottom:20px;display:none;" role="alert">
+        <h3>Impossible de charger votre profil</h3>
+        <p>Une erreur technique empêche le chargement de votre compte. Vérifiez votre connexion et réessayez.</p>
+        <div class="account-status-actions">
+          <button type="button" class="btn-main" id="btnReessayerProfil">Réessayer</button>
+        </div>
+      </div>
     </div>
   </div>
   <!-- ==================== VUE À PROPOS / CONTACT ==================== -->
@@ -2183,6 +2190,7 @@
     document.getElementById('btnAllerPublier').click();
   });
   document.getElementById('btnStatusAnnonces').addEventListener('click', () => showView('publications'));
+  document.getElementById('btnReessayerProfil').addEventListener('click', () => refreshSession());
   document.getElementById('btnPublierDepuisAnnonces').addEventListener('click', () => {
     if(currentUser && currentProfile && currentProfile.type_acteur && currentProfile.compte_approuve && !currentProfile.compte_rejete){
       document.getElementById('btnAllerPublier').click();
@@ -2260,14 +2268,60 @@
     btn.disabled = false;
   });
 
+  let refreshSessionRequestId = 0;
   async function refreshSession(){
     if(isPasswordRecovery) return;
-    const { data: { session } } = await sb.auth.getSession();
+    const requestId = ++refreshSessionRequestId;
+    const isCurrentRequest = () => requestId === refreshSessionRequestId;
+    const errorCard = document.getElementById('compteErreurTechnique');
+    const showTechnicalError = (error) => {
+      if(!isCurrentRequest()) return;
+      console.error('Impossible de charger la session ou le profil', error);
+      currentProfile = null;
+      document.getElementById('accountLabel').textContent = currentUser ? currentUser.email : '';
+      document.getElementById('compteConnecte').style.display = 'none';
+      document.getElementById('compteNonConnecte').style.display = 'none';
+      errorCard.style.display = 'block';
+      document.getElementById('btnNouvelleFormation').style.display = 'none';
+      document.getElementById('btnNouveauSujet').style.display = 'none';
+      document.getElementById('tabModeration').style.display = 'none';
+      document.getElementById('tabSuggestions').style.display = 'none';
+      document.getElementById('tabMembres').style.display = 'none';
+      document.getElementById('tabStats').style.display = 'none';
+      document.getElementById('carteAjoutContactInstit').style.display = 'none';
+      document.getElementById('carteAjoutPub').style.display = 'none';
+    };
+    let sessionResult;
+    try {
+      sessionResult = await sb.auth.getSession();
+    } catch(error) {
+      showTechnicalError(error);
+      return;
+    }
+    if(!isCurrentRequest()) return;
+    if(sessionResult.error){
+      showTechnicalError(sessionResult.error);
+      return;
+    }
+    const session = sessionResult.data && sessionResult.data.session;
     currentUser = session ? session.user : null;
     if(currentUser){
-      const { data: profile } = await sb.from('profiles').select('*').eq('id', currentUser.id).single();
+      let profileResult;
+      try {
+        profileResult = await sb.from('profiles').select('*').eq('id', currentUser.id).maybeSingle();
+      } catch(error) {
+        showTechnicalError(error);
+        return;
+      }
+      if(!isCurrentRequest()) return;
+      if(profileResult.error){
+        showTechnicalError(profileResult.error);
+        return;
+      }
+      const profile = profileResult.data;
       if(profile && profile.compte_rejete){
         await sb.auth.signOut();
+        if(!isCurrentRequest()) return;
         currentUser = null;
         currentProfile = null;
         alert("Votre compte n'a pas été validé et n'est plus accessible. Vous pouvez créer un nouveau compte si besoin, ou nous contacter sur WhatsApp.");
@@ -2280,6 +2334,7 @@
         document.getElementById('tabStats').style.display = 'none';
         return;
       }
+      errorCard.style.display = 'none';
       currentProfile = profile;
       document.getElementById('accountLabel').textContent = profile ? (profile.prenom + ' ' + profile.nom) : currentUser.email;
       document.getElementById('compteConnecte').style.display = 'block';
@@ -2375,6 +2430,7 @@
       }
     } else {
       currentProfile = null;
+      errorCard.style.display = 'none';
       document.getElementById('accountLabel').textContent = '';
       document.getElementById('compteConnecte').style.display = 'none';
       document.getElementById('compteNonConnecte').style.display = 'block';
