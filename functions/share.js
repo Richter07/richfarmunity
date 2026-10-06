@@ -17,7 +17,7 @@ export async function onRequestGet(context) {
   const type = (typeParam === "formation" || typeParam === "publicite") ? typeParam : "publication";
 
   const view = type === "formation" ? "formations" : (type === "publicite" ? "formations" : "publications");
-  const destination = id ? `${SITE_URL}/?view=${view}&id=${id}` : `${SITE_URL}/?view=${view}`;
+  const destination = id ? `${SITE_URL}/?view=${view}&id=${encodeURIComponent(id)}` : `${SITE_URL}/?view=${view}`;
 
   let titre = "Rĩch Farm Unity";
   let description = "Découvre Rĩch Farm Unity, la plateforme agricole béninoise.";
@@ -82,7 +82,7 @@ export async function onRequestGet(context) {
 <meta name="twitter:title" content="${escapeHtml(titre)} — Rĩch Farm Unity">
 <meta name="twitter:description" content="${escapeHtml(description)}">
 <meta name="twitter:image" content="${escapeHtml(image)}">
-<script>window.location.replace(${JSON.stringify(destination)});</script>
+<script>window.location.replace(${JSON.stringify(destination).replace(/</g, "\\u003c")});</script>
 </head>
 <body>
 <p>Redirection vers Rĩch Farm Unity… <a href="${escapeHtml(destination)}">Cliquez ici si rien ne se passe</a>.</p>

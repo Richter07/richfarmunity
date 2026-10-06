@@ -2369,6 +2369,13 @@
   let typeAnnonceActuel = 'vente';
   async function loadPublications(silencieux){
     const container = document.getElementById('pubListContainer');
+    if(!container.dataset.avisHandlerAttached){
+      container.addEventListener('click', event => {
+        const button = event.target.closest('[data-avis-user-id]');
+        if(button) ouvrirAvisModal(button.dataset.avisUserId, button.dataset.avisUserName);
+      });
+      container.dataset.avisHandlerAttached = 'true';
+    }
     if(!silencieux) container.innerHTML = '<div class="empty"><h3>Chargement…</h3></div>';
     let query = sb.from('publications').select('*, profiles(prenom, nom, telephone, type_acteur)').eq('type_annonce', typeAnnonceActuel).order('created_at', { ascending: false });
     const cat = document.getElementById('filterCategorie').value;
@@ -2410,8 +2417,8 @@
         ? `<button class="btn-outline-small" style="margin-top:12px;margin-left:8px;border-color:var(--rouge);color:var(--rouge);" onclick="supprimerAnnonce('${p.id}')">Supprimer mon annonce</button>`
         : (isAdmin ? `<button class="btn-outline-small" style="margin-top:12px;margin-left:8px;border-color:var(--rouge);color:var(--rouge);" onclick="supprimerAnnonce('${p.id}')">🛡️ Supprimer (admin)</button>` : '');
       const audioHtml = p.audio_url ? `<audio src="${p.audio_url}" controls style="width:100%;margin:10px 0;"></audio>` : '';
-      const avisBtn = (currentUser && !isOwner) ? `<button class="btn-outline-small" style="margin-top:12px;margin-left:8px;" onclick="ouvrirAvisModal('${p.user_id}', '${escapeHtml(auteur).replace(/'/g, "\\'")}')">⭐ Laisser un avis</button>` : '';
-      return `<div class="pub-card"><div class="pub-top"><div><span class="pub-type ${typeAnnonceClass}">${typeAnnonceLabel}</span><span class="pub-tag">${p.categorie}</span><h3>${escapeHtml(p.titre)}</h3></div><span class="pub-statut ${statutClass}">${statutLabel}</span>${ecoBadge}</div><div class="pub-meta pub-meta-priority">${p.quantite ? '<span><strong>Quantité :</strong> ' + escapeHtml(p.quantite) + '</span>' : ''}${p.prix ? '<span><strong>Prix :</strong> ' + escapeHtml(p.prix) + '</span>' : ''}${p.localisation ? '<span><strong>Lieu :</strong> ' + escapeHtml(p.localisation) + '</span>' : ''}</div>${photoHtml}${p.description ? '<p class="desc">' + escapeHtml(p.description) + '</p>' : ''}${audioHtml}<div class="pub-footer">Publié par ${escapeHtml(auteur)}${contact ? ' · ' + escapeHtml(contact) : ''}${certifBadge}<br><span id="avisBadge-${p.user_id}" class="stars-display"></span></div>${contactBtn}${shareBtn}${avisBtn}${deleteBtn}</div>`;
+      const avisBtn = (currentUser && !isOwner) ? `<button class="btn-outline-small" style="margin-top:12px;margin-left:8px;" data-avis-user-id="${escapeHtml(p.user_id)}" data-avis-user-name="${escapeHtml(auteur)}">⭐ Laisser un avis</button>` : '';
+      return `<div class="pub-card"><div class="pub-top"><div><span class="pub-type ${typeAnnonceClass}">${typeAnnonceLabel}</span><span class="pub-tag">${escapeHtml(p.categorie)}</span><h3>${escapeHtml(p.titre)}</h3></div><span class="pub-statut ${statutClass}">${statutLabel}</span>${ecoBadge}</div><div class="pub-meta pub-meta-priority">${p.quantite ? '<span><strong>Quantité :</strong> ' + escapeHtml(p.quantite) + '</span>' : ''}${p.prix ? '<span><strong>Prix :</strong> ' + escapeHtml(p.prix) + '</span>' : ''}${p.localisation ? '<span><strong>Lieu :</strong> ' + escapeHtml(p.localisation) + '</span>' : ''}</div>${photoHtml}${p.description ? '<p class="desc">' + escapeHtml(p.description) + '</p>' : ''}${audioHtml}<div class="pub-footer">Publié par ${escapeHtml(auteur)}${contact ? ' · ' + escapeHtml(contact) : ''}${certifBadge}<br><span id="avisBadge-${p.user_id}" class="stars-display"></span></div>${contactBtn}${shareBtn}${avisBtn}${deleteBtn}</div>`;
     }).join('');
     renderAvisBadges([...new Set(data.map(p => p.user_id))]);
   }
@@ -3304,7 +3311,7 @@
       const auteur = p.profiles ? (p.profiles.prenom + ' ' + p.profiles.nom + ' — ' + p.profiles.type_acteur) : 'Utilisateur';
       const photoHtml = galleryHtml(p, 220);
       const audioHtmlMod = p.audio_url ? `<audio src="${p.audio_url}" controls style="width:100%;margin:10px 0;"></audio>` : '';
-      return `<div class="pub-card"><div class="pub-top"><div><span class="pub-tag">${p.categorie}</span><h3>${escapeHtml(p.titre)}</h3></div><span class="pub-statut reserve">En attente</span></div>${photoHtml}${p.description ? '<p class="desc">' + escapeHtml(p.description) + '</p>' : ''}${audioHtmlMod}<div class="pub-footer">Publié par ${escapeHtml(auteur)}${p.profiles && p.profiles.telephone ? ' · ' + escapeHtml(p.profiles.telephone) : ''}</div><div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap;"><button class="btn-small" onclick="approuverAnnonce('${p.id}')">Approuver et publier</button><button class="btn-outline-small" style="border-color:var(--rouge);color:var(--rouge);" onclick="rejeterAnnonce('${p.id}')">Rejeter</button></div></div>`;
+      return `<div class="pub-card"><div class="pub-top"><div><span class="pub-tag">${escapeHtml(p.categorie)}</span><h3>${escapeHtml(p.titre)}</h3></div><span class="pub-statut reserve">En attente</span></div>${photoHtml}${p.description ? '<p class="desc">' + escapeHtml(p.description) + '</p>' : ''}${audioHtmlMod}<div class="pub-footer">Publié par ${escapeHtml(auteur)}${p.profiles && p.profiles.telephone ? ' · ' + escapeHtml(p.profiles.telephone) : ''}</div><div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap;"><button class="btn-small" onclick="approuverAnnonce('${p.id}')">Approuver et publier</button><button class="btn-outline-small" style="border-color:var(--rouge);color:var(--rouge);" onclick="rejeterAnnonce('${p.id}')">Rejeter</button></div></div>`;
     }).join('');
   }
 
