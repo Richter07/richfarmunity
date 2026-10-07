@@ -1955,6 +1955,11 @@
 
   let currentUser = null;
 
+  function compteActif(profile){
+    return !!profile && !!profile.type_acteur && !profile.compte_rejete &&
+      !(profile.type_acteur === "Membre d'institution" && !profile.compte_approuve);
+  }
+
   // ---- Installation de l'application (PWA) ----
   let deferredInstallPrompt = null;
   const estStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
@@ -2193,7 +2198,7 @@
   document.getElementById('btnStatusAnnonces').addEventListener('click', () => showView('publications'));
   document.getElementById('btnReessayerProfil').addEventListener('click', () => refreshSession());
   document.getElementById('btnPublierDepuisAnnonces').addEventListener('click', () => {
-    if(currentUser && currentProfile && currentProfile.type_acteur && currentProfile.compte_approuve && !currentProfile.compte_rejete){
+    if(currentUser && compteActif(currentProfile)){
       document.getElementById('btnAllerPublier').click();
     } else {
       showView('compte');
@@ -2353,7 +2358,7 @@
       document.getElementById('btnNouvelleFormation').style.display = (profile && profile.is_admin) ? 'inline-block' : 'none';
       document.getElementById('tabModeration').style.display = (profile && profile.is_admin) ? 'inline-block' : 'none';
       document.getElementById('tabSuggestions').style.display = (profile && profile.is_admin) ? 'inline-block' : 'none';
-      document.getElementById('btnNouveauSujet').style.display = (profile && profile.compte_approuve) ? 'inline-block' : 'none';
+      document.getElementById('btnNouveauSujet').style.display = compteActif(profile) ? 'inline-block' : 'none';
       document.getElementById('tabMembres').style.display = (profile && profile.is_admin) ? 'inline-block' : 'none';
       document.getElementById('tabStats').style.display = (profile && profile.is_admin) ? 'inline-block' : 'none';
       const pendingMsg = document.getElementById('compteEnAttente');
@@ -2396,7 +2401,7 @@
           pendingMsg.innerHTML = '<p style="color:var(--encre);line-height:1.6;"><strong>Votre compte n\'a pas été validé.</strong><br>Contactez-nous sur WhatsApp pour plus d\'informations.</p>';
         }
         if(publierBtn) publierBtn.style.display = 'none';
-      } else if(profile && !profile.compte_approuve){
+      } else if(profile && profile.type_acteur === "Membre d'institution" && !profile.compte_approuve){
         if(completeCard) completeCard.style.display = 'none';
         if(pendingMsg) pendingMsg.style.display = 'block';
         pendingMsg.dataset.state = 'pending';
@@ -2423,11 +2428,13 @@
         pendingMsg.dataset.state = 'active';
         pendingMsg.style.display = 'block';
         statusTitle.textContent = 'COMPTE ACTIF / APPROUVÉ';
-        statusDescription.textContent = 'Votre compte est approuvé. Vous pouvez publier des annonces et contacter les acteurs agricoles.';
+        statusDescription.textContent = profile && !profile.compte_approuve
+          ? 'Votre compte est actif. Vous pouvez publier des annonces et contacter les acteurs agricoles.'
+          : 'Votre compte est approuvé. Vous pouvez publier des annonces et contacter les acteurs agricoles.';
         statusCompleteBtn.style.display = 'none';
         statusPublishBtn.style.display = 'inline-block';
         statusAnnouncementsBtn.style.display = 'none';
-        if(publierBtn) publierBtn.style.display = 'inline-block';
+        if(publierBtn) publierBtn.style.display = compteActif(profile) ? 'inline-block' : 'none';
       }
     } else {
       currentProfile = null;
