@@ -946,7 +946,8 @@
         <button type="button" class="btn-outline-small" id="btnOuvrirAlerte">🔔 Créer une alerte pour cette recherche</button>
         <div class="card" id="carteAlerte" style="display:none;margin-top:14px;">
           <h3 style="margin-bottom:6px;">Créer une alerte de recherche</h3>
-          <p style="color:var(--encre-douce);font-size:0.86rem;margin-bottom:16px;">Soyez notifié dès qu'une annonce correspond à ces critères. Laissez un champ vide pour ne pas filtrer dessus.</p>
+          <span style="display:inline-block;padding:5px 10px;border-radius:100px;background:#FBF0DC;color:var(--or-fonce);font-size:0.75rem;font-weight:600;margin:4px 0 10px;">Bientôt disponible - notification en cours d'activation</span>
+          <p style="color:var(--encre-douce);font-size:0.86rem;margin-bottom:16px;">Enregistrez vos critères de recherche. Laissez un champ vide pour ne pas filtrer dessus.</p>
           <form id="formAlerte">
             <div class="field"><label for="alerteMotCle">Mot-clé</label><input type="text" id="alerteMotCle" placeholder="Ex : maïs, tracteur, semences..."></div>
             <div class="field-row">
@@ -2459,7 +2460,7 @@
     if(document.getElementById('filterEco').checked) query = query.eq('eco_responsable', true);
     if(search) query = query.or(`titre.ilike.%${search}%,description.ilike.%${search}%,localisation.ilike.%${search}%`);
     const { data, error } = await query;
-    if(error){ container.innerHTML = '<div class="empty"><h3>Erreur de chargement</h3><p>' + error.message + '</p></div>'; return; }
+    if(error){ container.innerHTML = '<div class="empty"><h3>Erreur de chargement</h3><p>' + escapeHtml(error.message) + '</p></div>'; return; }
     if(!data || data.length === 0){ container.innerHTML = '<div class="empty"><h3>Aucune annonce pour le moment</h3><p>Sois le premier à publier.</p></div>'; return; }
     container.innerHTML = data.map(p => {
       const auteur = p.profiles ? (p.profiles.prenom + ' ' + p.profiles.nom + ' — ' + p.profiles.type_acteur) : 'Utilisateur';
@@ -2489,7 +2490,8 @@
       const deleteBtn = isOwner
         ? `<button class="btn-outline-small" style="margin-top:12px;margin-left:8px;border-color:var(--rouge);color:var(--rouge);" onclick="supprimerAnnonce('${p.id}')">Supprimer mon annonce</button>`
         : (isAdmin ? `<button class="btn-outline-small" style="margin-top:12px;margin-left:8px;border-color:var(--rouge);color:var(--rouge);" onclick="supprimerAnnonce('${p.id}')">🛡️ Supprimer (admin)</button>` : '');
-      const audioHtml = p.audio_url ? `<audio src="${p.audio_url}" controls style="width:100%;margin:10px 0;"></audio>` : '';
+      const audioUrl = safeHttpUrl(p.audio_url);
+      const audioHtml = audioUrl ? `<audio src="${audioUrl}" controls style="width:100%;margin:10px 0;"></audio>` : '';
       const avisBtn = (currentUser && !isOwner) ? `<button class="btn-outline-small" style="margin-top:12px;margin-left:8px;" data-avis-user-id="${escapeHtml(p.user_id)}" data-avis-user-name="${escapeHtml(auteur)}">⭐ Laisser un avis</button>` : '';
       return `<div class="pub-card"><div class="pub-top"><div><span class="pub-type ${typeAnnonceClass}">${typeAnnonceLabel}</span><span class="pub-tag">${escapeHtml(p.categorie)}</span><h3>${escapeHtml(p.titre)}</h3></div><span class="pub-statut ${statutClass}">${statutLabel}</span>${ecoBadge}</div><div class="pub-meta pub-meta-priority">${p.quantite ? '<span><strong>Quantité :</strong> ' + escapeHtml(p.quantite) + '</span>' : ''}${p.prix ? '<span><strong>Prix :</strong> ' + escapeHtml(p.prix) + '</span>' : ''}${p.localisation ? '<span><strong>Lieu :</strong> ' + escapeHtml(p.localisation) + '</span>' : ''}</div>${photoHtml}${p.description ? '<p class="desc">' + escapeHtml(p.description) + '</p>' : ''}${audioHtml}<div class="pub-footer">Publié par ${escapeHtml(auteur)}${contact ? ' · ' + escapeHtml(contact) : ''}${certifBadge}<br><span id="avisBadge-${p.user_id}" class="stars-display"></span></div>${contactBtn}${shareBtn}${avisBtn}${deleteBtn}</div>`;
     }).join('');
@@ -2519,7 +2521,7 @@
     const container = document.getElementById('contactsInstitutionnelsContainer');
     container.innerHTML = '<div class="empty"><h3>Chargement…</h3></div>';
     const { data, error } = await sb.from('contacts_institutionnels').select('*').order('departement', { ascending: true }).order('ordre', { ascending: true });
-    if(error){ container.innerHTML = '<div class="empty"><h3>Erreur de chargement</h3><p>' + error.message + '</p></div>'; return; }
+    if(error){ container.innerHTML = '<div class="empty"><h3>Erreur de chargement</h3><p>' + escapeHtml(error.message) + '</p></div>'; return; }
     if(!data || data.length === 0){ container.innerHTML = '<div class="empty"><h3>Aucun contact renseigné pour le moment</h3><p>Revenez bientôt.</p></div>'; return; }
     const estAdmin = currentProfile && currentProfile.is_admin;
     const groupes = {};
@@ -2950,7 +2952,8 @@
     data.forEach(p => {
       const marker = L.marker([p.latitude, p.longitude]).addTo(carteLeaflet);
       const photo = (p.photos && p.photos[0]) || p.photo_url;
-      const imgHtml = photo ? `<img src="${photo}" style="width:100%;height:90px;object-fit:cover;border-radius:6px;margin-bottom:6px;">` : '';
+      const photoUrl = safeHttpUrl(photo);
+      const imgHtml = photoUrl ? `<img src="${photoUrl}" style="width:100%;height:90px;object-fit:cover;border-radius:6px;margin-bottom:6px;">` : '';
       marker.bindPopup(`<div style="min-width:160px;">${imgHtml}<strong>${escapeHtml(p.titre)}</strong><br><span style="font-size:0.8rem;color:#666;">${escapeHtml(p.localisation || '')}${p.prix ? ' · ' + escapeHtml(p.prix) : ''}</span><br><a href="#" onclick="showView('publications');return false;" style="font-size:0.8rem;">Voir les annonces →</a></div>`);
       carteMarqueurs.push(marker);
     });
@@ -3035,7 +3038,7 @@
     if(filiere) query = query.eq('filiere', filiere);
     if(departement) query = query.eq('departement', departement);
     const { data, error } = await query;
-    if(error){ container.innerHTML = '<div class="empty"><h3>Erreur</h3><p>' + error.message + '</p></div>'; return; }
+    if(error){ container.innerHTML = '<div class="empty"><h3>Erreur</h3><p>' + escapeHtml(error.message) + '</p></div>'; return; }
     if(!data || data.length === 0){ container.innerHTML = '<div class="empty"><h3>Aucun prix disponible pour ces critères</h3></div>'; return; }
     container.innerHTML = data.map(p => {
       const date = p.created_at ? new Date(p.created_at).toLocaleDateString('fr-FR') : '';
@@ -3077,7 +3080,7 @@
     const { error } = await sb.from('alertes_recherche').insert(payload);
     if(error){ showMsg('msgAlerte', error.message, 'error'); }
     else {
-      showMsg('msgAlerte', 'Alerte activée ! Vous serez notifié dès qu\'une annonce correspond.', 'success');
+      showMsg('msgAlerte', 'Votre alerte est enregistrée. Les notifications automatiques arrivent très bientôt.', 'success');
       e.target.reset();
       if(currentProfile) loadMesAlertes();
     }
@@ -3089,7 +3092,7 @@
     const { data, error } = await sb.from('alertes_recherche').select('*').eq('user_id', currentUser.id).order('created_at', { ascending: false });
     if(error || !data || data.length === 0){ wrap.innerHTML = '<p style="color:var(--encre-douce);font-size:0.9rem;">Aucune alerte active.</p>'; return; }
     wrap.innerHTML = data.map(a => {
-      const criteres = [a.mot_cle ? '« ' + escapeHtml(a.mot_cle) + ' »' : null, a.categorie, a.departement].filter(Boolean).join(' · ') || 'Toutes les annonces';
+      const criteres = [a.mot_cle ? '« ' + escapeHtml(a.mot_cle) + ' »' : null, a.categorie ? escapeHtml(a.categorie) : null, a.departement ? escapeHtml(a.departement) : null].filter(Boolean).join(' · ') || 'Toutes les annonces';
       return `<div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid rgba(28,26,20,0.1);">
         <div style="flex:1;"><strong style="font-size:0.9rem;">${criteres}</strong><br><span style="font-size:0.78rem;color:${a.actif ? 'var(--vert-rich)' : 'var(--encre-douce)'};">${a.actif ? 'Active' : 'Désactivée'}</span></div>
         <button class="btn-outline-small" onclick="toggleAlerte('${a.id}', ${!a.actif})">${a.actif ? 'Désactiver' : 'Activer'}</button>
@@ -3183,7 +3186,7 @@
     const container = document.getElementById('suggestionsContainer');
     container.innerHTML = '<div class="empty"><h3>Chargement…</h3></div>';
     const { data, error } = await sb.from('suggestions').select('*, profiles(prenom, nom, telephone)').order('created_at', { ascending: false });
-    if(error){ container.innerHTML = '<div class="empty"><h3>Erreur</h3><p>' + error.message + '</p></div>'; return; }
+    if(error){ container.innerHTML = '<div class="empty"><h3>Erreur</h3><p>' + escapeHtml(error.message) + '</p></div>'; return; }
     if(!data || data.length === 0){ container.innerHTML = '<div class="empty"><h3>Aucune suggestion pour le moment</h3></div>'; return; }
     container.innerHTML = data.map(s => {
       const auteur = s.profiles ? (s.profiles.prenom + ' ' + s.profiles.nom) : 'Utilisateur';
@@ -3191,7 +3194,7 @@
       const statutColor = s.statut === 'traite' ? 'var(--vert-rich)' : (s.statut === 'lu' ? 'var(--or)' : 'var(--encre-douce)');
       return `<div class="pub-card">
         <p class="desc">${escapeHtml(s.contenu)}</p>
-        <div class="pub-footer">Par ${escapeHtml(auteur)}${s.profiles && s.profiles.telephone ? ' · ' + escapeHtml(s.profiles.telephone) : ''} · ${date} · <span style="color:${statutColor};font-weight:600;">${s.statut}</span></div>
+        <div class="pub-footer">Par ${escapeHtml(auteur)}${s.profiles && s.profiles.telephone ? ' · ' + escapeHtml(s.profiles.telephone) : ''} · ${date} · <span style="color:${statutColor};font-weight:600;">${escapeHtml(s.statut)}</span></div>
         <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;">
           <button class="btn-outline-small" onclick="changerStatutSuggestion('${s.id}', 'lu')">Marquer comme lu</button>
           <button class="btn-outline-small" onclick="changerStatutSuggestion('${s.id}', 'traite')">Marquer comme traité</button>
@@ -3422,12 +3425,13 @@
     const container = document.getElementById('moderationContainer');
     container.innerHTML = '<div class="empty"><h3>Chargement…</h3></div>';
     const { data, error } = await sb.from('publications').select('*, profiles(prenom, nom, telephone, type_acteur)').eq('approuve', false).eq('rejete', false).order('created_at', { ascending: true });
-    if(error){ container.innerHTML = '<div class="empty"><h3>Erreur</h3><p>' + error.message + '</p></div>'; return; }
+    if(error){ container.innerHTML = '<div class="empty"><h3>Erreur</h3><p>' + escapeHtml(error.message) + '</p></div>'; return; }
     if(!data || data.length === 0){ container.innerHTML = '<div class="empty"><h3>Aucune annonce en attente</h3></div>'; return; }
     container.innerHTML = data.map(p => {
       const auteur = p.profiles ? (p.profiles.prenom + ' ' + p.profiles.nom + ' — ' + p.profiles.type_acteur) : 'Utilisateur';
       const photoHtml = galleryHtml(p, 220);
-      const audioHtmlMod = p.audio_url ? `<audio src="${p.audio_url}" controls style="width:100%;margin:10px 0;"></audio>` : '';
+      const audioUrl = safeHttpUrl(p.audio_url);
+      const audioHtmlMod = audioUrl ? `<audio src="${audioUrl}" controls style="width:100%;margin:10px 0;"></audio>` : '';
       return `<div class="pub-card"><div class="pub-top"><div><span class="pub-tag">${escapeHtml(p.categorie)}</span><h3>${escapeHtml(p.titre)}</h3></div><span class="pub-statut reserve">En attente</span></div>${photoHtml}${p.description ? '<p class="desc">' + escapeHtml(p.description) + '</p>' : ''}${audioHtmlMod}<div class="pub-footer">Publié par ${escapeHtml(auteur)}${p.profiles && p.profiles.telephone ? ' · ' + escapeHtml(p.profiles.telephone) : ''}</div><div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap;"><button class="btn-small" onclick="approuverAnnonce('${p.id}')">Approuver et publier</button><button class="btn-outline-small" style="border-color:var(--rouge);color:var(--rouge);" onclick="rejeterAnnonce('${p.id}')">Rejeter</button></div></div>`;
     }).join('');
   }
@@ -3437,7 +3441,7 @@
     if(!container) return;
     container.innerHTML = '<div class="empty"><h3>Chargement…</h3></div>';
     const { data, error } = await sb.from('prix_marche').select('*, profiles(prenom, nom, telephone)').eq('approuve', false).eq('rejete', false).order('created_at', { ascending: true });
-    if(error){ container.innerHTML = '<div class="empty"><h3>Erreur</h3><p>' + error.message + '</p></div>'; return; }
+    if(error){ container.innerHTML = '<div class="empty"><h3>Erreur</h3><p>' + escapeHtml(error.message) + '</p></div>'; return; }
     if(!data || data.length === 0){ container.innerHTML = '<div class="empty"><h3>Aucun prix en attente</h3></div>'; return; }
     container.innerHTML = data.map(p => {
       const auteur = p.profiles ? (p.profiles.prenom + ' ' + p.profiles.nom) : 'Utilisateur';
@@ -3538,7 +3542,7 @@
     const container = document.getElementById('membresContainer');
     container.innerHTML = '<div class="empty"><h3>Chargement…</h3></div>';
     const { data, error } = await sb.from('profiles').select('*').order('created_at', { ascending: false });
-    if(error){ container.innerHTML = '<div class="empty"><h3>Erreur</h3><p>' + error.message + '</p></div>'; return; }
+    if(error){ container.innerHTML = '<div class="empty"><h3>Erreur</h3><p>' + escapeHtml(error.message) + '</p></div>'; return; }
     window._allMembres = data || [];
     renderMembres();
   }
@@ -3588,12 +3592,13 @@
     const secteur = document.getElementById('filterForumSecteur').value;
     if(secteur) query = query.eq('secteur', secteur);
     const { data, error } = await query;
-    if(error){ container.innerHTML = '<div class="empty"><h3>Erreur</h3><p>' + error.message + '</p></div>'; return; }
+    if(error){ container.innerHTML = '<div class="empty"><h3>Erreur</h3><p>' + escapeHtml(error.message) + '</p></div>'; return; }
     if(!data || data.length === 0){ container.innerHTML = '<div class="empty"><h3>Aucun sujet pour le moment</h3><p>Sois le premier à en lancer un.</p></div>'; return; }
     container.innerHTML = data.map(s => {
       const auteur = s.profiles ? (s.profiles.prenom + ' ' + s.profiles.nom) : 'Utilisateur';
       const date = s.created_at ? new Date(s.created_at).toLocaleDateString('fr-FR') : '';
-      const audioHtmlSujet = s.audio_url ? `<audio src="${s.audio_url}" controls style="width:100%;margin:8px 0;"></audio>` : '';
+      const audioUrl = safeHttpUrl(s.audio_url);
+      const audioHtmlSujet = audioUrl ? `<audio src="${audioUrl}" controls style="width:100%;margin:8px 0;"></audio>` : '';
       return `<div class="pub-card">
         <div class="pub-top"><div>${s.secteur ? '<span class="pub-tag">' + escapeHtml(s.secteur) + '</span>' : ''}<h3>${escapeHtml(s.titre)}</h3></div></div>
         ${s.contenu ? '<p class="desc">' + escapeHtml(s.contenu) + '</p>' : ''}
@@ -3638,12 +3643,13 @@
     const liste = document.getElementById('reponsesListe-' + sujetId);
     liste.innerHTML = 'Chargement…';
     const { data, error } = await sb.from('forum_reponses').select('*, profiles(prenom, nom)').eq('sujet_id', sujetId).order('created_at', { ascending: true });
-    if(error){ liste.innerHTML = 'Erreur : ' + error.message; return; }
+    if(error){ liste.innerHTML = 'Erreur : ' + escapeHtml(error.message); return; }
     if(!data || data.length === 0){ liste.innerHTML = '<p style="font-size:0.86rem;color:var(--encre-douce);">Aucune réponse pour le moment.</p>'; return; }
     liste.innerHTML = data.map(r => {
       const auteur = r.profiles ? (r.profiles.prenom + ' ' + r.profiles.nom) : 'Utilisateur';
       const date = r.created_at ? new Date(r.created_at).toLocaleDateString('fr-FR') : '';
-      const audioHtml = r.audio_url ? `<audio src="${r.audio_url}" controls style="width:100%;margin-top:6px;"></audio>` : '';
+      const audioUrl = safeHttpUrl(r.audio_url);
+      const audioHtml = audioUrl ? `<audio src="${audioUrl}" controls style="width:100%;margin-top:6px;"></audio>` : '';
       return `<div style="padding:10px 0;border-bottom:1px solid rgba(27,94,32,0.08);">${r.contenu ? '<p style="font-size:0.9rem;color:var(--encre);">' + escapeHtml(r.contenu) + '</p>' : ''}${audioHtml}<p style="font-size:0.76rem;color:var(--encre-douce);margin-top:4px;font-family:'IBM Plex Mono',monospace;">${escapeHtml(auteur)} · ${date}</p></div>`;
     }).join('');
   }
@@ -3774,14 +3780,15 @@
     const container = document.getElementById('formationsContainer');
     container.innerHTML = '<div class="empty"><h3>Chargement…</h3></div>';
     const { data, error } = await sb.from('formations').select('*').order('created_at', { ascending: false });
-    if(error){ container.innerHTML = '<div class="empty"><h3>Erreur de chargement</h3><p>' + error.message + '</p></div>'; return; }
+    if(error){ container.innerHTML = '<div class="empty"><h3>Erreur de chargement</h3><p>' + escapeHtml(error.message) + '</p></div>'; return; }
     if(!data || data.length === 0){ container.innerHTML = '<div class="empty"><h3>Aucune formation publiée pour le moment</h3></div>'; return; }
     container.innerHTML = data.map(f => {
       let mediaHtml = '';
-      if(f.media_url && f.media_type === 'video'){
-        mediaHtml = `<video src="${f.media_url}" controls style="width:100%;border-radius:10px;margin-top:12px;"></video>`;
-      } else if(f.media_url){
-        mediaHtml = `<img src="${f.media_url}" alt="${escapeHtml(f.titre)}" style="width:100%;height:auto;max-height:420px;object-fit:contain;background:var(--ivoire-2);border-radius:10px;margin-top:12px;">`;
+      const mediaUrl = safeHttpUrl(f.media_url);
+      if(mediaUrl && f.media_type === 'video'){
+        mediaHtml = `<video src="${mediaUrl}" controls style="width:100%;border-radius:10px;margin-top:12px;"></video>`;
+      } else if(mediaUrl){
+        mediaHtml = `<img src="${mediaUrl}" alt="${escapeHtml(f.titre)}" style="width:100%;height:auto;max-height:420px;object-fit:contain;background:var(--ivoire-2);border-radius:10px;margin-top:12px;">`;
       }
       const shareUrl = `https://richfarmunity.com/share?type=formation&id=${f.id}`;
       const shareText = `🌾 ${f.titre}\n\n${f.contenu}\n\nVoir plus sur Rĩch Farm Unity :\n${shareUrl}`;
@@ -3822,8 +3829,11 @@
     }
     else{
       const cardsHtml = data.map(p => {
-        const img = `<div class="bandeau-pub-card"><img src="${p.image_url}" alt="${escapeHtml(p.annonceur)}"></div>`;
-        return p.lien ? `<a href="${p.lien}" target="_blank" rel="noopener">${img}</a>` : img;
+        const imageUrl = safeHttpUrl(p.image_url);
+        if(!imageUrl) return '';
+        const img = `<div class="bandeau-pub-card"><img src="${imageUrl}" alt="${escapeHtml(p.annonceur)}"></div>`;
+        const lien = safeHttpUrl(p.lien);
+        return lien ? `<a href="${lien}" target="_blank" rel="noopener noreferrer">${img}</a>` : img;
       }).join('');
       // Le contenu est dupliqué une fois pour permettre une boucle visuelle continue (translateX -50%).
       track.innerHTML = `<div class="bandeau-pub-inner">${cardsHtml}${cardsHtml}</div>`;
@@ -3844,7 +3854,7 @@
       const expTxt = p.date_expiration ? ` · Expire le ${p.date_expiration}` : '';
       return `
       <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid rgba(28,26,20,0.12);">
-        <img src="${p.image_url}" style="width:70px;height:40px;object-fit:cover;border-radius:6px;">
+        ${safeHttpUrl(p.image_url) ? `<img src="${safeHttpUrl(p.image_url)}" style="width:70px;height:40px;object-fit:cover;border-radius:6px;">` : ''}
         <div style="flex:1;"><strong>${escapeHtml(p.annonceur)}</strong><br><span style="font-size:0.8rem;color:${estExpiree ? 'var(--rouge)' : 'var(--encre-douce)'};">Ordre : ${p.ordre} ${statutTxt}${expTxt}</span></div>
         <button class="btn-outline-small" onclick="togglePublicite('${p.id}', ${!p.actif})">${p.actif ? 'Désactiver' : 'Activer'}</button>
         <button class="btn-outline-small" onclick="copierLienPublicite('${p.id}')">📤 Lien</button>
@@ -4043,15 +4053,31 @@
       return '';
     }
     if(list.length === 1){
-      return `<img src="${list[0]}" alt="${escapeHtml(p.titre)}" style="width:100%;height:auto;max-height:${maxH}px;object-fit:contain;background:var(--ivoire-2);border-radius:10px;margin-top:12px;">`;
+      const imageUrl = safeHttpUrl(list[0]);
+      return imageUrl ? `<img src="${imageUrl}" alt="${escapeHtml(p.titre)}" style="width:100%;height:auto;max-height:${maxH}px;object-fit:contain;background:var(--ivoire-2);border-radius:10px;margin-top:12px;">` : '';
     }
-    const thumbs = list.map(url => `<img src="${url}" alt="${escapeHtml(p.titre)}" style="height:${maxH}px;width:auto;max-width:90%;object-fit:contain;background:var(--ivoire-2);border-radius:10px;flex-shrink:0;">`).join('');
+    const thumbs = list.map(url => {
+      const imageUrl = safeHttpUrl(url);
+      return imageUrl ? `<img src="${imageUrl}" alt="${escapeHtml(p.titre)}" style="height:${maxH}px;width:auto;max-width:90%;object-fit:contain;background:var(--ivoire-2);border-radius:10px;flex-shrink:0;">` : '';
+    }).join('');
     return `<div style="display:flex;gap:10px;overflow-x:auto;margin-top:12px;padding-bottom:4px;">${thumbs}</div>`;
   }
 
   function escapeHtml(str){
-    if(!str) return '';
-    return str.replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+    if(str == null) return '';
+    return String(str).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+  }
+
+  function safeHttpUrl(value){
+    if(typeof value !== 'string' || !value.trim()) return '';
+    try{
+      const url = new URL(value, window.location.origin);
+      if(url.protocol !== 'https:' && !(url.protocol === 'http:' && url.origin === window.location.origin)) return '';
+      if(url.username || url.password) return '';
+      return escapeHtml(url.href);
+    } catch(error){
+      return '';
+    }
   }
 
   const observer = new IntersectionObserver((entries) => {
