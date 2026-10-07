@@ -144,7 +144,7 @@
       radial-gradient(ellipse 1000px 560px at 84% -8%, rgba(217,166,43,0.22), transparent 60%),
       radial-gradient(ellipse 700px 500px at -5% 105%, rgba(63,139,68,0.25), transparent 55%),
       var(--grad-vert);
-    color:var(--ivoire); padding:64px 32px 96px; position:relative; overflow:hidden;
+    color:var(--ivoire); padding:64px 32px 118px; position:relative; overflow:hidden;
   }
   .hero-grain{
     position:absolute; inset:0; pointer-events:none;
@@ -163,8 +163,8 @@
     font-style:italic; font-weight:400;
     background:var(--grad-or); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;
   }
-  .hero p.lede{ margin-top:22px; font-size:1.08rem; line-height:1.65; color:rgba(245,239,224,0.88); max-width:54ch; }
-  .hero-actions{ margin-top:32px; display:flex; align-items:center; gap:12px 16px; flex-wrap:wrap; }
+  .hero p.lede{ margin-top:28px; font-size:1.14rem; line-height:1.68; color:rgba(245,239,224,0.82); max-width:46ch; }
+  .hero-actions{ margin-top:40px; display:flex; gap:16px; flex-wrap:wrap; }
 
   .btn-primary{
     position:relative; overflow:hidden;
@@ -184,13 +184,8 @@
     padding:15.5px 26px; border-radius:100px; transition:border-color .25s ease, background .25s ease, transform .25s ease; display:inline-block;
   }
   .btn-ghost:hover{ border-color:var(--or-clair); background:rgba(217,166,43,0.1); transform:translateY(-2px); }
-  .hero-whatsapp{
-    display:inline-flex; align-items:center; min-height:44px; padding:8px 4px;
-    color:rgba(245,239,224,0.8); font-size:0.88rem; text-decoration:underline; text-underline-offset:4px;
-  }
-  .hero-whatsapp:hover{ color:var(--or-clair); }
 
-  .hero-stats{ margin-top:38px; display:flex; gap:12px; flex-wrap:wrap; }
+  .hero-stats{ margin-top:52px; display:flex; gap:14px; flex-wrap:wrap; }
   .hero-stat{
     background:rgba(245,239,224,0.07); border:1px solid rgba(217,166,43,0.28); backdrop-filter:blur(6px);
     border-radius:16px; padding:14px 20px; min-width:120px;
@@ -201,29 +196,11 @@
   .hero-weave{ position:relative; aspect-ratio:1/1.05; filter:drop-shadow(0 20px 40px rgba(0,0,0,0.35)); }
   .hero-weave svg{ width:100%; height:100%; }
   .weave-node-label{ font-family:'IBM Plex Mono',monospace; font-size:0.62rem; fill:rgba(245,239,224,0.7); letter-spacing:0.05em; }
-  @media (max-width:880px){
-    .hero{ padding:48px 24px 72px; }
-    .hero-inner{ grid-template-columns:1fr; gap:32px; }
-    .hero-weave{ max-width:280px; margin:0 auto; }
-  }
-  @media (max-width:560px){
-    .hero{ padding:38px 20px 56px; }
-    .hero-inner{ gap:26px; }
-    .hero-eyebrow{ margin-bottom:16px; }
-    .hero h1{ font-size:clamp(2.35rem, 11vw, 3.2rem); }
-    .hero p.lede{ margin-top:18px; font-size:1rem; line-height:1.6; }
-    .hero-actions{ margin-top:26px; flex-direction:column; align-items:stretch; gap:8px; }
-    .hero-actions .btn-primary, .hero-actions .btn-ghost{ width:100%; text-align:center; }
-    .hero-whatsapp{ justify-content:center; }
-    .hero-stats{ margin-top:28px; display:grid; grid-template-columns:repeat(auto-fit, minmax(min(100%, 130px), 1fr)); gap:10px; }
-    .hero-stat{ min-width:0; padding:12px 14px; }
-    .hero-weave{ max-width:240px; }
-  }
+  @media (max-width:880px){ .hero-inner{ grid-template-columns:1fr; } .hero-weave{ max-width:320px; margin:0 auto; } }
 
   section{ padding:96px 0; position:relative; }
   .section-head{ max-width:640px; margin-bottom:58px; }
   .section-head .eyebrow{ margin-bottom:16px; display:block; color:var(--or); }
-  #view-accueil .section-head .eyebrow{ color:var(--or-fonce); }
   .section-head h2{ font-size:clamp(1.9rem, 3.4vw, 2.6rem); line-height:1.14; font-weight:500; }
   .section-head p{ margin-top:18px; font-size:1.03rem; color:var(--encre-douce); line-height:1.62; }
   .reveal{ opacity:0; transform:translateY(26px) scale(0.985); transition:opacity .75s cubic-bezier(.2,.7,.2,1), transform .75s cubic-bezier(.2,.7,.2,1); }
@@ -330,12 +307,6 @@
   .page-head h2{ font-size:1.9rem; }
   .page-head p{ margin-top:8px; color:var(--encre-douce); }
   .card{ background:var(--creme); border:1px solid rgba(27,94,32,0.12); border-radius:18px; padding:30px; box-shadow:var(--ombre-douce); }
-  .account-status{ padding:20px 24px; border-left:4px solid var(--or); }
-  .account-status[data-state="active"]{ border-left-color:var(--vert-rich); }
-  .account-status h3{ font-size:1rem; letter-spacing:0.03em; }
-  .account-status p{ margin-top:6px; color:var(--encre-douce); line-height:1.55; }
-  .account-status-actions{ display:flex; flex-wrap:wrap; gap:10px; margin-top:14px; }
-  @media (max-width:600px){ .account-status{ padding:18px; } .account-status-actions > button{ width:100%; } }
   form .field{ margin-bottom:16px; }
   form label{ display:block; font-size:0.84rem; font-weight:600; margin-bottom:6px; color:var(--vert-nuit); }
   form input, form select, form textarea{ width:100%; padding:12px 14px; border:1px solid rgba(27,94,32,0.22); border-radius:10px; background:#fff; transition:border-color .2s ease, box-shadow .2s ease; }
@@ -361,6 +332,8 @@
   .avis-stars span{ cursor:pointer; color:rgba(184,134,11,0.25); transition:color .15s ease; }
   .avis-stars span.is-active{ color:var(--or); }
   .stars-display{ color:var(--or); font-size:0.85rem; letter-spacing:1px; }
+  .noter-pub-row{ display:flex; align-items:center; gap:12px; background:#fff; border:1px solid rgba(27,94,32,0.1); border-radius:12px; padding:10px 12px; margin-bottom:8px; }
+  .noter-pub-row img{ width:52px; height:40px; object-fit:cover; border-radius:6px; flex-shrink:0; }
   .desc-mode-btn{
     flex:1; padding:9px 12px; border-radius:10px; border:1.5px solid rgba(27,94,32,0.22);
     background:#fff; color:var(--encre-douce); font-size:0.85rem; font-weight:600; cursor:pointer; transition:all .2s ease;
@@ -393,37 +366,19 @@
   .msg.success{ background:#E6F1E6; color:var(--vert-rich); display:block; }
   .filters{ display:flex; gap:10px; flex-wrap:wrap; margin-bottom:22px; }
   .filters select{ padding:9px 14px; border-radius:100px; border:1px solid rgba(27,94,32,0.25); background:#fff; font-size:0.84rem; }
-  .pub-type-filters{ display:flex; gap:12px; margin-bottom:20px; }
-  .pub-type-filters button{ flex:1; min-width:0; min-height:44px; padding:12px 8px; font-size:0.92rem; }
-  @media (max-width:600px){
-    #view-publications .filters select{ flex:1 1 100%; width:100%; min-width:0; min-height:44px; }
-    #view-publications .filters label{ max-width:100%; }
-  }
   .pub-list{ display:flex; flex-direction:column; gap:16px; }
   .pub-card{ background:var(--creme); border:1px solid rgba(27,94,32,0.12); border-radius:16px; padding:24px; box-shadow:var(--ombre-douce); transition:transform .25s ease, box-shadow .25s ease; }
   .pub-card:hover{ transform:translateY(-3px); box-shadow:0 20px 40px rgba(15,44,19,0.14); }
   .pub-top{ display:flex; justify-content:space-between; align-items:flex-start; gap:12px; flex-wrap:wrap; }
   .pub-card h3{ font-size:1.06rem; }
   .pub-tag{ font-family:'IBM Plex Mono',monospace; font-size:0.68rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--terre); margin-bottom:6px; display:block; font-weight:600; }
-  .pub-type{ display:inline-block; margin-bottom:8px; padding:6px 11px; border-radius:100px; background:#E6F1E6; color:var(--vert-rich); font-size:0.72rem; font-weight:700; letter-spacing:0.04em; }
-  .pub-type.achat{ background:#FBF0DC; color:var(--or-fonce); }
   .pub-statut{ font-size:0.72rem; font-weight:700; padding:5px 12px; border-radius:100px; background:var(--ivoire-2); color:var(--vert-rich); white-space:nowrap; }
   .pub-statut.reserve{ background:#FBF0DC; color:var(--or-fonce); }
   .pub-statut.ecoule{ background:#F0E8E0; color:var(--encre-douce); }
   .pub-card p.desc{ margin-top:10px; font-size:0.9rem; color:var(--encre-douce); line-height:1.5; }
   .pub-meta{ margin-top:14px; display:flex; gap:16px; flex-wrap:wrap; font-size:0.82rem; color:var(--encre-douce); }
-  .pub-meta-priority{ margin:14px 0 4px; padding:12px 14px; border-radius:12px; background:var(--ivoire-2); gap:10px 20px; }
   .pub-meta strong{ color:var(--vert-nuit); }
   .pub-footer{ margin-top:12px; font-size:0.78rem; color:var(--encre-douce); font-family:'IBM Plex Mono',monospace; }
-  .mes-annonce-status{ display:flex; flex-direction:column; gap:6px; min-width:0; margin-top:12px; }
-  .mes-annonce-status select{ box-sizing:border-box; width:100%; max-width:100%; min-width:0; min-height:44px; padding:9px 12px; border:1px solid rgba(27,94,32,0.25); border-radius:10px; background:#fff; color:var(--vert-nuit); font:inherit; }
-  .mes-annonce-status-message{ margin-top:10px; padding:10px 12px; border-radius:10px; background:#FBE9E7; color:var(--rouge); font-size:0.86rem; }
-  .pub-contact-btn{ display:inline-flex; align-items:center; justify-content:center; margin-top:16px !important; padding:11px 20px; font-size:0.9rem; }
-  @media (max-width:600px){ .pub-contact-btn{ width:100%; } }
-  .annonces-publish-cta{ display:flex; align-items:center; justify-content:space-between; gap:16px; margin-bottom:18px; padding:18px 22px; }
-  .annonces-publish-cta h3{ font-size:1rem; }
-  .annonces-publish-cta p{ margin-top:4px; color:var(--encre-douce); font-size:0.88rem; }
-  @media (max-width:600px){ .annonces-publish-cta{ align-items:stretch; flex-direction:column; gap:12px; padding:18px; } }
   .empty{ text-align:center; padding:54px 20px; color:var(--encre-douce); }
   .empty h3{ margin-bottom:8px; color:var(--vert-nuit); }
   .formation-card{ background:var(--creme); border:1px solid rgba(184,134,11,0.28); border-radius:16px; padding:26px; margin-bottom:18px; box-shadow:var(--ombre-douce); }
@@ -501,6 +456,14 @@
       <textarea id="avisCommentaire" placeholder="Commentaire (optionnel)" style="width:100%;margin-top:14px;min-height:80px;padding:12px 14px;border-radius:10px;border:1px solid rgba(27,94,32,0.22);"></textarea>
       <button type="button" class="btn-main" id="avisSubmitBtn" style="margin-top:14px;width:100%;">Envoyer l'avis</button>
       <div class="msg" id="msgAvisModal"></div>
+    </div>
+  </div>
+
+  <div class="avis-modal-backdrop" id="avisListeModalBackdrop">
+    <div class="avis-modal">
+      <button type="button" class="avis-modal-close" id="avisListeModalClose">✕</button>
+      <h3>Avis sur <span id="avisListeModalNom"></span></h3>
+      <div id="avisListeContenu" style="max-height:60vh;overflow-y:auto;margin-top:10px;"></div>
     </div>
   </div>
 </header>
@@ -653,11 +616,10 @@
         <div>
           <div class="hero-eyebrow"><span class="line"></span><span class="eyebrow">Plateforme numérique agricole — Bénin</span></div>
           <h1>Bénin,<br><em>terre connectée</em>.</h1>
-          <p class="lede">Rĩch Farm Unity met en relation semenciers, fournisseurs d’outils et d’intrants, producteurs, éleveurs, transformateurs, commerçants et consommateurs. Publiez vos offres, trouvez des partenaires et échangez directement, partout au Bénin.</p>
+          <p class="lede">Rĩch Farm Unity relie sur une seule plateforme semenciers, vendeurs d'outils agricoles, producteurs, éleveurs, transformateurs, commerçants et consommateurs — pour que chaque récolte trouve son marché, et que chaque marché trouve sa récolte, partout au Bénin.</p>
           <div class="hero-actions">
             <a href="#" class="btn-primary" onclick="showView('compte'); return false;">Créer mon compte</a>
-            <a href="#" class="btn-ghost" onclick="showView('publications'); return false;">Découvrir les annonces</a>
-            <a href="https://whatsapp.com/channel/0029VaqhsG3B4hdYsix5ZO0I" target="_blank" class="hero-whatsapp">Rejoindre sur WhatsApp</a>
+            <a href="https://whatsapp.com/channel/0029VaqhsG3B4hdYsix5ZO0I" target="_blank" class="btn-ghost">Rejoindre sur WhatsApp</a>
           </div>
           <div class="hero-stats">
             <div class="hero-stat"><div class="num">8</div><div class="label">maillons réunis sur une plateforme</div></div>
@@ -913,10 +875,9 @@
           <p>Semences, outils, récoltes, bétail, produits transformés — tout ce qui se propose au Bénin.</p>
         </div>
       </div>
-      <div class="pub-type-filters">
-        <button type="button" id="btnFiltreToutes" class="btn-main" aria-pressed="true" onclick="filtrerTypeAnnonce('toutes')">Toutes</button>
-        <button type="button" id="btnFiltreVentes" class="btn-outline-small" aria-pressed="false" onclick="filtrerTypeAnnonce('vente')">Ventes</button>
-        <button type="button" id="btnFiltreAchats" class="btn-outline-small" aria-pressed="false" onclick="filtrerTypeAnnonce('achat')">Achats</button>
+      <div style="display:flex;gap:12px;margin-bottom:20px;">
+        <button type="button" id="btnFiltreVentes" class="btn-main" style="flex:1;" onclick="filtrerTypeAnnonce('vente')">🌾 Ventes</button>
+        <button type="button" id="btnFiltreAchats" class="btn-outline-small" style="flex:1;padding:14px;font-size:0.92rem;" onclick="filtrerTypeAnnonce('achat')">🛒 Achats</button>
       </div>
       <div class="field" style="margin-bottom:16px;">
         <input type="text" id="searchAnnonces" placeholder="Rechercher (ex : maïs, tracteur, semences...)" style="width:100%;padding:13px 16px;border-radius:100px;border:1px solid rgba(27,94,32,0.3);background:#fff;">
@@ -986,13 +947,6 @@
             <div class="msg" id="msgAlerte"></div>
           </form>
         </div>
-      </div>
-      <div class="card annonces-publish-cta">
-        <div>
-          <h3>Vous avez un produit ou un besoin à partager ?</h3>
-          <p>Publiez votre annonce et trouvez des partenaires agricoles.</p>
-        </div>
-        <button type="button" class="btn-main" id="btnPublierDepuisAnnonces">+ Publier une annonce</button>
       </div>
       <div id="pubListContainer" class="pub-list"><div class="empty"><h3>Chargement…</h3></div></div>
     </div>
@@ -1256,6 +1210,20 @@
           </div>
         </div>
       </a>
+
+      <div id="listeNoterPublicites" style="margin-bottom:24px;"></div>
+
+      <div class="avis-modal-backdrop" id="avisPubModalBackdrop">
+        <div class="avis-modal">
+          <button type="button" class="avis-modal-close" id="avisPubModalClose">✕</button>
+          <h3>Noter <span id="avisPubModalNom"></span></h3>
+          <div class="avis-stars" id="avisPubStars">
+            <span data-val="1">★</span><span data-val="2">★</span><span data-val="3">★</span><span data-val="4">★</span><span data-val="5">★</span>
+          </div>
+          <button type="button" class="btn-main" id="avisPubSubmitBtn" style="margin-top:14px;width:100%;">Envoyer la note</button>
+          <div class="msg" id="msgAvisPubModal"></div>
+        </div>
+      </div>
       <div class="toolbar">
         <div class="page-head" style="margin-bottom:0;"><h2>Formations &amp; astuces</h2><p>Conseils de production et actualités publiés par Rĩch Farm Unity.</p></div>
         <button class="btn-small" id="btnNouvelleFormation" style="display:none;">+ Nouvelle formation</button>
@@ -1434,14 +1402,8 @@
     <div class="app-main">
       <div id="compteConnecte" style="display:none;">
         <div class="page-head"><h2>Mon compte</h2><p id="compteResume"></p></div>
-        <div id="compteEnAttente" class="card account-status" style="margin-bottom:20px;display:none;" aria-live="polite">
-          <h3 id="compteStatusTitre"></h3>
-          <p id="compteStatusDescription"></p>
-          <div class="account-status-actions">
-            <button type="button" class="btn-main" id="btnStatusCompleter" style="display:none;">Compléter mon profil</button>
-            <button type="button" class="btn-main" id="btnStatusPublier" style="display:none;">Publier une annonce</button>
-            <button type="button" class="btn-outline-small" id="btnStatusAnnonces" style="display:none;">Voir les annonces</button>
-          </div>
+        <div id="compteEnAttente" class="card" style="margin-bottom:20px;display:none;background:#FBF0DC;border-color:var(--or);">
+          <p style="color:var(--encre);line-height:1.6;"><strong>Votre compte est en cours de vérification.</strong><br>Nous allons vous contacter pour quelques informations avant de valider votre accès à la publication d'annonces. Merci de votre patience.</p>
         </div>
         <div id="carteCompleterProfil" class="card" style="margin-bottom:20px;display:none;background:#FBF0DC;border-color:var(--or);">
           <p style="color:var(--encre);line-height:1.6;margin-bottom:14px;"><strong>Encore une étape !</strong><br>Complétez ces informations pour pouvoir publier des annonces et être contacté(e).</p>
@@ -1454,15 +1416,9 @@
             <div class="field"><label for="cpType">Je suis…</label>
               <select id="cpType" required>
                 <option value="">Choisir un rôle</option>
-                <option value="Semencier">Semencier</option>
-                <option value="Vendeur d'outils agricoles">Vendeur d'outils agricoles</option>
-                <option value="Fournisseur d'intrants">Fournisseur d'intrants (engrais, pesticides, produits vétérinaires…)</option>
-                <option value="Propriétaire foncier">Propriétaire foncier (terres à louer, vendre, disposer)</option>
-                <option value="Producteur (végétal)">Producteur végétal</option>
-                <option value="Éleveur (animal)">Éleveur (animal)</option>
-                <option value="Agroforesterie / Foresterie">Agroforesterie / Foresterie</option>
+                <option value="Producteur">Producteur</option>
                 <option value="Transformateur">Transformateur</option>
-                <option value="Commerçant">Distributeur / commerçant</option>
+                <option value="Distributeur">Distributeur / commerçant</option>
                 <option value="Consommateur">Consommateur</option>
                 <option value="Membre d'institution">Membre d'institution (recherche, ONG, État…)</option>
               </select>
@@ -1596,13 +1552,6 @@
             <button type="submit" class="btn-main">Enregistrer le mot de passe</button>
             <div class="msg" id="msgResetPassword"></div>
           </form>
-        </div>
-      </div>
-      <div id="compteErreurTechnique" class="card account-status" style="margin-bottom:20px;display:none;" role="alert">
-        <h3>Impossible de charger votre profil</h3>
-        <p>Une erreur technique empêche le chargement de votre compte. Vérifiez votre connexion et réessayez.</p>
-        <div class="account-status-actions">
-          <button type="button" class="btn-main" id="btnReessayerProfil">Réessayer</button>
         </div>
       </div>
     </div>
@@ -2182,22 +2131,6 @@
     showView('accueil');
   });
   document.getElementById('btnAllerPublier').addEventListener('click', () => { choisirTypeAnnonce('vente'); showView('nouvelle-pub'); });
-  document.getElementById('btnStatusCompleter').addEventListener('click', () => {
-    document.getElementById('carteCompleterProfil').scrollIntoView({ behavior: 'smooth', block: 'start' });
-    document.getElementById('cpPrenom').focus();
-  });
-  document.getElementById('btnStatusPublier').addEventListener('click', () => {
-    document.getElementById('btnAllerPublier').click();
-  });
-  document.getElementById('btnStatusAnnonces').addEventListener('click', () => showView('publications'));
-  document.getElementById('btnReessayerProfil').addEventListener('click', () => refreshSession());
-  document.getElementById('btnPublierDepuisAnnonces').addEventListener('click', () => {
-    if(currentUser && currentProfile && currentProfile.type_acteur && currentProfile.compte_approuve && !currentProfile.compte_rejete){
-      document.getElementById('btnAllerPublier').click();
-    } else {
-      showView('compte');
-    }
-  });
 
   // ---- Mot de passe oublié ----
   document.getElementById('formForgotPassword').addEventListener('submit', async (e) => {
@@ -2268,60 +2201,14 @@
     btn.disabled = false;
   });
 
-  let refreshSessionRequestId = 0;
   async function refreshSession(){
     if(isPasswordRecovery) return;
-    const requestId = ++refreshSessionRequestId;
-    const isCurrentRequest = () => requestId === refreshSessionRequestId;
-    const errorCard = document.getElementById('compteErreurTechnique');
-    const showTechnicalError = (error) => {
-      if(!isCurrentRequest()) return;
-      console.error('Impossible de charger la session ou le profil', error);
-      currentProfile = null;
-      document.getElementById('accountLabel').textContent = currentUser ? currentUser.email : '';
-      document.getElementById('compteConnecte').style.display = 'none';
-      document.getElementById('compteNonConnecte').style.display = 'none';
-      errorCard.style.display = 'block';
-      document.getElementById('btnNouvelleFormation').style.display = 'none';
-      document.getElementById('btnNouveauSujet').style.display = 'none';
-      document.getElementById('tabModeration').style.display = 'none';
-      document.getElementById('tabSuggestions').style.display = 'none';
-      document.getElementById('tabMembres').style.display = 'none';
-      document.getElementById('tabStats').style.display = 'none';
-      document.getElementById('carteAjoutContactInstit').style.display = 'none';
-      document.getElementById('carteAjoutPub').style.display = 'none';
-    };
-    let sessionResult;
-    try {
-      sessionResult = await sb.auth.getSession();
-    } catch(error) {
-      showTechnicalError(error);
-      return;
-    }
-    if(!isCurrentRequest()) return;
-    if(sessionResult.error){
-      showTechnicalError(sessionResult.error);
-      return;
-    }
-    const session = sessionResult.data && sessionResult.data.session;
+    const { data: { session } } = await sb.auth.getSession();
     currentUser = session ? session.user : null;
     if(currentUser){
-      let profileResult;
-      try {
-        profileResult = await sb.from('profiles').select('*').eq('id', currentUser.id).maybeSingle();
-      } catch(error) {
-        showTechnicalError(error);
-        return;
-      }
-      if(!isCurrentRequest()) return;
-      if(profileResult.error){
-        showTechnicalError(profileResult.error);
-        return;
-      }
-      const profile = profileResult.data;
+      const { data: profile } = await sb.from('profiles').select('*').eq('id', currentUser.id).single();
       if(profile && profile.compte_rejete){
         await sb.auth.signOut();
-        if(!isCurrentRequest()) return;
         currentUser = null;
         currentProfile = null;
         alert("Votre compte n'a pas été validé et n'est plus accessible. Vous pouvez créer un nouveau compte si besoin, ou nous contacter sur WhatsApp.");
@@ -2334,7 +2221,6 @@
         document.getElementById('tabStats').style.display = 'none';
         return;
       }
-      errorCard.style.display = 'none';
       currentProfile = profile;
       document.getElementById('accountLabel').textContent = profile ? (profile.prenom + ' ' + profile.nom) : currentUser.email;
       document.getElementById('compteConnecte').style.display = 'block';
@@ -2358,33 +2244,13 @@
       const pendingMsg = document.getElementById('compteEnAttente');
       const completeCard = document.getElementById('carteCompleterProfil');
       const publierBtn = document.getElementById('btnAllerPublier');
-      const statusTitle = document.getElementById('compteStatusTitre');
-      const statusDescription = document.getElementById('compteStatusDescription');
-      const statusCompleteBtn = document.getElementById('btnStatusCompleter');
-      const statusPublishBtn = document.getElementById('btnStatusPublier');
-      const statusAnnouncementsBtn = document.getElementById('btnStatusAnnonces');
-      pendingMsg.style.display = 'none';
-      pendingMsg.style.background = '';
-      pendingMsg.style.borderColor = '';
-      pendingMsg.dataset.state = '';
-      statusTitle.textContent = '';
-      statusDescription.textContent = '';
-      statusCompleteBtn.style.display = 'none';
-      statusPublishBtn.style.display = 'none';
-      statusAnnouncementsBtn.style.display = 'none';
       if(profile && !profile.type_acteur){
-        pendingMsg.dataset.state = 'incomplete';
-        pendingMsg.style.display = 'block';
-        statusTitle.textContent = 'PROFIL À COMPLÉTER';
-        statusDescription.textContent = 'Ajoutez vos informations de profil pour pouvoir publier des annonces et être contacté(e).';
-        statusCompleteBtn.style.display = 'inline-block';
-        statusPublishBtn.style.display = 'none';
-        statusAnnouncementsBtn.style.display = 'none';
         if(completeCard){
           completeCard.style.display = 'block';
           document.getElementById('cpPrenom').value = profile.prenom || '';
           document.getElementById('cpNom').value = profile.nom || '';
         }
+        if(pendingMsg) pendingMsg.style.display = 'none';
         if(publierBtn) publierBtn.style.display = 'none';
       } else if(profile && profile.compte_rejete){
         if(completeCard) completeCard.style.display = 'none';
@@ -2398,12 +2264,6 @@
       } else if(profile && !profile.compte_approuve){
         if(completeCard) completeCard.style.display = 'none';
         if(pendingMsg) pendingMsg.style.display = 'block';
-        pendingMsg.dataset.state = 'pending';
-        statusTitle.textContent = 'EN ATTENTE DE VÉRIFICATION';
-        statusDescription.textContent = 'Votre profil est en cours de vérification. Nous vous contacterons si des informations complémentaires sont nécessaires. En attendant, vous pouvez consulter les annonces.';
-        statusCompleteBtn.style.display = 'none';
-        statusPublishBtn.style.display = 'none';
-        statusAnnouncementsBtn.style.display = 'inline-block';
         if(publierBtn) publierBtn.style.display = 'none';
       } else if(!profile){
         if(completeCard) completeCard.style.display = 'none';
@@ -2411,26 +2271,16 @@
           pendingMsg.style.display = 'block';
           pendingMsg.style.background = '#FBE9E7';
           pendingMsg.style.borderColor = 'var(--rouge)';
-          pendingMsg.dataset.state = 'missing';
-          statusTitle.textContent = 'PROFIL INTROUVABLE';
-          statusDescription.textContent = 'Ton profil est introuvable. Il y a eu un problème lors de la création de ton compte. Contacte-nous sur WhatsApp pour le corriger.';
+          pendingMsg.innerHTML = '<p style="color:var(--encre);line-height:1.6;"><strong>Ton profil est introuvable.</strong><br>Il y a eu un problème lors de la création de ton compte. Contacte-nous sur WhatsApp pour le corriger.</p>';
         }
         if(publierBtn) publierBtn.style.display = 'none';
       } else {
         if(completeCard) completeCard.style.display = 'none';
         if(pendingMsg) pendingMsg.style.display = 'none';
-        pendingMsg.dataset.state = 'active';
-        pendingMsg.style.display = 'block';
-        statusTitle.textContent = 'COMPTE ACTIF / APPROUVÉ';
-        statusDescription.textContent = 'Votre compte est approuvé. Vous pouvez publier des annonces et contacter les acteurs agricoles.';
-        statusCompleteBtn.style.display = 'none';
-        statusPublishBtn.style.display = 'inline-block';
-        statusAnnouncementsBtn.style.display = 'none';
         if(publierBtn) publierBtn.style.display = 'inline-block';
       }
     } else {
       currentProfile = null;
-      errorCard.style.display = 'none';
       document.getElementById('accountLabel').textContent = '';
       document.getElementById('compteConnecte').style.display = 'none';
       document.getElementById('compteNonConnecte').style.display = 'block';
@@ -2438,19 +2288,11 @@
     }
   }
 
-  let typeAnnonceActuel = 'toutes';
+  let typeAnnonceActuel = 'vente';
   async function loadPublications(silencieux){
     const container = document.getElementById('pubListContainer');
-    if(!container.dataset.avisHandlerAttached){
-      container.addEventListener('click', event => {
-        const button = event.target.closest('[data-avis-user-id]');
-        if(button) ouvrirAvisModal(button.dataset.avisUserId, button.dataset.avisUserName);
-      });
-      container.dataset.avisHandlerAttached = 'true';
-    }
     if(!silencieux) container.innerHTML = '<div class="empty"><h3>Chargement…</h3></div>';
-    let query = sb.from('publications').select('*, profiles(prenom, nom, telephone, type_acteur)').order('created_at', { ascending: false });
-    if(typeAnnonceActuel !== 'toutes') query = query.eq('type_annonce', typeAnnonceActuel);
+    let query = sb.from('publications').select('*, profiles(prenom, nom, telephone, type_acteur)').eq('type_annonce', typeAnnonceActuel).order('created_at', { ascending: false });
     const cat = document.getElementById('filterCategorie').value;
     const statut = document.getElementById('filterStatut').value;
     const search = document.getElementById('searchAnnonces').value.trim();
@@ -2470,11 +2312,9 @@
       const photoHtml = galleryHtml(p, 300);
       const ecoBadge = p.eco_responsable ? '<span class="pub-statut" style="background:#E6F1E6;color:var(--vert-rich);margin-left:6px;">🌱 Éco-responsable</span>' : '';
       const waNumber = contact ? contact.replace(/[^0-9]/g, '') : '';
-      const contactBtn = waNumber ? `<a href="https://wa.me/${waNumber}?text=${encodeURIComponent('Bonjour, je vous contacte au sujet de votre annonce "' + p.titre + '" sur Rĩch Farm Unity.')}" target="_blank" class="btn-small pub-contact-btn">Contacter sur WhatsApp</a>` : '';
+      const contactBtn = waNumber ? `<a href="https://wa.me/${waNumber}?text=${encodeURIComponent('Bonjour, je vous contacte au sujet de votre annonce "' + p.titre + '" sur Rĩch Farm Unity.')}" target="_blank" class="btn-small" style="display:inline-block;margin-top:12px;">Contacter sur WhatsApp</a>` : '';
       const shareUrl = `https://richfarmunity.com/share?id=${p.id}`;
       const estAchat = p.type_annonce === 'achat';
-      const typeAnnonceLabel = estAchat ? 'JE CHERCHE À ACHETER' : 'JE VENDS';
-      const typeAnnonceClass = estAchat ? 'achat' : 'vente';
       const ficheEntete = estAchat ? "🛒 FICHE D'ACHAT (Je veux acheter)" : "🌾 FICHE DE VENTE (Je vends)";
       const lignesFiche = [
         `Produit : ${p.titre}`,
@@ -2490,11 +2330,14 @@
         ? `<button class="btn-outline-small" style="margin-top:12px;margin-left:8px;border-color:var(--rouge);color:var(--rouge);" onclick="supprimerAnnonce('${p.id}')">Supprimer mon annonce</button>`
         : (isAdmin ? `<button class="btn-outline-small" style="margin-top:12px;margin-left:8px;border-color:var(--rouge);color:var(--rouge);" onclick="supprimerAnnonce('${p.id}')">🛡️ Supprimer (admin)</button>` : '');
       const audioHtml = p.audio_url ? `<audio src="${p.audio_url}" controls style="width:100%;margin:10px 0;"></audio>` : '';
-      const avisBtn = (currentUser && !isOwner) ? `<button class="btn-outline-small" style="margin-top:12px;margin-left:8px;" data-avis-user-id="${escapeHtml(p.user_id)}" data-avis-user-name="${escapeHtml(auteur)}">⭐ Laisser un avis</button>` : '';
-      return `<div class="pub-card"><div class="pub-top"><div><span class="pub-type ${typeAnnonceClass}">${typeAnnonceLabel}</span><span class="pub-tag">${escapeHtml(p.categorie)}</span><h3>${escapeHtml(p.titre)}</h3></div><span class="pub-statut ${statutClass}">${statutLabel}</span>${ecoBadge}</div><div class="pub-meta pub-meta-priority">${p.quantite ? '<span><strong>Quantité :</strong> ' + escapeHtml(p.quantite) + '</span>' : ''}${p.prix ? '<span><strong>Prix :</strong> ' + escapeHtml(p.prix) + '</span>' : ''}${p.localisation ? '<span><strong>Lieu :</strong> ' + escapeHtml(p.localisation) + '</span>' : ''}</div>${photoHtml}${p.description ? '<p class="desc">' + escapeHtml(p.description) + '</p>' : ''}${audioHtml}<div class="pub-footer">Publié par ${escapeHtml(auteur)}${contact ? ' · ' + escapeHtml(contact) : ''}${certifBadge}<br><span id="avisBadge-${p.user_id}" class="stars-display"></span></div>${contactBtn}${shareBtn}${avisBtn}${deleteBtn}</div>`;
+      const avisBtn = (currentUser && !isOwner) ? `<button class="btn-outline-small" style="margin-top:12px;margin-left:8px;" onclick="ouvrirAvisModal('${p.user_id}', '${escapeHtml(auteur).replace(/'/g, "\\'")}')">⭐ Laisser un avis</button>` : '';
+      nomsUtilisateurs[p.user_id] = auteur;
+      return `<div class="pub-card"><div class="pub-top"><div><span class="pub-tag">${p.categorie}</span><h3>${escapeHtml(p.titre)}</h3></div><span class="pub-statut ${statutClass}">${statutLabel}</span>${ecoBadge}</div>${photoHtml}${p.description ? '<p class="desc">' + escapeHtml(p.description) + '</p>' : ''}${audioHtml}<div class="pub-meta">${p.quantite ? '<span><strong>Quantité :</strong> ' + escapeHtml(p.quantite) + '</span>' : ''}${p.prix ? '<span><strong>Prix :</strong> ' + escapeHtml(p.prix) + '</span>' : ''}${p.localisation ? '<span><strong>Lieu :</strong> ' + escapeHtml(p.localisation) + '</span>' : ''}</div><div class="pub-footer">Publié par ${escapeHtml(auteur)}${contact ? ' · ' + escapeHtml(contact) : ''}${certifBadge}<br><span id="avisBadge-${p.user_id}" class="stars-display" style="cursor:pointer;" onclick="ouvrirAvisListeModal('${p.user_id}')"></span></div>${contactBtn}${shareBtn}${avisBtn}${deleteBtn}</div>`;
     }).join('');
     renderAvisBadges([...new Set(data.map(p => p.user_id))]);
   }
+
+  const nomsUtilisateurs = {};
 
   async function renderAvisBadges(userIds){
     if(!userIds || userIds.length === 0) return;
@@ -2582,79 +2425,35 @@
     if(mesAnnoncesVisible) await loadMesAnnonces();
   };
 
-  async function loadMesAnnonces(messageAnnonceId, messageStatut){
+  async function loadMesAnnonces(){
     if(!currentUser) return;
     const container = document.getElementById('mesAnnoncesContainer');
     container.innerHTML = '<div class="empty"><h3>Chargement…</h3></div>';
     const { data, error } = await sb.from('publications').select('*').eq('user_id', currentUser.id).order('created_at', { ascending: false });
-    if(error){
-      const message = messageStatut ? '<p>' + escapeHtml(messageStatut) + ' La valeur enregistrée n’a pas pu être rechargée.</p>' : '';
-      container.innerHTML = '<div class="empty"><h3>Erreur</h3>' + message + '<p>' + escapeHtml(error.message) + '</p></div>';
-      return;
-    }
+    if(error){ container.innerHTML = '<div class="empty"><h3>Erreur</h3><p>' + error.message + '</p></div>'; return; }
     if(!data || data.length === 0){ container.innerHTML = '<div class="empty"><h3>Vous n\'avez encore rien publié</h3></div>'; return; }
-    if(!container.dataset.statutHandlerAttached){
-      container.addEventListener('change', event => {
-        const select = event.target.closest('select[data-annonce-statut]');
-        if(select) changerStatutAnnonce(select.dataset.annonceId, select.value);
-      });
-      container.dataset.statutHandlerAttached = 'true';
-    }
     container.innerHTML = data.map(p => {
       let statutLabel, statutClass;
       if(p.rejete){ statutLabel = 'Rejetée'; statutClass = 'ecoule'; }
       else if(!p.approuve){ statutLabel = 'En attente de validation'; statutClass = 'reserve'; }
-      else if(p.statut === 'disponible' || p.statut === 'reserve' || p.statut === 'ecoule') { statutLabel = p.statut === 'reserve' ? 'Réservé' : (p.statut === 'ecoule' ? 'Écoulé' : 'Disponible'); statutClass = p.statut === 'reserve' ? 'reserve' : (p.statut === 'ecoule' ? 'ecoule' : ''); }
-      else { statutLabel = 'Statut commercial non reconnu'; statutClass = 'reserve'; }
+      else { statutLabel = p.statut === 'reserve' ? 'Réservé' : (p.statut === 'ecoule' ? 'Écoulé' : 'Disponible'); statutClass = p.statut === 'reserve' ? 'reserve' : (p.statut === 'ecoule' ? 'ecoule' : ''); }
       const date = p.created_at ? new Date(p.created_at).toLocaleDateString('fr-FR') : '';
       const photoHtml = galleryHtml(p, 220);
-      const statutControl = p.approuve && !p.rejete && (p.statut === 'disponible' || p.statut === 'reserve' || p.statut === 'ecoule')
-        ? `<label class="mes-annonce-status"><span>Statut commercial</span><select data-annonce-statut data-annonce-id="${escapeHtml(p.id)}" aria-label="Statut commercial de ${escapeHtml(p.titre)}"><option value="disponible"${p.statut === 'disponible' ? ' selected' : ''}>Disponible</option><option value="reserve"${p.statut === 'reserve' ? ' selected' : ''}>Réservé</option><option value="ecoule"${p.statut === 'ecoule' ? ' selected' : ''}>Écoulé</option></select></label>`
-        : (!p.rejete && p.approuve && statutLabel === 'Statut commercial non reconnu' ? `<div class="mes-annonce-status"><span>${statutLabel} : ${escapeHtml(String(p.statut))}</span></div>` : '');
-      const statutMessage = messageStatut && p.id === messageAnnonceId ? `<p class="mes-annonce-status-message" role="alert">${escapeHtml(messageStatut)}</p>` : '';
-      return `<div class="pub-card"><div class="pub-top"><div><span class="pub-tag">${escapeHtml(p.categorie)}</span><h3>${escapeHtml(p.titre)}</h3></div><span class="pub-statut ${statutClass}">${statutLabel}</span></div>${photoHtml}<div class="pub-footer">Publié le ${date}</div>${statutControl}${statutMessage}<button class="btn-outline-small" style="margin-top:12px;border-color:var(--rouge);color:var(--rouge);" onclick="supprimerAnnonce('${p.id}')">Supprimer</button></div>`;
+      return `<div class="pub-card"><div class="pub-top"><div><span class="pub-tag">${escapeHtml(p.categorie)}</span><h3>${escapeHtml(p.titre)}</h3></div><span class="pub-statut ${statutClass}">${statutLabel}</span></div>${photoHtml}<div class="pub-footer">Publié le ${date}</div><button class="btn-outline-small" style="margin-top:12px;border-color:var(--rouge);color:var(--rouge);" onclick="supprimerAnnonce('${p.id}')">Supprimer</button></div>`;
     }).join('');
-  }
-
-  async function changerStatutAnnonce(id, statut){
-    const statutsAutorises = ['disponible', 'reserve', 'ecoule'];
-    if(!currentUser || !statutsAutorises.includes(statut)) return;
-    const container = document.getElementById('mesAnnoncesContainer');
-    const select = [...container.querySelectorAll('select[data-annonce-statut]')].find(element => element.dataset.annonceId === id);
-    if(select) select.disabled = true;
-    let updateError = null;
-    let annonceModifiee = null;
-    try{
-      const result = await sb.from('publications').update({ statut }).eq('id', id).eq('user_id', currentUser.id).select('id').maybeSingle();
-      updateError = result.error;
-      annonceModifiee = result.data;
-    } catch(error){
-      updateError = error;
-    }
-    if(updateError || !annonceModifiee){
-      const detail = updateError && updateError.message ? ' ' + updateError.message : '';
-      const message = updateError
-        ? 'Le statut n’a pas pu être modifié.' + detail
-        : 'Aucune annonce correspondante n’a été modifiée. Vérifiez vos droits ou rechargez la page.';
-      await loadMesAnnonces(id, message);
-      return;
-    }
-    await loadMesAnnonces();
-    if(getActiveViewName() === 'publications') loadPublications();
   }
 
   window.filtrerTypeAnnonce = function(type){
     typeAnnonceActuel = type;
-    const boutons = {
-      toutes: document.getElementById('btnFiltreToutes'),
-      vente: document.getElementById('btnFiltreVentes'),
-      achat: document.getElementById('btnFiltreAchats')
-    };
-    Object.entries(boutons).forEach(([valeur, bouton]) => {
-      const actif = valeur === type;
-      bouton.className = actif ? 'btn-main' : 'btn-outline-small';
-      bouton.setAttribute('aria-pressed', String(actif));
-    });
+    const btnVentes = document.getElementById('btnFiltreVentes');
+    const btnAchats = document.getElementById('btnFiltreAchats');
+    if(type === 'vente'){
+      btnVentes.className = 'btn-main'; btnVentes.style.cssText = 'flex:1;';
+      btnAchats.className = 'btn-outline-small'; btnAchats.style.cssText = 'flex:1;padding:14px;font-size:0.92rem;';
+    } else {
+      btnAchats.className = 'btn-main'; btnAchats.style.cssText = 'flex:1;';
+      btnVentes.className = 'btn-outline-small'; btnVentes.style.cssText = 'flex:1;padding:14px;font-size:0.92rem;';
+    }
     loadPublications();
   };
 
@@ -3112,7 +2911,7 @@
   let avisNoteChoisie = 0;
   const avisCache = {}; // { userId: { moyenne, nombre } }
 
-  function ouvrirAvisModal(userId, userNom){
+  async function ouvrirAvisModal(userId, userNom){
     if(!currentUser){ alert('Connectez-vous pour laisser un avis.'); return; }
     if(userId === currentUser.id){ alert('Vous ne pouvez pas vous auto-évaluer.'); return; }
     avisCibleId = userId;
@@ -3122,8 +2921,44 @@
     document.getElementById('msgAvisModal').innerHTML = '';
     document.querySelectorAll('#avisStars span').forEach(s => s.classList.remove('is-active'));
     document.getElementById('avisModalBackdrop').classList.add('is-open');
+
+    // Un seul avis par personne : si un avis existe déjà, on le pré-remplit (la validation le mettra à jour)
+    const { data } = await sb.from('avis_utilisateurs').select('note, commentaire').eq('evaluateur_id', currentUser.id).eq('evalue_id', userId).maybeSingle();
+    if(data){
+      avisNoteChoisie = data.note;
+      document.querySelectorAll('#avisStars span').forEach(s => s.classList.toggle('is-active', parseInt(s.dataset.val) <= data.note));
+      document.getElementById('avisCommentaire').value = data.commentaire || '';
+      document.getElementById('msgAvisModal').innerHTML = '<p style="font-size:0.78rem;color:var(--or);margin-top:8px;">Vous avez déjà noté cette personne — votre envoi mettra à jour votre avis.</p>';
+    }
   }
   window.ouvrirAvisModal = ouvrirAvisModal;
+
+  function ouvrirAvisListeModal(userId){
+    const nom = nomsUtilisateurs[userId] || 'cette personne';
+    document.getElementById('avisListeModalNom').textContent = nom;
+    document.getElementById('avisListeContenu').innerHTML = '<p style="text-align:center;color:var(--encre-douce);padding:20px 0;">Chargement…</p>';
+    document.getElementById('avisListeModalBackdrop').classList.add('is-open');
+    sb.from('avis_utilisateurs').select('note, commentaire, created_at, profiles!avis_utilisateurs_evaluateur_id_fkey(prenom, nom)').eq('evalue_id', userId).order('created_at', { ascending: false }).then(({ data, error }) => {
+      const zone = document.getElementById('avisListeContenu');
+      if(error || !data || data.length === 0){ zone.innerHTML = '<p style="text-align:center;color:var(--encre-douce);padding:20px 0;">Aucun avis pour le moment.</p>'; return; }
+      zone.innerHTML = data.map(a => {
+        const evaluateur = a.profiles ? (a.profiles.prenom + ' ' + a.profiles.nom) : 'Utilisateur';
+        const date = a.created_at ? new Date(a.created_at).toLocaleDateString('fr-FR') : '';
+        return `<div style="padding:12px 0;border-bottom:1px solid rgba(27,94,32,0.1);">
+          <div style="color:var(--or);font-size:0.95rem;">${starsHtml(a.note)}</div>
+          ${a.commentaire ? '<p style="font-size:0.88rem;color:var(--encre);margin-top:4px;">' + escapeHtml(a.commentaire) + '</p>' : '<p style="font-size:0.8rem;color:var(--encre-douce);font-style:italic;margin-top:4px;">Pas de commentaire.</p>'}
+          <p style="font-size:0.72rem;color:var(--encre-douce);margin-top:4px;">${escapeHtml(evaluateur)} · ${date}</p>
+        </div>`;
+      }).join('');
+    });
+  }
+  window.ouvrirAvisListeModal = ouvrirAvisListeModal;
+  document.getElementById('avisListeModalClose').addEventListener('click', () => {
+    document.getElementById('avisListeModalBackdrop').classList.remove('is-open');
+  });
+  document.getElementById('avisListeModalBackdrop').addEventListener('click', (e) => {
+    if(e.target.id === 'avisListeModalBackdrop') document.getElementById('avisListeModalBackdrop').classList.remove('is-open');
+  });
 
   document.getElementById('avisModalClose').addEventListener('click', () => {
     document.getElementById('avisModalBackdrop').classList.remove('is-open');
@@ -3428,7 +3263,7 @@
       const auteur = p.profiles ? (p.profiles.prenom + ' ' + p.profiles.nom + ' — ' + p.profiles.type_acteur) : 'Utilisateur';
       const photoHtml = galleryHtml(p, 220);
       const audioHtmlMod = p.audio_url ? `<audio src="${p.audio_url}" controls style="width:100%;margin:10px 0;"></audio>` : '';
-      return `<div class="pub-card"><div class="pub-top"><div><span class="pub-tag">${escapeHtml(p.categorie)}</span><h3>${escapeHtml(p.titre)}</h3></div><span class="pub-statut reserve">En attente</span></div>${photoHtml}${p.description ? '<p class="desc">' + escapeHtml(p.description) + '</p>' : ''}${audioHtmlMod}<div class="pub-footer">Publié par ${escapeHtml(auteur)}${p.profiles && p.profiles.telephone ? ' · ' + escapeHtml(p.profiles.telephone) : ''}</div><div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap;"><button class="btn-small" onclick="approuverAnnonce('${p.id}')">Approuver et publier</button><button class="btn-outline-small" style="border-color:var(--rouge);color:var(--rouge);" onclick="rejeterAnnonce('${p.id}')">Rejeter</button></div></div>`;
+      return `<div class="pub-card"><div class="pub-top"><div><span class="pub-tag">${p.categorie}</span><h3>${escapeHtml(p.titre)}</h3></div><span class="pub-statut reserve">En attente</span></div>${photoHtml}${p.description ? '<p class="desc">' + escapeHtml(p.description) + '</p>' : ''}${audioHtmlMod}<div class="pub-footer">Publié par ${escapeHtml(auteur)}${p.profiles && p.profiles.telephone ? ' · ' + escapeHtml(p.profiles.telephone) : ''}</div><div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap;"><button class="btn-small" onclick="approuverAnnonce('${p.id}')">Approuver et publier</button><button class="btn-outline-small" style="border-color:var(--rouge);color:var(--rouge);" onclick="rejeterAnnonce('${p.id}')">Rejeter</button></div></div>`;
     }).join('');
   }
 
@@ -3831,21 +3666,96 @@
       cta.style.display = 'none';
     }
     if(currentProfile && currentProfile.is_admin) loadPublicitesAdmin();
+    loadNoterPublicites(data || []);
   }
+
+  async function loadNoterPublicites(publicitesActives){
+    const zone = document.getElementById('listeNoterPublicites');
+    if(!zone) return;
+    if(!publicitesActives || publicitesActives.length === 0){ zone.innerHTML = ''; return; }
+
+    const ids = publicitesActives.map(p => p.id);
+    const { data: avis } = await sb.from('avis_publicites').select('publicite_id, note').in('publicite_id', ids);
+    const parPub = {};
+    (avis || []).forEach(a => { (parPub[a.publicite_id] = parPub[a.publicite_id] || []).push(a.note); });
+
+    zone.innerHTML = `<h3 style="margin-bottom:12px;font-size:1rem;">⭐ Notez nos partenaires publicitaires</h3>` + publicitesActives.map(p => {
+      const notes = parPub[p.id] || [];
+      const moyenne = notes.length ? (notes.reduce((s,n) => s+n, 0) / notes.length) : 0;
+      return `<div class="noter-pub-row">
+        <img src="${p.image_url}" alt="${escapeHtml(p.annonceur)}">
+        <div style="flex:1;">
+          <p style="font-weight:600;font-size:0.88rem;margin:0;">${escapeHtml(p.annonceur)}</p>
+          <p style="font-size:0.78rem;color:var(--or);margin:2px 0 0;">${notes.length ? starsHtml(moyenne) + ' (' + notes.length + ' avis)' : 'Pas encore noté'}</p>
+        </div>
+        <button class="btn-outline-small" onclick="ouvrirAvisPubModal('${p.id}', '${escapeHtml(p.annonceur).replace(/'/g, "\\'")}')">Noter</button>
+      </div>`;
+    }).join('');
+  }
+
+  let avisPubCibleId = null;
+  let avisPubNoteChoisie = 0;
+  window.ouvrirAvisPubModal = async function(publiciteId, nom){
+    if(!currentUser){ alert('Connectez-vous pour noter.'); return; }
+    avisPubCibleId = publiciteId;
+    avisPubNoteChoisie = 0;
+    document.getElementById('avisPubModalNom').textContent = nom;
+    document.getElementById('msgAvisPubModal').innerHTML = '';
+    document.querySelectorAll('#avisPubStars span').forEach(s => s.classList.remove('is-active'));
+    document.getElementById('avisPubModalBackdrop').classList.add('is-open');
+
+    const { data } = await sb.from('avis_publicites').select('note').eq('evaluateur_id', currentUser.id).eq('publicite_id', publiciteId).maybeSingle();
+    if(data){
+      avisPubNoteChoisie = data.note;
+      document.querySelectorAll('#avisPubStars span').forEach(s => s.classList.toggle('is-active', parseInt(s.dataset.val) <= data.note));
+      document.getElementById('msgAvisPubModal').innerHTML = '<p style="font-size:0.78rem;color:var(--or);margin-top:8px;">Vous avez déjà noté cette publicité — votre envoi mettra à jour votre note.</p>';
+    }
+  };
+  document.getElementById('avisPubModalClose').addEventListener('click', () => {
+    document.getElementById('avisPubModalBackdrop').classList.remove('is-open');
+  });
+  document.getElementById('avisPubModalBackdrop').addEventListener('click', (e) => {
+    if(e.target.id === 'avisPubModalBackdrop') document.getElementById('avisPubModalBackdrop').classList.remove('is-open');
+  });
+  document.querySelectorAll('#avisPubStars span').forEach(star => {
+    star.addEventListener('click', () => {
+      avisPubNoteChoisie = parseInt(star.dataset.val);
+      document.querySelectorAll('#avisPubStars span').forEach(s => s.classList.toggle('is-active', parseInt(s.dataset.val) <= avisPubNoteChoisie));
+    });
+  });
+  document.getElementById('avisPubSubmitBtn').addEventListener('click', async () => {
+    if(!avisPubNoteChoisie){ showMsg('msgAvisPubModal', 'Choisissez une note (étoiles).', 'error'); return; }
+    const { error } = await sb.from('avis_publicites').upsert(
+      { evaluateur_id: currentUser.id, publicite_id: avisPubCibleId, note: avisPubNoteChoisie },
+      { onConflict: 'evaluateur_id,publicite_id' }
+    );
+    if(error){ showMsg('msgAvisPubModal', error.message, 'error'); return; }
+    showMsg('msgAvisPubModal', 'Note enregistrée, merci !', 'success');
+    setTimeout(() => { document.getElementById('avisPubModalBackdrop').classList.remove('is-open'); loadPublicites(); }, 900);
+  });
 
   async function loadPublicitesAdmin(){
     const { data, error } = await sb.from('publicites').select('*').order('ordre', { ascending: true });
     const list = document.getElementById('listePublicitesAdmin');
     if(error || !data || data.length === 0){ list.innerHTML = '<p style="color:var(--encre-douce);font-size:0.9rem;">Aucune publicité pour le moment.</p>'; return; }
+
+    const idsP = data.map(p => p.id);
+    const { data: avisP } = await sb.from('avis_publicites').select('publicite_id, note').in('publicite_id', idsP);
+    const parPubAdmin = {};
+    (avisP || []).forEach(a => { (parPubAdmin[a.publicite_id] = parPubAdmin[a.publicite_id] || []).push(a.note); });
+
     const aujourdHui = new Date().toISOString().slice(0,10);
     list.innerHTML = data.map(p => {
       const estExpiree = p.date_expiration && p.date_expiration < aujourdHui;
       const statutTxt = estExpiree ? '· Expirée' : (p.actif ? '· Active' : '· Désactivée');
       const expTxt = p.date_expiration ? ` · Expire le ${p.date_expiration}` : '';
+      const notesP = parPubAdmin[p.id] || [];
+      const moyenneP = notesP.length ? (notesP.reduce((s,n) => s+n, 0) / notesP.length) : 0;
+      const votesTxt = notesP.length ? ` · ⭐ ${moyenneP.toFixed(1)} (${notesP.length} vote${notesP.length > 1 ? 's' : ''})` : ' · Pas encore noté';
       return `
       <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid rgba(28,26,20,0.12);">
         <img src="${p.image_url}" style="width:70px;height:40px;object-fit:cover;border-radius:6px;">
-        <div style="flex:1;"><strong>${escapeHtml(p.annonceur)}</strong><br><span style="font-size:0.8rem;color:${estExpiree ? 'var(--rouge)' : 'var(--encre-douce)'};">Ordre : ${p.ordre} ${statutTxt}${expTxt}</span></div>
+        <div style="flex:1;"><strong>${escapeHtml(p.annonceur)}</strong><br><span style="font-size:0.8rem;color:${estExpiree ? 'var(--rouge)' : 'var(--encre-douce)'};">Ordre : ${p.ordre} ${statutTxt}${expTxt}${votesTxt}</span></div>
         <button class="btn-outline-small" onclick="togglePublicite('${p.id}', ${!p.actif})">${p.actif ? 'Désactiver' : 'Activer'}</button>
         <button class="btn-outline-small" onclick="copierLienPublicite('${p.id}')">📤 Lien</button>
         <button class="btn-outline-small" style="border-color:var(--rouge);color:var(--rouge);" onclick="supprimerPublicite('${p.id}')">Supprimer</button>
