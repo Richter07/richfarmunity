@@ -1843,6 +1843,10 @@
   <div class="view" id="view-moderation">
     <div class="app-main">
       <div class="page-head">
+        <h2 id="pendingMembersTitle">Validation Institutions (0 en attente)</h2>
+      </div>
+      <div id="pendingMembersContainer" class="pub-list"><div class="empty"><h3>Chargement…</h3></div></div>
+      <div class="page-head">
         <h2>Modération des annonces</h2>
         <p>Ces annonces sont en attente de validation avant publication.</p>
       </div>
@@ -1954,6 +1958,7 @@
   });
 
   let currentUser = null;
+  let pendingMembers = [];
 
   function compteActif(profile){
     return !!profile && !!profile.type_acteur && !profile.compte_rejete &&
@@ -2066,7 +2071,7 @@
     if(name === 'calendrier'){ remplirMenuCalendrier(); afficherCalendrier(); }
     if(name === 'carte'){ initOrRafraichirCarte(); }
     if(name === 'formations'){ loadFormations(); loadPublicites(); demarrerAutoRefresh(loadFormations); }
-    if(name === 'moderation'){ loadModeration(); loadModerationPrix(); }
+    if(name === 'moderation'){ loadPending(); loadModeration(); loadModerationPrix(); }
     if(name === 'suggestions'){ loadSuggestions(); }
     if(name === 'forums'){ loadSujets(); demarrerAutoRefresh(loadSujets); }
     if(name === 'institutionnel') loadContactsInstitutionnels();
@@ -3427,6 +3432,84 @@
     btn.disabled = false;
     btn.textContent = "Publier l'annonce";
   });
+
+  async function loadPending(){
+    const container = document.getElementById('pendingMembersContainer');
+    const title = document.getElementById('pendingMembersTitle');
+    pendingMembers = [];
+    if(!container.dataset.actionsAttached){
+      container.addEventListener('click', async event => {
+        if(!(event.target instanceof Element)) return;
+        const button = event.target.closest('[data-pending-member-action]');
+        if(!button) return;
+        const approve = button.dataset.pendingMemberAction === 'approve';
+        if(!approve && !confirm('Rejeter ce compte institutionnel ?')) return;
+        const memberId = button.dataset.memberId;
+        button.disabled = true;
+        try{
+          const { error: updateError } = await sb.from('profiles')
+            .update({
+              compte_approuve: approve,
+              compte_rejete: !approve
+            })
+            .eq('id', memberId);
+          if(updateError) throw updateError;
+          await loadPending();
+        } catch(error){
+          console.error('Impossible de mettre à jour le compte institutionnel', error);
+          alert('Impossible de mettre à jour ce compte : ' + (error.message || 'erreur inconnue'));
+          button.disabled = false;
+        }
+      });
+      container.dataset.actionsAttached = 'true';
+    }
+
+    container.innerHTML = '<div class="empty"><h3>Chargement…</h3></div>';
+    let result;
+    try{
+      result = await sb.from('profiles')
+        .select('*')
+        .eq('type_acteur', "Membre d'institution")
+        .eq('compte_approuve', false)
+        .eq('compte_rejete', false)
+        .order('created_at', { ascending: false });
+    } catch(error){
+      console.error('Impossible de charger les comptes institutionnels en attente', error);
+      title.textContent = 'Validation Institutions';
+      container.innerHTML = '<div class="empty"><h3>Erreur</h3><p>' + escapeHtml(error.message || 'Erreur inconnue') + '</p></div>';
+      return;
+    }
+    if(result.error){
+      title.textContent = 'Validation Institutions';
+      container.innerHTML = '<div class="empty"><h3>Erreur</h3><p>' + escapeHtml(result.error.message) + '</p></div>';
+      return;
+    }
+
+    pendingMembers = result.data || [];
+    title.textContent = `Validation Institutions (${pendingMembers.length} en attente)`;
+    if(pendingMembers.length === 0){
+      container.innerHTML = '<div class="empty"><h3>Aucun compte en attente de validation</h3></div>';
+      return;
+    }
+
+    container.innerHTML = pendingMembers.map(member => {
+      const createdAt = member.created_at
+        ? new Date(member.created_at).toLocaleString('fr-FR')
+        : 'Date inconnue';
+      return `<div class="pub-card">
+        <div class="pub-top"><div><h3>${escapeHtml((member.prenom || '') + ' ' + (member.nom || ''))}</h3></div><span class="pub-statut reserve">En attente</span></div>
+        <div class="pub-meta">
+          <span><strong>Email :</strong> ${escapeHtml(member.email || '')}</span>
+          <span><strong>Domaine :</strong> ${escapeHtml(member.domaine || 'Non renseigné')}</span>
+        </div>
+        <div class="pub-footer">Inscrit le ${escapeHtml(createdAt)}</div>
+        <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap;">
+          <button type="button" class="btn-small" data-pending-member-action="approve" data-member-id="${escapeHtml(member.id)}">Approuver</button>
+          <button type="button" class="btn-outline-small" style="border-color:var(--rouge);color:var(--rouge);" data-pending-member-action="reject" data-member-id="${escapeHtml(member.id)}">Rejeter</button>
+        </div>
+      </div>`;
+    }).join('');
+  }
 
   async function loadModeration(){
     const container = document.getElementById('moderationContainer');
