@@ -32,35 +32,43 @@
     --vert-profond:#081A0B;
     --vert-rich:#1B5E20;
     --vert-clair:#3F8B44;
-    --or:#B8860B;
+    --or:#8B6508;
     --or-clair:#D9A62B;
     --or-fonce:#8B6508;
     --ivoire:#F7F1E3;
     --ivoire-2:#EDE1C4;
     --creme:#FBF8F0;
+    --bordure:#DED7C8;
     --terre:#A8461F;
     --encre:#1C1A14;
     --encre-douce:#4A4436;
     --rouge:#B23A2E;
+    --rayon-champ:10px;
+    --rayon-carte:16px;
+    --rayon-surface:20px;
     --grad-or: linear-gradient(135deg, #E8BE4F 0%, #B8860B 55%, #8B6508 100%);
     --grad-vert: linear-gradient(160deg, #234D26 0%, #0F2C13 65%, #081A0B 100%);
     --ombre-or: 0 10px 30px rgba(184,134,11,0.28);
-    --ombre-douce: 0 18px 44px rgba(15,44,19,0.14);
+    --ombre-douce: 0 8px 24px rgba(15,44,19,0.08);
   }
   *{margin:0;padding:0;box-sizing:border-box;}
   html{scroll-behavior:smooth;}
   body{
-    font-family:'Work Sans',sans-serif;color:var(--encre);overflow-x:hidden;
+    font-family:'Work Sans',sans-serif;color:var(--encre);font-size:1rem;
     background-color:var(--ivoire);
     background-image:
       repeating-linear-gradient(135deg, rgba(184,134,11,0.045) 0px, rgba(184,134,11,0.045) 1px, transparent 1px, transparent 27px),
       repeating-linear-gradient(45deg, rgba(27,94,32,0.03) 0px, rgba(27,94,32,0.03) 1px, transparent 1px, transparent 27px);
   }
   @media (prefers-reduced-motion: reduce){ *{animation-duration:0.01ms !important; transition-duration:0.01ms !important; scroll-behavior:auto !important;} }
-  h1,h2,h3,.display{font-family:'Fraunces',serif; font-weight:500; letter-spacing:-0.012em; color:var(--vert-nuit);}
+  h1,h2,h3,.display{font-family:'Fraunces',serif; font-weight:500; letter-spacing:-0.012em; color:var(--vert-nuit);line-height:1.2;}
+  h1{font-size:clamp(2.5rem,5vw,4.25rem);line-height:1.08;}
+  h2{font-size:clamp(1.875rem,3.4vw,2.625rem);line-height:1.16;}
+  h3{font-size:1.25rem;line-height:1.28;}
+  p{line-height:1.6;}
   a{color:inherit; text-decoration:none;}
   img{max-width:100%; display:block;}
-  :focus-visible{outline:2px solid var(--or-clair); outline-offset:3px;}
+  :focus-visible{outline:2px solid var(--vert-nuit); outline-offset:2px; box-shadow:0 0 0 5px var(--or-clair);}
   .wrap{max-width:1180px; margin:0 auto; padding:0 32px;}
   input,select,textarea,button{font-family:'Work Sans',sans-serif; font-size:0.95rem;}
 
@@ -84,27 +92,28 @@
   .logo .mark::before{ width:1.4px; height:12px; top:5.5px; left:11px; transform:rotate(20deg);}
   .logo .mark::after{ width:12px; height:1.4px; top:11px; left:5.5px; transform:rotate(20deg);}
 
-  nav.tabs{ display:flex; gap:6px; flex-wrap:wrap; }
+  nav.tabs{ display:flex; gap:4px; flex-wrap:wrap; }
   nav.tabs button{
     position:relative;
     background:transparent; border:1px solid rgba(245,239,224,0.2); color:rgba(245,239,224,0.85);
-    padding:9px 17px; border-radius:100px; cursor:pointer; font-size:0.85rem; transition:all .25s ease;
+    min-height:44px; padding:9px 12px; border-radius:100px; cursor:pointer; font-size:0.82rem; line-height:1.3; white-space:nowrap; transition:background-color .2s ease, border-color .2s ease, color .2s ease, box-shadow .2s ease;
   }
-  nav.tabs button.active{ background:var(--grad-or); color:var(--vert-profond); border-color:transparent; font-weight:700; box-shadow:var(--ombre-or); }
-  nav.tabs button:hover:not(.active){ border-color:var(--or-clair); color:var(--or-clair); transform:translateY(-1px); }
+  nav.tabs button.active{ background:rgba(27,94,32,0.34); color:var(--ivoire); border-color:var(--vert-clair); font-weight:600; box-shadow:inset 0 -2px 0 var(--or-clair); }
+  nav.tabs button:hover:not(.active){ background:rgba(27,94,32,0.22); border-color:var(--vert-clair); color:var(--ivoire); }
+  header a:focus-visible, header button:focus-visible{ outline:2px solid var(--or-clair); outline-offset:2px; box-shadow:0 0 0 4px rgba(15,44,19,0.9); }
 
   .menu-toggle{
     display:none; background:transparent; border:1px solid rgba(245,239,224,0.25); color:var(--ivoire);
-    width:42px; height:42px; border-radius:12px; cursor:pointer; font-size:1.3rem; align-items:center; justify-content:center; flex-shrink:0;
+    width:44px; height:44px; border-radius:12px; cursor:pointer; font-size:1.3rem; align-items:center; justify-content:center; flex-shrink:0;
   }
 
   .menu-close{
     display:none; align-self:flex-end;
     background:transparent; border:1px solid rgba(245,239,224,0.25); color:var(--ivoire);
-    width:38px; height:38px; border-radius:12px; align-items:center; justify-content:center; font-size:1.2rem; cursor:pointer;
+    width:44px; height:44px; border-radius:12px; align-items:center; justify-content:center; font-size:1.2rem; cursor:pointer;
     margin-bottom:6px;
   }
-  @media (max-width:820px){
+  @media (max-width:1200px){
     .menu-toggle{ display:flex; }
     .menu-backdrop{
       display:none;
@@ -121,19 +130,38 @@
       flex-direction:column; align-items:stretch; gap:8px;
       padding:24px 18px 24px; overflow-y:auto; z-index:150;
       transform:translateX(100%);
-      transition:transform .3s cubic-bezier(.2,.7,.2,1);
+      visibility:hidden; transition:transform .3s cubic-bezier(.2,.7,.2,1), visibility 0s linear .3s;
       box-shadow:-8px 0 30px rgba(0,0,0,0.3);
     }
-    nav.tabs.open{ transform:translateX(0); }
+    nav.tabs.open{ transform:translateX(0); visibility:visible; transition:transform .3s cubic-bezier(.2,.7,.2,1), visibility 0s; }
     nav.tabs button{
       width:100%; text-align:left; padding:15px 18px; font-size:0.98rem; border-radius:14px;
     }
-    .menu-close{ display:flex; }
+    .menu-close{ display:none; }
+    nav.tabs.open .menu-close{ display:flex; }
+  }
+  @media (min-width:1201px){
+    header > nav:not(.tabs){
+      display:grid; grid-template-columns:minmax(0,1fr) auto; align-items:center;
+      width:100%; max-width:1440px; padding:12px clamp(24px,3vw,48px) 0;
+      column-gap:20px; row-gap:8px;
+    }
+    header > nav:not(.tabs) > .logo{ grid-column:1; grid-row:1; }
+    header > nav:not(.tabs) > .account-box{ grid-column:2; grid-row:1; }
+    header > nav:not(.tabs) > .menu-toggle{ display:none; }
+    header > nav:not(.tabs) > nav.tabs{
+      grid-column:1 / -1; grid-row:2; justify-content:center; flex-wrap:nowrap;
+      min-width:0; width:100%; gap:4px; padding-bottom:12px;
+    }
+    header > nav:not(.tabs) > nav.tabs button{
+      flex:0 1 auto; min-width:0; padding:9px clamp(5px,0.55vw,8px);
+      font-size:clamp(0.72rem,0.86vw,0.8rem);
+    }
   }
 
   .account-box{ font-size:0.82rem; color:rgba(245,239,224,0.85); white-space:nowrap; }
 
-  main{ }
+  main{ line-height:1.6; }
   .view{ display:none; }
   .view.active{ display:block; animation:fade .35s ease; }
   @keyframes fade{ from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);} }
@@ -157,7 +185,7 @@
   .hero-inner{ max-width:1180px; margin:0 auto; position:relative; display:grid; grid-template-columns:1.15fr 0.85fr; gap:60px; align-items:center; }
   .hero-eyebrow{ display:flex; align-items:center; gap:10px; margin-bottom:22px; }
   .hero-eyebrow .line{ width:32px; height:1.5px; background:var(--grad-or); }
-  .eyebrow{ font-family:'IBM Plex Mono',monospace; font-size:0.72rem; letter-spacing:0.16em; text-transform:uppercase; color:var(--or-clair); font-weight:600; }
+  .eyebrow{ font-family:'IBM Plex Mono',monospace; font-size:0.75rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--or-clair); font-weight:500; }
   .hero h1{ font-size:clamp(2.5rem, 5vw, 4.3rem); line-height:1.04; font-weight:500; color:var(--ivoire); letter-spacing:-0.02em; }
   .hero h1 em{
     font-style:italic; font-weight:400;
@@ -220,26 +248,26 @@
     .hero-weave{ max-width:240px; }
   }
 
-  section{ padding:96px 0; position:relative; }
-  .section-head{ max-width:640px; margin-bottom:58px; }
+  section{ padding:88px 0; position:relative; }
+  .section-head{ max-width:640px; margin-bottom:44px; }
   .section-head .eyebrow{ margin-bottom:16px; display:block; color:var(--or); }
   #view-accueil .section-head .eyebrow{ color:var(--or-fonce); }
-  .section-head h2{ font-size:clamp(1.9rem, 3.4vw, 2.6rem); line-height:1.14; font-weight:500; }
-  .section-head p{ margin-top:18px; font-size:1.03rem; color:var(--encre-douce); line-height:1.62; }
+  .section-head h2{ font-size:clamp(1.875rem, 3.4vw, 2.625rem); line-height:1.16; font-weight:500; }
+  .section-head p{ margin-top:16px; font-size:1rem; color:var(--encre-douce); line-height:1.65; }
   .reveal{ opacity:0; transform:translateY(26px) scale(0.985); transition:opacity .75s cubic-bezier(.2,.7,.2,1), transform .75s cubic-bezier(.2,.7,.2,1); }
   .reveal.is-visible{ opacity:1; transform:translateY(0) scale(1); }
 
   .pillars{ display:grid; grid-template-columns:repeat(3,1fr); gap:20px; }
   .pillar{
-    position:relative; background:var(--creme); padding:38px 30px 32px; border-radius:18px;
-    border:1px solid rgba(27,94,32,0.1); box-shadow:var(--ombre-douce);
+    position:relative; background:var(--creme); padding:32px 28px; border-radius:var(--rayon-carte);
+    border:1px solid var(--bordure); box-shadow:var(--ombre-douce);
     transition:transform .3s ease, box-shadow .3s ease;
   }
   .pillar::before{ content:""; position:absolute; top:0; left:24px; right:24px; height:4px; border-radius:0 0 6px 6px; background:var(--grad-or); }
-  .pillar:hover{ transform:translateY(-6px); box-shadow:0 24px 50px rgba(15,44,19,0.16); }
+  .pillar:hover{ transform:translateY(-3px); box-shadow:0 12px 28px rgba(15,44,19,0.12); }
   .pillar .eyebrow{ color:var(--vert-rich); }
-  .pillar h3{ margin-top:14px; font-size:1.22rem; font-weight:500; }
-  .pillar p{ margin-top:12px; font-size:0.94rem; line-height:1.6; color:var(--encre-douce); }
+  .pillar h3{ margin-top:14px; font-size:1.25rem; font-weight:500; }
+  .pillar p{ margin-top:12px; font-size:1rem; line-height:1.6; color:var(--encre-douce); }
   @media (max-width:820px){ .pillars{ grid-template-columns:1fr; } }
 
   .chain-section{
@@ -256,37 +284,37 @@
     border:2px solid var(--or-clair); box-shadow:0 10px 22px rgba(15,44,19,0.25); transition:transform .3s ease;
   }
   .chain-step:hover .chain-num{ transform:scale(1.08) rotate(-4deg); }
-  .chain-step h3{ margin-top:20px; font-size:1.05rem; font-weight:500; }
-  .chain-step p{ margin-top:10px; font-size:0.88rem; line-height:1.55; color:var(--encre-douce); }
+  .chain-step h3{ margin-top:20px; font-size:1.25rem; font-weight:500; }
+  .chain-step p{ margin-top:10px; font-size:0.94rem; line-height:1.6; color:var(--encre-douce); }
   @media (max-width:1020px){ .chain{ grid-template-columns:repeat(2,1fr); gap:36px; } .chain::before{ display:none; } }
   @media (max-width:560px){ .chain{ grid-template-columns:1fr; } }
 
   .acteurs-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:22px; }
   .acteur-card{
     position:relative; overflow:hidden;
-    border:1px solid rgba(27,94,32,0.12); border-radius:18px; padding:30px 26px; background:var(--creme);
+    border:1px solid var(--bordure); border-radius:var(--rayon-carte); padding:28px 24px; background:var(--creme);
     box-shadow:var(--ombre-douce);
     transition:border-color .3s ease, transform .3s ease, box-shadow .3s ease;
   }
   .acteur-card::before{ content:""; position:absolute; top:0; left:0; right:0; height:5px; background:var(--grad-or); opacity:0; transition:opacity .3s ease; }
-  .acteur-card:hover{ border-color:var(--or); transform:translateY(-7px); box-shadow:0 26px 50px rgba(15,44,19,0.18); }
+  .acteur-card:hover{ border-color:var(--or); transform:translateY(-3px); box-shadow:0 12px 28px rgba(15,44,19,0.12); }
   .acteur-card:hover::before{ opacity:1; }
-  .acteur-card .tag{ font-family:'IBM Plex Mono',monospace; font-size:0.7rem; letter-spacing:0.08em; text-transform:uppercase; color:var(--terre); font-weight:600; }
-  .acteur-card h3{ margin-top:12px; font-size:1.12rem; font-weight:500; }
+  .acteur-card .tag{ font-family:'IBM Plex Mono',monospace; font-size:0.75rem; letter-spacing:0.06em; text-transform:uppercase; color:var(--terre); font-weight:500; }
+  .acteur-card h3{ margin-top:12px; font-size:1.25rem; font-weight:500; }
   .acteur-card ul{ margin-top:16px; list-style:none; display:flex; flex-direction:column; gap:10px; }
-  .acteur-card li{ font-size:0.87rem; line-height:1.5; color:var(--encre-douce); padding-left:18px; position:relative; }
+  .acteur-card li{ font-size:0.94rem; line-height:1.6; color:var(--encre-douce); padding-left:18px; position:relative; }
   .acteur-card li::before{ content:""; position:absolute; left:0; top:7px; width:7px; height:7px; background:var(--grad-or); border-radius:50%; }
   @media (max-width:980px){ .acteurs-grid{ grid-template-columns:1fr 1fr; } }
   @media (max-width:560px){ .acteurs-grid{ grid-template-columns:1fr; } }
 
   .cedeao{
-    background:var(--grad-vert); color:var(--ivoire); border-radius:30px; padding:64px 54px;
+    background:var(--grad-vert); color:var(--ivoire); border-radius:var(--rayon-surface); padding:56px 48px;
     display:grid; grid-template-columns:1fr 1fr; gap:50px; align-items:center;
-    box-shadow:0 30px 70px rgba(8,26,11,0.35); border:1px solid rgba(217,166,43,0.2); position:relative; overflow:hidden;
+    box-shadow:0 12px 32px rgba(8,26,11,0.2); border:1px solid rgba(217,166,43,0.2); position:relative; overflow:hidden;
   }
   .cedeao::before{ content:""; position:absolute; inset:0; background:radial-gradient(ellipse 500px 300px at 90% 0%, rgba(217,166,43,0.18), transparent 60%); pointer-events:none; }
   .cedeao h2{ color:var(--ivoire); font-size:clamp(1.8rem,3.2vw,2.3rem); }
-  .cedeao p{ margin-top:18px; color:rgba(245,239,224,0.78); line-height:1.65; font-size:0.99rem; }
+  .cedeao p{ margin-top:16px; color:rgba(245,239,224,0.78); line-height:1.65; font-size:1rem; }
   .cedeao .countries{ margin-top:26px; display:flex; flex-wrap:wrap; gap:10px; }
   .cedeao .countries span{ font-family:'IBM Plex Mono',monospace; font-size:0.72rem; border:1px solid rgba(217,166,43,0.45); color:var(--or-clair); padding:7px 13px; border-radius:100px; transition:background .25s ease; }
   .cedeao .countries span:hover{ background:rgba(217,166,43,0.14); }
@@ -303,10 +331,10 @@
   }
   .cta-section::before{ top:36px; }
   .cta-section::after{ bottom:36px; }
-  .cta-section h2{ font-size:clamp(2rem,4.2vw,2.9rem); max-width:16ch; margin:0 auto; line-height:1.14; }
-  .cta-section p{ margin:22px auto 0; max-width:52ch; color:var(--encre-douce); font-size:1.03rem; }
+  .cta-section h2{ font-size:clamp(2rem,4.2vw,2.625rem); max-width:16ch; margin:0 auto; line-height:1.16; }
+  .cta-section p{ margin:20px auto 0; max-width:52ch; color:var(--encre-douce); font-size:1rem; line-height:1.65; }
 
-  footer.site-footer{ background:var(--grad-vert); color:rgba(245,239,224,0.7); padding:50px 0 32px; position:relative; }
+  footer.site-footer{ background:var(--grad-vert); color:rgba(245,239,224,0.7); padding:50px 0 32px; position:relative; line-height:1.6; }
   footer.site-footer::before{ content:""; position:absolute; top:0; left:0; right:0; height:3px; background:var(--grad-or); }
   .footer-top{ display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:32px; padding-bottom:32px; border-bottom:1px solid rgba(245,239,224,0.12); }
   .footer-brand .logo{ color:var(--ivoire); }
@@ -319,29 +347,35 @@
   }
   .footer-social a:hover{ color:var(--vert-profond); background:var(--grad-or); border-color:transparent; transform:translateY(-2px); }
   .footer-cols{ display:flex; gap:50px; flex-wrap:wrap; }
-  .footer-col h4{ font-family:'IBM Plex Mono',monospace; font-size:0.7rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--or-clair); margin-bottom:14px; }
-  .footer-col button, .footer-col p{ display:block; font-size:0.86rem; color:rgba(245,239,224,0.68); margin-bottom:10px; background:none; border:none; cursor:pointer; padding:0; font-family:inherit; text-align:left; }
+  .footer-col h4{ font-family:'IBM Plex Mono',monospace; font-size:0.75rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--or-clair); margin-bottom:14px; }
+  .footer-col button, .footer-col p{ display:block; font-size:0.875rem; color:rgba(245,239,224,0.68); margin-bottom:10px; background:none; border:none; cursor:pointer; padding:0; font-family:inherit; text-align:left; }
   .footer-col button:hover{ color:var(--or-clair); }
   .footer-bottom{ padding-top:24px; display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px; font-size:0.76rem; color:rgba(245,239,224,0.45); }
 
   /* ---------- APP (Annonces / Formations / Compte) ---------- */
-  .app-main{ max-width:920px; margin:0 auto; padding:44px 24px 100px; }
+  .app-main{ max-width:920px; min-width:0; margin:0 auto; padding:48px 24px 80px; }
   .page-head{ margin-bottom:28px; }
-  .page-head h2{ font-size:1.9rem; }
-  .page-head p{ margin-top:8px; color:var(--encre-douce); }
-  .card{ background:var(--creme); border:1px solid rgba(27,94,32,0.12); border-radius:18px; padding:30px; box-shadow:var(--ombre-douce); }
+  .page-head h2{ font-size:clamp(1.875rem,3.4vw,2.625rem); line-height:1.16; }
+  .page-head p{ margin-top:8px; color:var(--encre-douce); font-size:1rem; line-height:1.6; }
+  .card{ min-width:0; background:var(--creme); border:1px solid var(--bordure); border-radius:var(--rayon-carte); padding:26px; box-shadow:var(--ombre-douce); }
   .account-status{ padding:20px 24px; border-left:4px solid var(--or); }
-  .account-status[data-state="active"]{ border-left-color:var(--vert-rich); }
-  .account-status h3{ font-size:1rem; letter-spacing:0.03em; }
-  .account-status p{ margin-top:6px; color:var(--encre-douce); line-height:1.55; }
-  .account-status-actions{ display:flex; flex-wrap:wrap; gap:10px; margin-top:14px; }
+  .account-status[data-state="incomplete"]{ background:var(--ivoire); border-color:var(--bordure); border-left:4px dashed var(--or-fonce); }
+  .account-status[data-state="pending"]{ background:#FBF0DC; border-color:var(--bordure); border-left:4px solid var(--or-fonce); }
+  .account-status[data-state="active"]{ background:#E6F1E6; border-color:var(--bordure); border-left:4px solid var(--vert-rich); }
+  .account-status[data-state="missing"], .account-status[style*="rgb(251, 233, 231)"]{ background:#FBE9E7 !important; border-color:var(--rouge) !important; }
+  .account-status h3{ font-size:1.25rem; letter-spacing:0; }
+  .account-status p{ margin-top:8px; color:var(--encre-douce); line-height:1.6; }
+  .account-status-actions{ display:flex; flex-wrap:wrap; gap:12px; margin-top:16px; }
   @media (max-width:600px){ .account-status{ padding:18px; } .account-status-actions > button{ width:100%; } }
-  form .field{ margin-bottom:16px; }
-  form label{ display:block; font-size:0.84rem; font-weight:600; margin-bottom:6px; color:var(--vert-nuit); }
-  form input, form select, form textarea{ width:100%; padding:12px 14px; border:1px solid rgba(27,94,32,0.22); border-radius:10px; background:#fff; transition:border-color .2s ease, box-shadow .2s ease; }
-  form input:focus, form select:focus, form textarea:focus{ border-color:var(--or); box-shadow:0 0 0 3px rgba(184,134,11,0.14); outline:none; }
-  form textarea{ resize:vertical; min-height:80px; }
-  .field-row{ display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+  form .field{ margin-bottom:20px; }
+  form label{ display:block; font-size:0.875rem; font-weight:600; line-height:1.45; margin-bottom:8px; color:var(--vert-nuit); }
+  form input:not([type="hidden"]):not([type="checkbox"]):not([type="radio"]), form select, form textarea{ width:100%; min-width:0; min-height:44px; padding:11px 14px; border:1px solid var(--bordure); border-radius:var(--rayon-champ); background:#fff; color:var(--encre); line-height:1.5; transition:border-color .2s ease, box-shadow .2s ease, background-color .2s ease; }
+  #view-calendrier .field > label{ display:block; font-size:0.875rem; font-weight:600; line-height:1.45; margin-bottom:8px; color:var(--vert-nuit); }
+  #view-calendrier select, .meteo-widget select{ width:100%; min-width:0; min-height:44px; padding:11px 14px; border:1px solid var(--bordure); border-radius:var(--rayon-champ); background:#fff; color:var(--encre); line-height:1.5; transition:border-color .2s ease, box-shadow .2s ease, background-color .2s ease; }
+  form input:not([type="hidden"]):not([type="checkbox"]):not([type="radio"]):focus-visible, form select:focus-visible, form textarea:focus-visible, .filters select:focus-visible, .mes-annonce-status select:focus-visible, #view-calendrier select:focus-visible, .meteo-widget select:focus-visible{ border-color:var(--or); outline:2px solid var(--vert-nuit); outline-offset:2px; box-shadow:0 0 0 5px var(--or-clair); }
+  form input:not([type="hidden"]):not([type="checkbox"]):not([type="radio"]):disabled, form select:disabled, form textarea:disabled, .filters select:disabled, #view-calendrier select:disabled, .meteo-widget select:disabled{ background:#F0E8E0; color:var(--encre-douce); cursor:not-allowed; opacity:0.8; }
+  form textarea{ resize:vertical; min-height:96px; }
+  .field-row{ display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:16px; }
   @media (max-width:600px){ .field-row{ grid-template-columns:1fr; } }
 
   .desc-mode-toggle{ display:flex; gap:8px; margin-bottom:10px; }
@@ -352,47 +386,54 @@
   }
   .avis-modal-backdrop.is-open{ display:flex; }
   .avis-modal{
-    background:#fff; border-radius:18px; padding:28px; max-width:420px; width:100%; position:relative;
-    box-shadow:0 24px 60px rgba(0,0,0,0.3);
+    background:#fff; border-radius:var(--rayon-carte); padding:26px; max-width:420px; width:100%; position:relative;
+    box-shadow:0 12px 32px rgba(0,0,0,0.2);
   }
-  .avis-modal h3{ font-size:1.1rem; margin-bottom:16px; padding-right:20px; }
-  .avis-modal-close{ position:absolute; top:16px; right:16px; background:none; border:none; font-size:1.1rem; cursor:pointer; color:var(--encre-douce); }
+  .avis-modal h3{ font-size:1.25rem; margin-bottom:16px; padding-right:20px; }
+  .avis-modal-close{ position:absolute; top:8px; right:8px; display:flex; align-items:center; justify-content:center; width:44px; height:44px; background:none; border:none; border-radius:50%; font-size:1.1rem; cursor:pointer; color:var(--encre-douce); transition:background-color .2s ease, color .2s ease; }
+  .avis-modal-close:hover{ background:#F0E8E0; color:var(--encre); }
   .avis-stars{ display:flex; gap:6px; font-size:2rem; }
   .avis-stars span{ cursor:pointer; color:rgba(184,134,11,0.25); transition:color .15s ease; }
   .avis-stars span.is-active{ color:var(--or); }
   .stars-display{ color:var(--or); font-size:0.85rem; letter-spacing:1px; }
   .desc-mode-btn{
-    flex:1; padding:9px 12px; border-radius:10px; border:1.5px solid rgba(27,94,32,0.22);
-    background:#fff; color:var(--encre-douce); font-size:0.85rem; font-weight:600; cursor:pointer; transition:all .2s ease;
+    flex:1; min-height:44px; padding:10px 12px; border-radius:var(--rayon-champ); border:1.5px solid var(--bordure);
+    background:#fff; color:var(--encre-douce); font-size:0.875rem; font-weight:600; cursor:pointer; transition:background-color .2s ease, border-color .2s ease, color .2s ease, box-shadow .2s ease;
   }
-  .desc-mode-btn.is-active{ background:var(--vert-nuit); color:var(--ivoire); border-color:var(--vert-nuit); }
+  .desc-mode-btn:hover:not(.is-active):not(:disabled){ background:#F7F1E3; border-color:var(--vert-rich); color:var(--vert-rich); }
+  .desc-mode-btn.is-active{ background:var(--vert-rich); color:var(--ivoire); border-color:var(--vert-rich); }
 
-  .voice-recorder{ background:var(--ivoire-2); border-radius:12px; padding:16px; text-align:center; }
+  .voice-recorder{ background:var(--ivoire-2); border:1px solid var(--bordure); border-radius:var(--rayon-carte); padding:16px; text-align:center; }
   .voice-rec-btn{
-    background:var(--rouge); color:#fff; border:none; padding:11px 20px; border-radius:100px;
-    font-weight:600; font-size:0.88rem; cursor:pointer;
+    min-height:44px; background:var(--rouge); color:#fff; border:none; padding:11px 20px; border-radius:100px;
+    font-weight:600; font-size:0.875rem; cursor:pointer; transition:background-color .2s ease, box-shadow .2s ease;
   }
+  .voice-rec-btn:hover:not(:disabled){ background:#922F26; box-shadow:0 4px 12px rgba(178,58,46,0.2); }
   .voice-rec-btn.is-recording{ animation:pulseRec 1.2s ease-in-out infinite; }
   @keyframes pulseRec{ 0%,100%{ box-shadow:0 0 0 0 rgba(178,58,46,0.4); } 50%{ box-shadow:0 0 0 10px rgba(178,58,46,0); } }
   .voice-rec-time{ display:block; margin-top:8px; font-weight:600; color:var(--encre-douce); font-size:0.9rem; }
   .btn-main{
-    background:var(--grad-vert); color:var(--ivoire); border:none; padding:14px 26px; border-radius:100px;
-    font-weight:600; cursor:pointer; font-size:0.92rem; transition:transform .25s ease, box-shadow .25s ease;
-    box-shadow:0 10px 24px rgba(15,44,19,0.22); display:inline-block; text-align:center; text-decoration:none;
+    min-height:44px; background:var(--vert-rich); color:var(--ivoire); border:1px solid var(--vert-rich); padding:11px 22px; border-radius:100px;
+    font-weight:600; cursor:pointer; font-size:0.94rem; line-height:1.4; transition:background-color .2s ease, border-color .2s ease, box-shadow .2s ease, transform .2s ease;
+    box-shadow:0 3px 10px rgba(15,44,19,0.12); display:inline-block; text-align:center; text-decoration:none;
   }
-  .btn-main:hover{ transform:translateY(-2px); box-shadow:0 14px 30px rgba(15,44,19,0.3); }
-  .btn-main:disabled{ opacity:0.6; cursor:not-allowed; transform:none; }
-  .btn-small{ background:var(--grad-or); color:var(--vert-profond); border:none; padding:9px 18px; border-radius:100px; font-weight:700; cursor:pointer; font-size:0.84rem; box-shadow:var(--ombre-or); transition:transform .25s ease; }
-  .btn-small:hover{ transform:translateY(-2px); }
-  .btn-outline-small{ background:transparent; border:1.5px solid rgba(27,94,32,0.3); color:var(--vert-rich); padding:8px 17px; border-radius:100px; cursor:pointer; font-size:0.84rem; transition:all .2s ease; }
-  .btn-outline-small:hover{ border-color:var(--vert-rich); background:rgba(27,94,32,0.06); }
-  .switch-auth{ margin-top:16px; font-size:0.86rem; color:var(--encre-douce); }
-  .switch-auth button{ background:none; border:none; color:var(--vert-rich); font-weight:600; cursor:pointer; text-decoration:underline; padding:0; }
-  .msg{ margin-top:14px; padding:12px 14px; border-radius:10px; font-size:0.86rem; display:none; }
-  .msg.error{ background:#FBE9E7; color:var(--rouge); display:block; }
-  .msg.success{ background:#E6F1E6; color:var(--vert-rich); display:block; }
+  .btn-main:hover:not(:disabled){ background:#164D1A; border-color:#164D1A; transform:translateY(-1px); box-shadow:0 6px 14px rgba(15,44,19,0.18); }
+  .btn-main:active, .btn-small:active, .btn-outline-small:active{ transform:translateY(0); box-shadow:none; }
+  .btn-main:disabled, .btn-small:disabled, .btn-outline-small:disabled{ opacity:0.55; cursor:not-allowed; transform:none; box-shadow:none; }
+  .btn-small{ min-height:44px; background:var(--vert-rich); color:var(--ivoire); border:1px solid var(--vert-rich); padding:9px 16px; border-radius:100px; font-weight:600; cursor:pointer; font-size:0.875rem; line-height:1.4; box-shadow:0 3px 10px rgba(15,44,19,0.12); transition:background-color .2s ease, border-color .2s ease, box-shadow .2s ease, transform .2s ease; }
+  .btn-small:hover:not(:disabled){ background:#164D1A; border-color:#164D1A; transform:translateY(-1px); box-shadow:0 6px 14px rgba(15,44,19,0.18); }
+  .btn-outline-small{ min-height:44px; background:transparent; border:1.5px solid var(--vert-rich); color:var(--vert-rich); padding:8px 15px; border-radius:100px; cursor:pointer; font-size:0.875rem; line-height:1.4; transition:background-color .2s ease, border-color .2s ease, color .2s ease, box-shadow .2s ease, transform .2s ease; }
+  .btn-outline-small:hover:not(:disabled){ border-color:var(--vert-rich); background:#E6F1E6; color:var(--vert-nuit); }
+  button.btn-outline-small[style*="var(--rouge)"]{ border-color:var(--rouge) !important; color:var(--rouge) !important; }
+  button.btn-outline-small[style*="var(--rouge)"]:hover:not(:disabled){ background:#FBE9E7; color:#922F26 !important; }
+  .switch-auth{ margin-top:16px; font-size:0.875rem; color:var(--encre-douce); }
+  .switch-auth button{ display:inline-flex; align-items:center; min-height:44px; background:none; border:none; color:var(--vert-rich); font-weight:600; cursor:pointer; text-decoration:underline; padding:4px 0; }
+  .switch-auth button:hover:not(:disabled){ color:var(--vert-nuit); }
+  .msg{ min-width:0; margin-top:14px; padding:12px 14px; border:1px solid transparent; border-radius:var(--rayon-champ); font-size:0.95rem; line-height:1.55; overflow-wrap:anywhere; display:none; }
+  .msg.error{ background:#FBE9E7; border-color:#EAC8C4; border-left:3px solid var(--rouge); color:var(--rouge); display:block; }
+  .msg.success{ background:#E6F1E6; border-color:#C9DFC9; border-left:3px solid var(--vert-rich); color:var(--vert-rich); display:block; }
   .filters{ display:flex; gap:10px; flex-wrap:wrap; margin-bottom:22px; }
-  .filters select{ padding:9px 14px; border-radius:100px; border:1px solid rgba(27,94,32,0.25); background:#fff; font-size:0.84rem; }
+  .filters select{ min-width:0; min-height:44px; padding:10px 14px; border-radius:100px; border:1px solid var(--bordure); background:#fff; font-size:0.875rem; line-height:1.4; }
   .pub-type-filters{ display:flex; gap:12px; margin-bottom:20px; }
   .pub-type-filters button{ flex:1; min-width:0; min-height:44px; padding:12px 8px; font-size:0.92rem; }
   @media (max-width:600px){
@@ -400,36 +441,64 @@
     #view-publications .filters label{ max-width:100%; }
   }
   .pub-list{ display:flex; flex-direction:column; gap:16px; }
-  .pub-card{ background:var(--creme); border:1px solid rgba(27,94,32,0.12); border-radius:16px; padding:24px; box-shadow:var(--ombre-douce); transition:transform .25s ease, box-shadow .25s ease; }
-  .pub-card:hover{ transform:translateY(-3px); box-shadow:0 20px 40px rgba(15,44,19,0.14); }
-  .pub-top{ display:flex; justify-content:space-between; align-items:flex-start; gap:12px; flex-wrap:wrap; }
-  .pub-card h3{ font-size:1.06rem; }
-  .pub-tag{ font-family:'IBM Plex Mono',monospace; font-size:0.68rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--terre); margin-bottom:6px; display:block; font-weight:600; }
-  .pub-type{ display:inline-block; margin-bottom:8px; padding:6px 11px; border-radius:100px; background:#E6F1E6; color:var(--vert-rich); font-size:0.72rem; font-weight:700; letter-spacing:0.04em; }
+  .pub-pagination{ display:flex; align-items:center; justify-content:center; flex-wrap:wrap; gap:12px; margin:20px 0; }
+  .pub-pagination[hidden]{ display:none; }
+  .pub-pagination-status{ color:var(--encre-douce); font-size:0.9rem; font-weight:600; text-align:center; }
+  .forum-pagination{ display:flex; align-items:center; justify-content:center; flex-wrap:wrap; gap:12px; margin:20px 0; }
+  .forum-pagination[hidden]{ display:none; }
+  .forum-pagination-status{ color:var(--encre-douce); font-size:0.9rem; font-weight:600; text-align:center; }
+  .pub-card{ min-width:0; background:var(--creme); border:1px solid var(--bordure); border-radius:var(--rayon-carte); padding:24px; box-shadow:var(--ombre-douce); }
+  .pub-top{ display:flex; justify-content:space-between; align-items:flex-start; gap:12px; flex-wrap:wrap; min-width:0; }
+  .pub-card h3{ font-size:1.25rem; line-height:1.3; overflow-wrap:anywhere; }
+  .pub-tag{ font-family:'IBM Plex Mono',monospace; font-size:0.75rem; line-height:1.4; text-transform:uppercase; letter-spacing:0.06em; color:var(--terre); margin-bottom:6px; display:block; font-weight:500; }
+  .pub-type{ display:inline-flex; align-items:center; max-width:100%; min-width:0; min-height:28px; margin-bottom:8px; padding:5px 10px; border:1px solid transparent; border-radius:100px; background:#E6F1E6; color:var(--vert-rich); font-size:0.75rem; line-height:1.35; font-weight:600; letter-spacing:0.02em; white-space:normal; overflow-wrap:anywhere; }
   .pub-type.achat{ background:#FBF0DC; color:var(--or-fonce); }
-  .pub-statut{ font-size:0.72rem; font-weight:700; padding:5px 12px; border-radius:100px; background:var(--ivoire-2); color:var(--vert-rich); white-space:nowrap; }
-  .pub-statut.reserve{ background:#FBF0DC; color:var(--or-fonce); }
-  .pub-statut.ecoule{ background:#F0E8E0; color:var(--encre-douce); }
-  .pub-card p.desc{ margin-top:10px; font-size:0.9rem; color:var(--encre-douce); line-height:1.5; }
-  .pub-meta{ margin-top:14px; display:flex; gap:16px; flex-wrap:wrap; font-size:0.82rem; color:var(--encre-douce); }
+  .pub-statut{ display:inline-flex; align-items:center; max-width:100%; min-width:0; min-height:28px; padding:5px 10px; border:1px solid #C9DFC9; border-radius:100px; background:#E6F1E6; color:var(--vert-rich); font-size:0.75rem; line-height:1.35; font-weight:600; white-space:normal; overflow-wrap:anywhere; }
+  .pub-statut.reserve{ background:#FBF0DC; color:var(--or-fonce); border-color:#E6D6AA; }
+  .pub-statut.ecoule{ background:#F0E8E0; color:var(--encre-douce); border-color:var(--bordure); }
+  #membresContainer .pub-statut[style*="#F0E8E0"]{ background:#FBE9E7 !important; color:var(--rouge) !important; }
+  .pub-card p.desc{ margin-top:12px; font-size:0.94rem; color:var(--encre-douce); line-height:1.6; }
+  .pub-meta{ margin-top:14px; display:flex; gap:12px 16px; flex-wrap:wrap; font-size:0.875rem; line-height:1.5; color:var(--encre-douce); }
   .pub-meta-priority{ margin:14px 0 4px; padding:12px 14px; border-radius:12px; background:var(--ivoire-2); gap:10px 20px; }
   .pub-meta strong{ color:var(--vert-nuit); }
-  .pub-footer{ margin-top:12px; font-size:0.78rem; color:var(--encre-douce); font-family:'IBM Plex Mono',monospace; }
+  .pub-footer{ margin-top:12px; font-size:0.75rem; line-height:1.5; color:var(--encre-douce); font-family:'IBM Plex Mono',monospace; font-weight:500; }
   .mes-annonce-status{ display:flex; flex-direction:column; gap:6px; min-width:0; margin-top:12px; }
   .mes-annonce-status select{ box-sizing:border-box; width:100%; max-width:100%; min-width:0; min-height:44px; padding:9px 12px; border:1px solid rgba(27,94,32,0.25); border-radius:10px; background:#fff; color:var(--vert-nuit); font:inherit; }
   .mes-annonce-status-message{ margin-top:10px; padding:10px 12px; border-radius:10px; background:#FBE9E7; color:var(--rouge); font-size:0.86rem; }
   .pub-contact-btn{ display:inline-flex; align-items:center; justify-content:center; margin-top:16px !important; padding:11px 20px; font-size:0.9rem; }
   @media (max-width:600px){ .pub-contact-btn{ width:100%; } }
   .annonces-publish-cta{ display:flex; align-items:center; justify-content:space-between; gap:16px; margin-bottom:18px; padding:18px 22px; }
-  .annonces-publish-cta h3{ font-size:1rem; }
-  .annonces-publish-cta p{ margin-top:4px; color:var(--encre-douce); font-size:0.88rem; }
+  .annonces-publish-cta h3{ font-size:1.25rem; }
+  .annonces-publish-cta p{ margin-top:6px; color:var(--encre-douce); font-size:0.875rem; line-height:1.5; }
   @media (max-width:600px){ .annonces-publish-cta{ align-items:stretch; flex-direction:column; gap:12px; padding:18px; } }
-  .empty{ text-align:center; padding:54px 20px; color:var(--encre-douce); }
-  .empty h3{ margin-bottom:8px; color:var(--vert-nuit); }
-  .formation-card{ background:var(--creme); border:1px solid rgba(184,134,11,0.28); border-radius:16px; padding:26px; margin-bottom:18px; box-shadow:var(--ombre-douce); }
-  .formation-card .eyebrow{ font-family:'IBM Plex Mono',monospace; font-size:0.7rem; color:var(--or); text-transform:uppercase; letter-spacing:0.08em; font-weight:600; }
+  .empty{
+    min-width:0; padding:clamp(24px,4vw,40px) 20px; border:1px solid var(--bordure);
+    border-radius:var(--rayon-carte); background:var(--creme); color:var(--encre-douce);
+    text-align:center; line-height:1.6;
+  }
+  .empty h3{ margin-bottom:8px; color:var(--vert-nuit); font-size:1.25rem; line-height:1.3; overflow-wrap:anywhere; }
+  .empty p{ max-width:58ch; margin:0 auto; font-size:0.95rem; line-height:1.65; overflow-wrap:anywhere; }
+  .empty.state-loading{ background:#F3EFE5; border-color:var(--bordure); }
+  .empty.state-loading h3{ color:var(--encre-douce); font-family:'Work Sans',sans-serif; font-size:1rem; font-weight:500; }
+  .empty.state-error{ background:#FBE9E7; border-color:#EAC8C4; border-left:3px solid var(--rouge); text-align:left; }
+  .empty.state-error h3{ color:var(--rouge); }
+  .empty.state-error p{ margin-left:0; }
+  #compteErreurTechnique{ background:#FBE9E7; border-color:#EAC8C4; border-left:3px solid var(--rouge); }
+  #compteErreurTechnique h3{ color:var(--rouge); }
+  #carteInfo.state-error{ color:var(--rouge) !important; background:#FBE9E7; border:1px solid #EAC8C4; border-radius:var(--rayon-champ); padding:10px 14px; font-size:0.95rem !important; line-height:1.55; }
+  #carteInfo.state-empty{ color:var(--encre-douce); background:#F3EFE5; border:1px solid var(--bordure); border-radius:var(--rayon-champ); padding:10px 14px; font-size:0.95rem !important; line-height:1.55; }
+  #meteoResultat .state-loading, #meteoResultat .state-error{ margin-top:12px; padding:12px 14px; border-radius:var(--rayon-champ); font-size:0.95rem !important; line-height:1.55; }
+  #meteoResultat .state-loading{ color:var(--encre-douce); background:#F3EFE5; border:1px solid var(--bordure); }
+  #meteoResultat .state-error{ color:var(--rouge) !important; background:#FBE9E7; border:1px solid #EAC8C4; }
+  .inline-state{ margin:8px 0; font-size:0.95rem; line-height:1.55; overflow-wrap:anywhere; }
+  .inline-state.state-loading{ color:var(--encre-douce); }
+  .inline-state.state-empty{ color:var(--encre-douce); }
+  .inline-state.state-error{ color:var(--rouge); }
+  @media (max-width:600px){ .empty{ padding:24px 16px; } .empty h3{ font-size:1.15rem; } .empty p{ font-size:0.94rem; } }
+  .formation-card{ min-width:0; background:var(--creme); border:1px solid var(--bordure); border-radius:var(--rayon-carte); padding:24px; margin-bottom:18px; box-shadow:var(--ombre-douce); }
+  .formation-card .eyebrow{ font-family:'IBM Plex Mono',monospace; font-size:0.75rem; color:var(--or); text-transform:uppercase; letter-spacing:0.06em; font-weight:500; }
   .formation-card h3{ margin-top:8px; }
-  .formation-card p{ margin-top:10px; color:var(--encre-douce); line-height:1.6; font-size:0.92rem; }
+  .formation-card p{ margin-top:10px; color:var(--encre-douce); line-height:1.6; font-size:0.94rem; }
   .toolbar{ display:flex; justify-content:space-between; align-items:center; margin-bottom:22px; flex-wrap:wrap; gap:12px; }
 
   .gallery-section{
@@ -456,6 +525,81 @@
   }
   @media (max-width:760px){
     .gallery-grid{ column-count:1; }
+  }
+  @media (max-width:560px){
+    .wrap{padding-right:20px;padding-left:20px;}
+    .app-main{padding:32px 20px 64px;}
+    .card{padding:20px;}
+    .pub-card{padding:18px;}
+    .field-row{gap:12px;}
+    .section-head{margin-bottom:32px;}
+  }
+
+  /* ---------- ACCUEIL : rythme éditorial et hiérarchie des sections ---------- */
+  #view-accueil{ background-color:var(--ivoire); }
+  #view-accueil > section:not(.hero){ padding-block:clamp(56px,7vw,84px); }
+  #view-accueil .section-head{ max-width:700px; margin-bottom:clamp(28px,4vw,40px); }
+  #view-accueil .section-head h2{ max-width:24ch; }
+  #view-accueil .section-head p{ max-width:62ch; }
+  #view-accueil .apercu-fonct-section{ background:var(--creme); }
+  #view-accueil .fonct-stage{ min-height:320px; border-radius:var(--rayon-carte); box-shadow:var(--ombre-douce); }
+  #view-accueil .fonct-step{ padding:36px clamp(24px,5vw,48px); }
+  #view-accueil .fonct-step h3{ max-width:34ch; line-height:1.28; }
+  #view-accueil .fonct-step p{ max-width:54ch; font-size:1rem; line-height:1.7; }
+  #view-accueil .fonct-icon-circle{ width:68px; height:68px; margin-bottom:18px; box-shadow:none; }
+  #view-accueil .fonct-dots{ margin-top:18px; }
+
+  #view-accueil .gallery-section{ clip-path:none; margin-top:0; padding-block:clamp(56px,7vw,80px); background:var(--ivoire-2); }
+  #view-accueil .gallery-grid{ column-gap:18px; }
+  #view-accueil .gallery-grid > div{ margin-bottom:18px; box-shadow:0 10px 28px rgba(15,44,19,0.12); }
+
+  #view-accueil #vision .pillars{ grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr)); gap:18px; }
+  #view-accueil #vision .pillar{ padding:28px 24px; box-shadow:none; }
+  #view-accueil #vision .pillar::before{ height:2px; background:var(--or-clair); }
+  #view-accueil #vision .pillar:hover{ box-shadow:0 8px 20px rgba(15,44,19,0.07); }
+  #view-accueil #vision .pillar h3{ line-height:1.3; }
+  #view-accueil #vision .pillar p{ max-width:42ch; }
+
+  #view-accueil .chain-section{ clip-path:none; margin-top:0; padding-block:clamp(64px,8vw,92px); }
+  #view-accueil #chaine .acteurs-grid{ grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr)); gap:18px; }
+  #view-accueil #chaine .acteur-card{ padding:24px 22px; box-shadow:none; }
+  #view-accueil #chaine .acteur-card::before{ height:2px; }
+  #view-accueil #chaine .acteur-card:hover{ box-shadow:0 8px 20px rgba(15,44,19,0.07); }
+
+  #view-accueil #region .cedeao{ padding:clamp(32px,5vw,52px); box-shadow:0 8px 24px rgba(8,26,11,0.14); }
+  #view-accueil .cta-section{ padding-block:clamp(68px,8vw,96px); }
+  #view-accueil .cta-section .eyebrow{ color:var(--or-fonce); }
+  #view-accueil .cta-section h2{ max-width:20ch; }
+  #view-accueil .cta-section p{ max-width:56ch; }
+  #view-accueil .cta-section .btn-primary{
+    display:inline-flex; align-items:center; justify-content:center; min-height:48px;
+    padding:12px 26px; background:var(--vert-rich); color:var(--ivoire);
+    box-shadow:0 6px 16px rgba(15,44,19,0.16);
+  }
+  #view-accueil .cta-section .btn-primary:hover{ box-shadow:0 9px 22px rgba(15,44,19,0.22); }
+
+  @media (max-width:760px){
+    #view-accueil .gallery-grid{ column-gap:14px; }
+    #view-accueil .gallery-grid > div{ margin-bottom:14px; }
+  }
+  @media (max-width:560px){
+    #view-accueil > section:not(.hero){ padding-block:52px; }
+    #view-accueil .section-head{ margin-bottom:28px; }
+    #view-accueil .section-head .eyebrow{ margin-bottom:12px; }
+    #view-accueil .section-head p{ margin-top:12px; font-size:0.98rem; }
+    #view-accueil .fonct-stage{ min-height:380px; }
+    #view-accueil .fonct-step{ padding:28px 20px; }
+    #view-accueil .fonct-step h3{ font-size:1.25rem; }
+    #view-accueil .fonct-step p{ font-size:1rem; }
+    #view-accueil .gallery-section{ padding-block:52px; }
+    #view-accueil #vision .pillars{ grid-template-columns:1fr; gap:14px; }
+    #view-accueil #vision .pillar{ padding:24px 20px; }
+    #view-accueil .chain-section{ padding-block:60px; }
+    #view-accueil #chaine .acteurs-grid{ grid-template-columns:1fr; gap:14px; }
+    #view-accueil #chaine .acteur-card{ padding:22px 20px; }
+    #view-accueil #region .cedeao{ padding:30px 22px; }
+    #view-accueil .cta-section{ padding-block:64px; }
+    #view-accueil .cta-section p{ margin-top:16px; }
   }
 </style>
 
@@ -995,7 +1139,12 @@
         </div>
         <button type="button" class="btn-main" id="btnPublierDepuisAnnonces">+ Publier une annonce</button>
       </div>
-      <div id="pubListContainer" class="pub-list"><div class="empty"><h3>Chargement…</h3></div></div>
+      <div id="pubListContainer" class="pub-list"><div class="empty state-loading"><h3>Chargement…</h3></div></div>
+      <nav class="pub-pagination" id="pubPagination" aria-label="Pagination des annonces" hidden>
+        <button type="button" class="btn-outline-small" id="pubPagePrevious" disabled>Précédent</button>
+        <span class="pub-pagination-status" id="pubPageStatus" aria-live="polite">Page 1 / 1</span>
+        <button type="button" class="btn-outline-small" id="pubPageNext" disabled>Suivant</button>
+      </nav>
     </div>
   </div>
 
@@ -1097,7 +1246,7 @@
           <option value="Zou">Zou</option>
         </select>
       </div>
-      <div id="prixMarcheContainer"><div class="empty"><h3>Chargement…</h3></div></div>
+      <div id="prixMarcheContainer"><div class="empty state-loading"><h3>Chargement…</h3></div></div>
     </div>
   </div>
 
@@ -1277,7 +1426,7 @@
         </form>
         <div id="listePublicitesAdmin" style="margin-top:18px;"></div>
       </div>
-      <div id="formationsContainer"><div class="empty"><h3>Chargement…</h3></div></div>
+      <div id="formationsContainer"><div class="empty state-loading"><h3>Chargement…</h3></div></div>
     </div>
   </div>
   <style>
@@ -1338,7 +1487,7 @@
 
       <div class="card">
         <h3 style="margin-bottom:14px;">Contacts institutionnels par département</h3>
-        <div id="contactsInstitutionnelsContainer"><div class="empty"><h3>Chargement…</h3></div></div>
+        <div id="contactsInstitutionnelsContainer"><div class="empty state-loading"><h3>Chargement…</h3></div></div>
       </div>
     </div>
   </div>
@@ -1365,7 +1514,12 @@
           <option value="Autre">Autre</option>
         </select>
       </div>
-      <div id="sujetsContainer" class="pub-list"><div class="empty"><h3>Chargement…</h3></div></div>
+      <div id="sujetsContainer" class="pub-list"><div class="empty state-loading"><h3>Chargement…</h3></div></div>
+      <nav class="forum-pagination" id="forumPagination" aria-label="Pagination des sujets du forum" hidden>
+        <button type="button" class="btn-outline-small" id="forumPagePrevious" disabled>Précédent</button>
+        <span class="forum-pagination-status" id="forumPageStatus" aria-live="polite">Page 1 / 1</span>
+        <button type="button" class="btn-outline-small" id="forumPageNext" disabled>Suivant</button>
+      </nav>
     </div>
   </div>
 
@@ -1752,7 +1906,7 @@
       display:flex; align-items:center; justify-content:center; font-size:2rem; margin-bottom:14px;
       box-shadow:var(--ombre-or);
     }
-    .reel-tag{ font-size:0.72rem; letter-spacing:1.5px; text-transform:uppercase; color:var(--or); font-weight:700; margin-bottom:10px; }
+    .reel-tag{ font-size:0.75rem; line-height:1.4; letter-spacing:1.2px; text-transform:uppercase; color:var(--or); font-weight:700; margin-bottom:10px; }
     .reel-step h3{ font-family:'Fraunces',serif; font-size:1.35rem; color:var(--ivoire); margin-bottom:12px; }
     .reel-step p{ color:rgba(245,239,224,0.78); font-size:0.95rem; line-height:1.6; max-width:480px; margin-bottom:18px; }
     .reel-exemple{
@@ -1764,7 +1918,7 @@
     .cal-barre{ display:flex; gap:2px; border-radius:8px; overflow:hidden; }
     .cal-mois{ flex:1; height:36px; cursor:help; }
     .cal-mois-labels{ display:flex; gap:2px; margin-top:4px; }
-    .cal-mois-labels span{ flex:1; text-align:center; font-size:0.62rem; color:var(--encre-douce); }
+    .cal-mois-labels span{ flex:1; min-width:0; text-align:center; font-size:0.75rem; color:var(--encre-douce); }
     .cal-continu{ background:var(--vert-nuit); color:var(--ivoire); padding:16px; border-radius:10px; text-align:center; font-weight:600; }
     .cal-legende{ display:flex; flex-wrap:wrap; gap:14px; margin-top:16px; }
     .cal-legende span{ display:flex; align-items:center; gap:6px; font-size:0.78rem; color:var(--encre-douce); }
@@ -1780,7 +1934,7 @@
     .meteo-grid{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
     .meteo-item{ background:rgba(247,241,227,0.08); border-radius:10px; padding:12px; text-align:center; }
     .meteo-item .val{ font-size:1.3rem; font-weight:700; color:var(--or-clair); }
-    .meteo-item .lbl{ font-size:0.7rem; color:rgba(247,241,227,0.7); margin-top:2px; }
+    .meteo-item .lbl{ font-size:0.75rem; line-height:1.4; color:rgba(247,241,227,0.7); margin-top:2px; }
   </style>
 
   <div class="view" id="view-conditions">
@@ -1845,16 +1999,16 @@
       <div class="page-head">
         <h2 id="pendingMembersTitle">Validation Institutions (0 en attente)</h2>
       </div>
-      <div id="pendingMembersContainer" class="pub-list"><div class="empty"><h3>Chargement…</h3></div></div>
+      <div id="pendingMembersContainer" class="pub-list"><div class="empty state-loading"><h3>Chargement…</h3></div></div>
       <div class="page-head">
         <h2>Modération des annonces</h2>
         <p>Ces annonces sont en attente de validation avant publication.</p>
       </div>
-      <div id="moderationContainer" class="pub-list"><div class="empty"><h3>Chargement…</h3></div></div>
+      <div id="moderationContainer" class="pub-list"><div class="empty state-loading"><h3>Chargement…</h3></div></div>
       <div class="page-head" style="margin-top:36px;">
         <h2>Prix en attente de validation</h2>
       </div>
-      <div id="moderationPrixContainer" class="pub-list"><div class="empty"><h3>Chargement…</h3></div></div>
+      <div id="moderationPrixContainer" class="pub-list"><div class="empty state-loading"><h3>Chargement…</h3></div></div>
     </div>
   </div>
   <!-- ==================== VUE SUGGESTIONS (ADMIN) ==================== -->
@@ -1864,7 +2018,7 @@
         <h2>💡 Suggestions des utilisateurs</h2>
         <p>Idées et retours envoyés par la communauté.</p>
       </div>
-      <div id="suggestionsContainer"><div class="empty"><h3>Chargement…</h3></div></div>
+      <div id="suggestionsContainer"><div class="empty state-loading"><h3>Chargement…</h3></div></div>
     </div>
   </div>
   <!-- ==================== VUE COMPTES (ADMIN) ==================== -->
@@ -1878,7 +2032,7 @@
       <div class="field" style="margin-bottom:16px;">
         <input type="text" id="searchMembres" placeholder="Rechercher (nom, email, téléphone, type...)" style="width:100%;padding:13px 16px;border-radius:100px;border:1px solid rgba(27,94,32,0.3);background:#fff;">
       </div>
-      <div id="membresContainer" class="pub-list"><div class="empty"><h3>Chargement…</h3></div></div>
+      <div id="membresContainer" class="pub-list"><div class="empty state-loading"><h3>Chargement…</h3></div></div>
     </div>
   </div>
 
@@ -1891,7 +2045,7 @@
       </div>
 
       <div id="statsCards" style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:24px;">
-        <div class="empty"><h3>Chargement…</h3></div>
+        <div class="empty state-loading"><h3>Chargement…</h3></div>
       </div>
 
       <div class="card" style="margin-bottom:20px;">
@@ -2066,14 +2220,14 @@
     tabButtons.forEach(b => b.classList.toggle('active', b.dataset.view === name));
     window.scrollTo({top:0, behavior:'instant'});
     arreterAutoRefresh();
-    if(name === 'publications'){ loadPublications(); demarrerAutoRefresh(loadPublications); }
+    if(name === 'publications') loadPublications();
     if(name === 'prixmarche') loadPrixMarche();
     if(name === 'calendrier'){ remplirMenuCalendrier(); afficherCalendrier(); }
     if(name === 'carte'){ initOrRafraichirCarte(); }
-    if(name === 'formations'){ loadFormations(); loadPublicites(); demarrerAutoRefresh(loadFormations); }
+    if(name === 'formations'){ loadFormations(); loadPublicites(); }
     if(name === 'moderation'){ loadPending(); loadModeration(); loadModerationPrix(); }
     if(name === 'suggestions'){ loadSuggestions(); }
-    if(name === 'forums'){ loadSujets(); demarrerAutoRefresh(loadSujets); }
+    if(name === 'forums'){ loadSujets(); demarrerAutoRefresh(rafraichirSujetsAutomatiquement); }
     if(name === 'institutionnel') loadContactsInstitutionnels();
     if(name === 'membres') loadMembres();
     if(name === 'stats') loadStats();
@@ -2084,14 +2238,18 @@
   // ---- Actualisation automatique des annonces et formations ----
   // Rafraîchit les données en arrière-plan pour que les nouveautés des autres utilisateurs
   // apparaissent sans que la personne n'ait besoin de recharger la page manuellement.
+  const intervalleMinimumRafraichissement = 15000;
+  let dernierChargementPublications = 0;
+  let dernierChargementFormations = 0;
   function getActiveViewName(){
     const active = document.querySelector('.view.active');
     return active ? active.id.replace('view-', '') : null;
   }
   function rafraichirVueActive(){
     const nom = getActiveViewName();
-    if(nom === 'publications') loadPublications();
-    if(nom === 'formations') loadFormations();
+    const maintenant = Date.now();
+    if(nom === 'publications' && maintenant - dernierChargementPublications >= intervalleMinimumRafraichissement) loadPublications(true, true);
+    if(nom === 'formations' && maintenant - dernierChargementFormations >= intervalleMinimumRafraichissement) loadFormations(true);
   }
   setInterval(rafraichirVueActive, 40000); // toutes les 40 secondes
   document.addEventListener('visibilitychange', () => {
@@ -2452,8 +2610,37 @@
   }
 
   let typeAnnonceActuel = 'toutes';
-  async function loadPublications(silencieux){
+  const limiteAnnoncesPubliques = 20;
+  let pageActuelle = 1;
+  let totalPages = 1;
+  let publicationsEnChargement = false;
+  let rechargementPublicationsEnAttente = false;
+  let rechargementPublicationsSilencieux = true;
+  async function loadPublications(silencieux, automatique = false){
+    if(publicationsEnChargement){
+      if(!automatique){
+        rechargementPublicationsEnAttente = true;
+        rechargementPublicationsSilencieux = rechargementPublicationsSilencieux && Boolean(silencieux);
+      }
+      return;
+    }
+    publicationsEnChargement = true;
+    dernierChargementPublications = Date.now();
+    try{
+      await chargerPublications(silencieux);
+    } finally {
+      publicationsEnChargement = false;
+      if(rechargementPublicationsEnAttente){
+        const prochainChargementSilencieux = rechargementPublicationsSilencieux;
+        rechargementPublicationsEnAttente = false;
+        rechargementPublicationsSilencieux = true;
+        loadPublications(prochainChargementSilencieux);
+      }
+    }
+  }
+  async function chargerPublications(silencieux){
     const container = document.getElementById('pubListContainer');
+    const pagination = document.getElementById('pubPagination');
     if(!container.dataset.avisHandlerAttached){
       container.addEventListener('click', event => {
         const button = event.target.closest('[data-avis-user-id]');
@@ -2461,8 +2648,8 @@
       });
       container.dataset.avisHandlerAttached = 'true';
     }
-    if(!silencieux) container.innerHTML = '<div class="empty"><h3>Chargement…</h3></div>';
-    let query = sb.from('publications').select('*, profiles(prenom, nom, telephone, type_acteur)').order('created_at', { ascending: false });
+    if(!silencieux) container.innerHTML = '<div class="empty state-loading"><h3>Chargement…</h3></div>';
+    let query = sb.from('publications').select('*, profiles(prenom, nom, telephone, type_acteur)', { count: 'exact' }).order('created_at', { ascending: false });
     if(typeAnnonceActuel !== 'toutes') query = query.eq('type_annonce', typeAnnonceActuel);
     const cat = document.getElementById('filterCategorie').value;
     const statut = document.getElementById('filterStatut').value;
@@ -2471,9 +2658,21 @@
     if(statut) query = query.eq('statut', statut);
     if(document.getElementById('filterEco').checked) query = query.eq('eco_responsable', true);
     if(search) query = query.or(`titre.ilike.%${search}%,description.ilike.%${search}%,localisation.ilike.%${search}%`);
-    const { data, error } = await query;
-    if(error){ container.innerHTML = '<div class="empty"><h3>Erreur de chargement</h3><p>' + escapeHtml(error.message) + '</p></div>'; return; }
-    if(!data || data.length === 0){ container.innerHTML = '<div class="empty"><h3>Aucune annonce pour le moment</h3><p>Sois le premier à publier.</p></div>'; return; }
+    const debut = (pageActuelle - 1) * limiteAnnoncesPubliques;
+    const { data, error, count } = await query.range(debut, debut + limiteAnnoncesPubliques - 1);
+    if(error){ pagination.hidden = true; container.innerHTML = '<div class="empty state-error"><h3>Erreur de chargement</h3><p>' + escapeHtml(error.message) + '</p></div>'; return; }
+    totalPages = Math.max(1, Math.ceil((count ?? data?.length ?? 0) / limiteAnnoncesPubliques));
+    if(pageActuelle > totalPages){
+      pageActuelle = totalPages;
+      rechargementPublicationsEnAttente = true;
+      rechargementPublicationsSilencieux = Boolean(silencieux);
+      return;
+    }
+    pagination.hidden = totalPages <= 1;
+    document.getElementById('pubPageStatus').textContent = 'Page ' + pageActuelle + ' / ' + totalPages;
+    document.getElementById('pubPagePrevious').disabled = pageActuelle <= 1;
+    document.getElementById('pubPageNext').disabled = pageActuelle >= totalPages;
+    if(!data || data.length === 0){ container.innerHTML = '<div class="empty state-empty"><h3>Aucune annonce pour le moment</h3><p>Sois le premier à publier.</p></div>'; return; }
     container.innerHTML = data.map(p => {
       const auteur = p.profiles ? (p.profiles.prenom + ' ' + p.profiles.nom + ' — ' + p.profiles.type_acteur) : 'Utilisateur';
       const contact = p.profiles ? p.profiles.telephone : '';
@@ -2510,31 +2709,34 @@
     renderAvisBadges([...new Set(data.map(p => p.user_id))]);
   }
 
+  const cacheAvis = new Map();
   async function renderAvisBadges(userIds){
-    if(!userIds || userIds.length === 0) return;
-    const { data, error } = await sb.from('avis_utilisateurs').select('evalue_id, note').in('evalue_id', userIds);
-    if(error || !data) return;
-    const parNote = {};
-    data.forEach(a => {
-      if(!parNote[a.evalue_id]) parNote[a.evalue_id] = [];
-      parNote[a.evalue_id].push(a.note);
-    });
-    userIds.forEach(uid => {
+    const ids = [...new Set(userIds || [])];
+    if(!ids.length) return;
+    const maintenant = Date.now();
+    const aRequerir = ids.filter(uid => !cacheAvis.has(uid) || maintenant - cacheAvis.get(uid).timestamp >= 60000);
+    if(aRequerir.length){
+      const { data, error } = await sb.from('avis_utilisateurs').select('evalue_id, note').in('evalue_id', aRequerir);
+      if(!error && data) aRequerir.forEach(uid => {
+          const notes = data.filter(avis => avis.evalue_id === uid).map(avis => avis.note);
+          cacheAvis.set(uid, { note: notes.length ? notes.reduce((s, n) => s + n, 0) / notes.length : 0, count: notes.length, timestamp: Date.now() });
+        });
+    }
+    ids.forEach(uid => {
       const el = document.getElementById('avisBadge-' + uid);
       if(!el) return;
-      const notes = parNote[uid];
-      if(!notes || notes.length === 0){ el.textContent = ''; return; }
-      const moyenne = notes.reduce((s, n) => s + n, 0) / notes.length;
-      el.textContent = starsHtml(moyenne) + ' (' + notes.length + ')';
+      const avis = cacheAvis.get(uid);
+      if(!avis || Date.now() - avis.timestamp >= 60000) return;
+      el.textContent = avis.count ? starsHtml(avis.note) + ' (' + avis.count + ')' : '';
     });
   }
 
   async function loadContactsInstitutionnels(){
     const container = document.getElementById('contactsInstitutionnelsContainer');
-    container.innerHTML = '<div class="empty"><h3>Chargement…</h3></div>';
+    container.innerHTML = '<div class="empty state-loading"><h3>Chargement…</h3></div>';
     const { data, error } = await sb.from('contacts_institutionnels').select('*').order('departement', { ascending: true }).order('ordre', { ascending: true });
-    if(error){ container.innerHTML = '<div class="empty"><h3>Erreur de chargement</h3><p>' + escapeHtml(error.message) + '</p></div>'; return; }
-    if(!data || data.length === 0){ container.innerHTML = '<div class="empty"><h3>Aucun contact renseigné pour le moment</h3><p>Revenez bientôt.</p></div>'; return; }
+    if(error){ container.innerHTML = '<div class="empty state-error"><h3>Erreur de chargement</h3><p>' + escapeHtml(error.message) + '</p></div>'; return; }
+    if(!data || data.length === 0){ container.innerHTML = '<div class="empty state-empty"><h3>Aucun contact renseigné pour le moment</h3><p>Revenez bientôt.</p></div>'; return; }
     const estAdmin = currentProfile && currentProfile.is_admin;
     const groupes = {};
     data.forEach(c => { (groupes[c.departement] = groupes[c.departement] || []).push(c); });
@@ -2585,7 +2787,7 @@
   window.supprimerAnnonce = async function(id){
     if(!confirm('Supprimer définitivement cette annonce ?')) return;
     const { error } = await sb.from('publications').delete().eq('id', id);
-    if(!error){ loadPublications(); loadMesAnnonces(); }
+    if(!error){ pageActuelle = 1; loadPublications(); loadMesAnnonces(); }
   };
 
   let mesAnnoncesVisible = false;
@@ -2599,14 +2801,14 @@
   async function loadMesAnnonces(messageAnnonceId, messageStatut){
     if(!currentUser) return;
     const container = document.getElementById('mesAnnoncesContainer');
-    container.innerHTML = '<div class="empty"><h3>Chargement…</h3></div>';
+    container.innerHTML = '<div class="empty state-loading"><h3>Chargement…</h3></div>';
     const { data, error } = await sb.from('publications').select('*').eq('user_id', currentUser.id).order('created_at', { ascending: false });
     if(error){
       const message = messageStatut ? '<p>' + escapeHtml(messageStatut) + ' La valeur enregistrée n’a pas pu être rechargée.</p>' : '';
-      container.innerHTML = '<div class="empty"><h3>Erreur</h3>' + message + '<p>' + escapeHtml(error.message) + '</p></div>';
+      container.innerHTML = '<div class="empty state-error"><h3>Erreur</h3>' + message + '<p>' + escapeHtml(error.message) + '</p></div>';
       return;
     }
-    if(!data || data.length === 0){ container.innerHTML = '<div class="empty"><h3>Vous n\'avez encore rien publié</h3></div>'; return; }
+    if(!data || data.length === 0){ container.innerHTML = '<div class="empty state-empty"><h3>Vous n\'avez encore rien publié</h3></div>'; return; }
     if(!container.dataset.statutHandlerAttached){
       container.addEventListener('change', event => {
         const select = event.target.closest('select[data-annonce-statut]');
@@ -2669,6 +2871,7 @@
       bouton.className = actif ? 'btn-main' : 'btn-outline-small';
       bouton.setAttribute('aria-pressed', String(actif));
     });
+    pageActuelle = 1;
     loadPublications();
   };
 
@@ -2692,13 +2895,27 @@
     }
   };
 
-  document.getElementById('filterCategorie').addEventListener('change', loadPublications);
-  document.getElementById('filterStatut').addEventListener('change', loadPublications);
-  document.getElementById('filterEco').addEventListener('change', loadPublications);
+  function chargerPremierePageAnnonces(){
+    pageActuelle = 1;
+    loadPublications();
+  }
+  document.getElementById('filterCategorie').addEventListener('change', chargerPremierePageAnnonces);
+  document.getElementById('filterStatut').addEventListener('change', chargerPremierePageAnnonces);
+  document.getElementById('filterEco').addEventListener('change', chargerPremierePageAnnonces);
+  document.getElementById('pubPagePrevious').addEventListener('click', () => {
+    if(pageActuelle <= 1) return;
+    pageActuelle--;
+    loadPublications();
+  });
+  document.getElementById('pubPageNext').addEventListener('click', () => {
+    if(pageActuelle >= totalPages) return;
+    pageActuelle++;
+    loadPublications();
+  });
   let searchTimeout;
   document.getElementById('searchAnnonces').addEventListener('input', () => {
     clearTimeout(searchTimeout);
-    searchTimeout = setTimeout(loadPublications, 400);
+    searchTimeout = setTimeout(chargerPremierePageAnnonces, 400);
   });
   // ---- Prix du marché : taxonomie des produits ----
   document.getElementById('searchMembres').addEventListener('input', renderMembres);
@@ -2911,7 +3128,7 @@
     const dep = this.value;
     const zone = document.getElementById('meteoResultat');
     if(!dep){ zone.innerHTML = ''; return; }
-    zone.innerHTML = '<p style="font-size:0.85rem;opacity:0.7;">Chargement des données météo en direct…</p>';
+    zone.innerHTML = '<p class="state-loading">Chargement des données météo en direct…</p>';
     const [lat, lon] = COORDS_DEPARTEMENTS[dep];
     try{
       const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,precipitation,relative_humidity_2m&daily=precipitation_sum&past_days=7&forecast_days=3&timezone=Africa%2FLagos`;
@@ -2929,13 +3146,15 @@
         <p style="font-size:0.7rem;opacity:0.6;margin-top:10px;text-align:center;">Données en direct via Open-Meteo, mises à jour à chaque consultation.</p>
       `;
     } catch(e){
-      zone.innerHTML = '<p style="font-size:0.85rem;color:#e0a0a0;">Impossible de récupérer la météo pour le moment. Réessayez plus tard.</p>';
+      zone.innerHTML = '<p class="state-error">Impossible de récupérer la météo pour le moment. Réessayez plus tard.</p>';
     }
   });
 
   // ---- Carte interactive ----
   let carteLeaflet = null;
   let carteMarqueurs = [];
+  let filtreCartePrecedent = null;
+  let nombreMarqueursPrecedent = null;
   async function initOrRafraichirCarte(){
     const conteneur = document.getElementById('carteInteractive');
     const infoEl = document.getElementById('carteInfo');
@@ -2946,19 +3165,23 @@
         maxZoom: 18
       }).addTo(carteLeaflet);
     }
-    carteMarqueurs.forEach(m => carteLeaflet.removeLayer(m));
-    carteMarqueurs = [];
-
     const categorie = document.getElementById('filterCarteCategorie').value;
     let query = sb.from('publications').select('id,titre,prix,localisation,categorie,latitude,longitude,photo_url,photos').eq('approuve', true).not('latitude', 'is', null).not('longitude', 'is', null);
     if(categorie) query = query.eq('categorie', categorie);
     const { data, error } = await query;
 
-    if(error){ infoEl.textContent = 'Erreur de chargement de la carte.'; return; }
+    if(error){ infoEl.className = 'state-error'; infoEl.textContent = 'Erreur de chargement de la carte.'; return; }
+    if(categorie === filtreCartePrecedent && (data || []).length === nombreMarqueursPrecedent){ setTimeout(() => carteLeaflet.invalidateSize(), 200); return; }
+    carteMarqueurs.forEach(m => carteLeaflet.removeLayer(m));
+    carteMarqueurs = [];
+    filtreCartePrecedent = categorie;
+    nombreMarqueursPrecedent = (data || []).length;
     if(!data || data.length === 0){
+      infoEl.className = 'state-empty';
       infoEl.textContent = "Aucune annonce géolocalisée pour l'instant. Les vendeurs peuvent activer leur position lors de la publication.";
       return;
     }
+    infoEl.className = '';
     infoEl.textContent = `${data.length} annonce(s) géolocalisée(s) affichée(s).`;
 
     data.forEach(p => {
@@ -3043,15 +3266,15 @@
 
   async function loadPrixMarche(){
     const container = document.getElementById('prixMarcheContainer');
-    container.innerHTML = '<div class="empty"><h3>Chargement…</h3></div>';
+    container.innerHTML = '<div class="empty state-loading"><h3>Chargement…</h3></div>';
     let query = sb.from('prix_marche').select('*').eq('approuve', true).order('produit', { ascending: true });
     const filiere = document.getElementById('filterPrixFiliere').value;
     const departement = document.getElementById('filterPrixDepartement').value;
     if(filiere) query = query.eq('filiere', filiere);
     if(departement) query = query.eq('departement', departement);
     const { data, error } = await query;
-    if(error){ container.innerHTML = '<div class="empty"><h3>Erreur</h3><p>' + escapeHtml(error.message) + '</p></div>'; return; }
-    if(!data || data.length === 0){ container.innerHTML = '<div class="empty"><h3>Aucun prix disponible pour ces critères</h3></div>'; return; }
+    if(error){ container.innerHTML = '<div class="empty state-error"><h3>Erreur</h3><p>' + escapeHtml(error.message) + '</p></div>'; return; }
+    if(!data || data.length === 0){ container.innerHTML = '<div class="empty state-empty"><h3>Aucun prix disponible pour ces critères</h3></div>'; return; }
     container.innerHTML = data.map(p => {
       const date = p.created_at ? new Date(p.created_at).toLocaleDateString('fr-FR') : '';
       const fourchette = p.prix_max ? `${p.prix_min} - ${p.prix_max} FCFA` : `${p.prix_min} FCFA`;
@@ -3166,6 +3389,7 @@
     if(error){ showMsg('msgAvisModal', error.message, 'error'); return; }
     showMsg('msgAvisModal', 'Avis enregistré, merci !', 'success');
     delete avisCache[avisCibleId];
+    cacheAvis.delete(avisCibleId);
     setTimeout(() => { document.getElementById('avisModalBackdrop').classList.remove('is-open'); }, 900);
   });
 
@@ -3196,10 +3420,10 @@
 
   async function loadSuggestions(){
     const container = document.getElementById('suggestionsContainer');
-    container.innerHTML = '<div class="empty"><h3>Chargement…</h3></div>';
+    container.innerHTML = '<div class="empty state-loading"><h3>Chargement…</h3></div>';
     const { data, error } = await sb.from('suggestions').select('*, profiles(prenom, nom, telephone)').order('created_at', { ascending: false });
-    if(error){ container.innerHTML = '<div class="empty"><h3>Erreur</h3><p>' + escapeHtml(error.message) + '</p></div>'; return; }
-    if(!data || data.length === 0){ container.innerHTML = '<div class="empty"><h3>Aucune suggestion pour le moment</h3></div>'; return; }
+    if(error){ container.innerHTML = '<div class="empty state-error"><h3>Erreur</h3><p>' + escapeHtml(error.message) + '</p></div>'; return; }
+    if(!data || data.length === 0){ container.innerHTML = '<div class="empty state-empty"><h3>Aucune suggestion pour le moment</h3></div>'; return; }
     container.innerHTML = data.map(s => {
       const auteur = s.profiles ? (s.profiles.prenom + ' ' + s.profiles.nom) : 'Utilisateur';
       const date = s.created_at ? new Date(s.created_at).toLocaleDateString('fr-FR') : '';
@@ -3428,7 +3652,7 @@
     };
     const { error } = await sb.from('publications').insert(payload);
     if(error){ showMsg('msgPublication', error.message, 'error'); }
-    else { showMsg('msgPublication', 'Annonce publiée !', 'success'); e.target.reset(); document.getElementById('pubCertifWrap').style.display = 'none'; document.getElementById('notifPromptPublication').style.display = 'block'; pubVoiceRecorder.reset(); document.getElementById('pubModeTexteBtn').click(); document.getElementById('geolocStatus').textContent = ''; await checkNotifStatus(); }
+    else { showMsg('msgPublication', 'Annonce publiée !', 'success'); pageActuelle = 1; loadPublications(); e.target.reset(); document.getElementById('pubCertifWrap').style.display = 'none'; document.getElementById('notifPromptPublication').style.display = 'block'; pubVoiceRecorder.reset(); document.getElementById('pubModeTexteBtn').click(); document.getElementById('geolocStatus').textContent = ''; await checkNotifStatus(); }
     btn.disabled = false;
     btn.textContent = "Publier l'annonce";
   });
@@ -3464,7 +3688,7 @@
       container.dataset.actionsAttached = 'true';
     }
 
-    container.innerHTML = '<div class="empty"><h3>Chargement…</h3></div>';
+    container.innerHTML = '<div class="empty state-loading"><h3>Chargement…</h3></div>';
     let result;
     try{
       result = await sb.from('profiles')
@@ -3476,19 +3700,19 @@
     } catch(error){
       console.error('Impossible de charger les comptes institutionnels en attente', error);
       title.textContent = 'Validation Institutions';
-      container.innerHTML = '<div class="empty"><h3>Erreur</h3><p>' + escapeHtml(error.message || 'Erreur inconnue') + '</p></div>';
+      container.innerHTML = '<div class="empty state-error"><h3>Erreur</h3><p>' + escapeHtml(error.message || 'Erreur inconnue') + '</p></div>';
       return;
     }
     if(result.error){
       title.textContent = 'Validation Institutions';
-      container.innerHTML = '<div class="empty"><h3>Erreur</h3><p>' + escapeHtml(result.error.message) + '</p></div>';
+      container.innerHTML = '<div class="empty state-error"><h3>Erreur</h3><p>' + escapeHtml(result.error.message) + '</p></div>';
       return;
     }
 
     pendingMembers = result.data || [];
     title.textContent = `Validation Institutions (${pendingMembers.length} en attente)`;
     if(pendingMembers.length === 0){
-      container.innerHTML = '<div class="empty"><h3>Aucun compte en attente de validation</h3></div>';
+      container.innerHTML = '<div class="empty state-empty"><h3>Aucun compte en attente de validation</h3></div>';
       return;
     }
 
@@ -3513,10 +3737,10 @@
 
   async function loadModeration(){
     const container = document.getElementById('moderationContainer');
-    container.innerHTML = '<div class="empty"><h3>Chargement…</h3></div>';
+    container.innerHTML = '<div class="empty state-loading"><h3>Chargement…</h3></div>';
     const { data, error } = await sb.from('publications').select('*, profiles(prenom, nom, telephone, type_acteur)').eq('approuve', false).eq('rejete', false).order('created_at', { ascending: true });
-    if(error){ container.innerHTML = '<div class="empty"><h3>Erreur</h3><p>' + escapeHtml(error.message) + '</p></div>'; return; }
-    if(!data || data.length === 0){ container.innerHTML = '<div class="empty"><h3>Aucune annonce en attente</h3></div>'; return; }
+    if(error){ container.innerHTML = '<div class="empty state-error"><h3>Erreur</h3><p>' + escapeHtml(error.message) + '</p></div>'; return; }
+    if(!data || data.length === 0){ container.innerHTML = '<div class="empty state-empty"><h3>Aucune annonce en attente</h3></div>'; return; }
     container.innerHTML = data.map(p => {
       const auteur = p.profiles ? (p.profiles.prenom + ' ' + p.profiles.nom + ' — ' + p.profiles.type_acteur) : 'Utilisateur';
       const photoHtml = galleryHtml(p, 220);
@@ -3529,10 +3753,10 @@
   async function loadModerationPrix(){
     const container = document.getElementById('moderationPrixContainer');
     if(!container) return;
-    container.innerHTML = '<div class="empty"><h3>Chargement…</h3></div>';
+    container.innerHTML = '<div class="empty state-loading"><h3>Chargement…</h3></div>';
     const { data, error } = await sb.from('prix_marche').select('*, profiles(prenom, nom, telephone)').eq('approuve', false).eq('rejete', false).order('created_at', { ascending: true });
-    if(error){ container.innerHTML = '<div class="empty"><h3>Erreur</h3><p>' + escapeHtml(error.message) + '</p></div>'; return; }
-    if(!data || data.length === 0){ container.innerHTML = '<div class="empty"><h3>Aucun prix en attente</h3></div>'; return; }
+    if(error){ container.innerHTML = '<div class="empty state-error"><h3>Erreur</h3><p>' + escapeHtml(error.message) + '</p></div>'; return; }
+    if(!data || data.length === 0){ container.innerHTML = '<div class="empty state-empty"><h3>Aucun prix en attente</h3></div>'; return; }
     container.innerHTML = data.map(p => {
       const auteur = p.profiles ? (p.profiles.prenom + ' ' + p.profiles.nom) : 'Utilisateur';
       const fourchette = p.prix_max ? `${p.prix_min} - ${p.prix_max} FCFA` : `${p.prix_min} FCFA`;
@@ -3594,7 +3818,7 @@
 
   async function loadStats(){
     const cardsEl = document.getElementById('statsCards');
-    cardsEl.innerHTML = '<div class="empty"><h3>Chargement…</h3></div>';
+    cardsEl.innerHTML = '<div class="empty state-loading"><h3>Chargement…</h3></div>';
 
     const [profilesRes, pubsRes, formationsRes] = await Promise.all([
       sb.from('profiles').select('id, created_at, compte_approuve').eq('compte_rejete', false),
@@ -3630,9 +3854,9 @@
 
   async function loadMembres(){
     const container = document.getElementById('membresContainer');
-    container.innerHTML = '<div class="empty"><h3>Chargement…</h3></div>';
+    container.innerHTML = '<div class="empty state-loading"><h3>Chargement…</h3></div>';
     const { data, error } = await sb.from('profiles').select('*').order('created_at', { ascending: false });
-    if(error){ container.innerHTML = '<div class="empty"><h3>Erreur</h3><p>' + escapeHtml(error.message) + '</p></div>'; return; }
+    if(error){ container.innerHTML = '<div class="empty state-error"><h3>Erreur</h3><p>' + escapeHtml(error.message) + '</p></div>'; return; }
     window._allMembres = data || [];
     renderMembres();
   }
@@ -3651,7 +3875,7 @@
         (p.domaine || '').toLowerCase().includes(search)
       );
     }
-    if(list.length === 0){ container.innerHTML = '<div class="empty"><h3>Aucun membre trouvé</h3></div>'; return; }
+    if(list.length === 0){ container.innerHTML = '<div class="empty state-empty"><h3>Aucun membre trouvé</h3></div>'; return; }
     container.innerHTML = list.map(p => {
       const statutLabel = p.compte_rejete ? 'Suspendu' : 'Actif';
       const statutClass = '';
@@ -3675,15 +3899,29 @@
   }
 
   // ---- Forums ----
+  const limiteSujetsForum = 20;
+  let pageSujetsActuelle = 1;
+  let totalPagesSujets = 1;
   async function loadSujets(silencieux){
     const container = document.getElementById('sujetsContainer');
-    if(!silencieux) container.innerHTML = '<div class="empty"><h3>Chargement…</h3></div>';
-    let query = sb.from('forum_sujets').select('*, profiles(prenom, nom)').order('created_at', { ascending: false });
+    const pagination = document.getElementById('forumPagination');
+    if(!silencieux) container.innerHTML = '<div class="empty state-loading"><h3>Chargement…</h3></div>';
+    let query = sb.from('forum_sujets').select('*, profiles(prenom, nom)', { count: 'exact' }).order('created_at', { ascending: false });
     const secteur = document.getElementById('filterForumSecteur').value;
     if(secteur) query = query.eq('secteur', secteur);
-    const { data, error } = await query;
-    if(error){ container.innerHTML = '<div class="empty"><h3>Erreur</h3><p>' + escapeHtml(error.message) + '</p></div>'; return; }
-    if(!data || data.length === 0){ container.innerHTML = '<div class="empty"><h3>Aucun sujet pour le moment</h3><p>Sois le premier à en lancer un.</p></div>'; return; }
+    const debut = (pageSujetsActuelle - 1) * limiteSujetsForum;
+    const { data, error, count } = await query.range(debut, debut + limiteSujetsForum - 1);
+    if(error){ pagination.hidden = true; container.innerHTML = '<div class="empty state-error"><h3>Erreur</h3><p>' + escapeHtml(error.message) + '</p></div>'; return; }
+    totalPagesSujets = Math.max(1, Math.ceil((count ?? data?.length ?? 0) / limiteSujetsForum));
+    if(pageSujetsActuelle > totalPagesSujets){
+      pageSujetsActuelle = totalPagesSujets;
+      return loadSujets(silencieux);
+    }
+    pagination.hidden = totalPagesSujets <= 1;
+    document.getElementById('forumPageStatus').textContent = 'Page ' + pageSujetsActuelle + ' / ' + totalPagesSujets;
+    document.getElementById('forumPagePrevious').disabled = pageSujetsActuelle <= 1;
+    document.getElementById('forumPageNext').disabled = pageSujetsActuelle >= totalPagesSujets;
+    if(!data || data.length === 0){ container.innerHTML = '<div class="empty state-empty"><h3>Aucun sujet pour le moment</h3><p>Sois le premier à en lancer un.</p></div>'; return; }
     container.innerHTML = data.map(s => {
       const auteur = s.profiles ? (s.profiles.prenom + ' ' + s.profiles.nom) : 'Utilisateur';
       const date = s.created_at ? new Date(s.created_at).toLocaleDateString('fr-FR') : '';
@@ -3722,19 +3960,54 @@
   }
 
   let reponsesOuvertes = {};
+  let rafraichissementForumEnAttente = false;
+  const reponsesEnCoursEnvoi = new Set();
+
+  function interactionReponseEnCours(){
+    const container = document.getElementById('sujetsContainer');
+    const activeElement = document.activeElement;
+    const textareaActif = [...container.querySelectorAll('textarea[id^="reponseTexte-"]')]
+      .some(textarea => textarea.value.length > 0 || textarea === activeElement);
+    const filOuvert = [...container.querySelectorAll('[id^="reponses-"]')]
+      .some(box => box.style.display === 'block');
+    const enregistrementVocal = !!container.querySelector('.voice-rec-btn.is-recording');
+    const vocalPret = Object.entries(reponseVoiceRecorders).some(([sujetId, recorder]) =>
+      container.contains(document.getElementById('rep' + sujetId + 'BtnRecord')) && recorder && recorder.getBlob()
+    );
+    return filOuvert || textareaActif || enregistrementVocal || vocalPret || reponsesEnCoursEnvoi.size > 0;
+  }
+
+  function rafraichirSujetsAutomatiquement(){
+    if(getActiveViewName() !== 'forums') return;
+    if(interactionReponseEnCours()){
+      rafraichissementForumEnAttente = true;
+      return;
+    }
+    rafraichissementForumEnAttente = false;
+    loadSujets(true);
+  }
+
+  function appliquerRafraichissementForumEnAttente(){
+    if(rafraichissementForumEnAttente && !interactionReponseEnCours()){
+      rafraichissementForumEnAttente = false;
+      loadSujets(true);
+    }
+  }
+
   window.toggleReponses = async function(sujetId){
     const box = document.getElementById('reponses-' + sujetId);
     reponsesOuvertes[sujetId] = !reponsesOuvertes[sujetId];
     box.style.display = reponsesOuvertes[sujetId] ? 'block' : 'none';
     if(reponsesOuvertes[sujetId]) await chargerReponses(sujetId);
+    else appliquerRafraichissementForumEnAttente();
   };
 
   async function chargerReponses(sujetId){
     const liste = document.getElementById('reponsesListe-' + sujetId);
-    liste.innerHTML = 'Chargement…';
+    liste.innerHTML = '<p class="inline-state state-loading">Chargement…</p>';
     const { data, error } = await sb.from('forum_reponses').select('*, profiles(prenom, nom)').eq('sujet_id', sujetId).order('created_at', { ascending: true });
-    if(error){ liste.innerHTML = 'Erreur : ' + escapeHtml(error.message); return; }
-    if(!data || data.length === 0){ liste.innerHTML = '<p style="font-size:0.86rem;color:var(--encre-douce);">Aucune réponse pour le moment.</p>'; return; }
+    if(error){ liste.innerHTML = '<p class="inline-state state-error">Erreur : ' + escapeHtml(error.message) + '</p>'; return; }
+    if(!data || data.length === 0){ liste.innerHTML = '<p class="inline-state state-empty">Aucune réponse pour le moment.</p>'; return; }
     liste.innerHTML = data.map(r => {
       const auteur = r.profiles ? (r.profiles.prenom + ' ' + r.profiles.nom) : 'Utilisateur';
       const date = r.created_at ? new Date(r.created_at).toLocaleDateString('fr-FR') : '';
@@ -3747,9 +4020,11 @@
   const reponseVoiceRecorders = {};
   const reponseModes = {};
   function initReponseVoice(sujetId){
-    if(reponseVoiceRecorders[sujetId]) return; // déjà initialisé
+    const btnRecord = document.getElementById('rep' + sujetId + 'BtnRecord');
+    if(btnRecord.dataset.voiceInitialized) return;
     reponseModes[sujetId] = 'texte';
     reponseVoiceRecorders[sujetId] = createVoiceRecorder('rep' + sujetId);
+    btnRecord.dataset.voiceInitialized = 'true';
     document.getElementById('rep' + sujetId + 'ModeTexteBtn').addEventListener('click', () => {
       reponseModes[sujetId] = 'texte';
       document.getElementById('rep' + sujetId + 'ModeTexteBtn').classList.add('is-active');
@@ -3786,14 +4061,33 @@
       if(!contenu) return;
     }
 
-    const { error } = await sb.from('forum_reponses').insert({ sujet_id: sujetId, user_id: currentUser.id, contenu, audio_url });
-    if(error){ alert(error.message); return; }
-    if(mode === 'texte'){ document.getElementById('reponseTexte-' + sujetId).value = ''; }
-    else { reponseVoiceRecorders[sujetId].reset(); document.getElementById('rep' + sujetId + 'ModeTexteBtn').click(); }
-    await chargerReponses(sujetId);
+    reponsesEnCoursEnvoi.add(sujetId);
+    try{
+      const { error } = await sb.from('forum_reponses').insert({ sujet_id: sujetId, user_id: currentUser.id, contenu, audio_url });
+      if(error){ alert(error.message); return; }
+      if(mode === 'texte'){ document.getElementById('reponseTexte-' + sujetId).value = ''; }
+      else { reponseVoiceRecorders[sujetId].reset(); document.getElementById('rep' + sujetId + 'ModeTexteBtn').click(); }
+      await chargerReponses(sujetId);
+    } finally {
+      reponsesEnCoursEnvoi.delete(sujetId);
+      appliquerRafraichissementForumEnAttente();
+    }
   };
 
-  document.getElementById('filterForumSecteur').addEventListener('change', loadSujets);
+  document.getElementById('filterForumSecteur').addEventListener('change', () => {
+    pageSujetsActuelle = 1;
+    loadSujets();
+  });
+  document.getElementById('forumPagePrevious').addEventListener('click', () => {
+    if(pageSujetsActuelle <= 1) return;
+    pageSujetsActuelle--;
+    loadSujets();
+  });
+  document.getElementById('forumPageNext').addEventListener('click', () => {
+    if(pageSujetsActuelle >= totalPagesSujets) return;
+    pageSujetsActuelle++;
+    loadSujets();
+  });
   document.getElementById('btnNouveauSujet').addEventListener('click', () => showView('nouveau-sujet'));
 
   const sujetVoiceRecorder = createVoiceRecorder('sujet');
@@ -3845,6 +4139,7 @@
     if(error){ showMsg('msgSujet', error.message, 'error'); }
     else {
       showMsg('msgSujet', 'Sujet publié !', 'success');
+      pageSujetsActuelle = 1;
       e.target.reset();
       sujetVoiceRecorder.reset();
       document.getElementById('sujetModeTexteBtn').click();
@@ -3866,12 +4161,59 @@
     if(!error){ loadMembres(); }
   };
 
-  async function loadFormations(){
+  let formationsEnChargement = false;
+  let rechargementFormationsEnAttente = false;
+  let rechargementFormationsAutomatique = true;
+  async function loadFormations(automatique = false){
     const container = document.getElementById('formationsContainer');
-    container.innerHTML = '<div class="empty"><h3>Chargement…</h3></div>';
+    if(formationsEnChargement){
+      if(!automatique){
+        rechargementFormationsEnAttente = true;
+        rechargementFormationsAutomatique = false;
+      }
+      return;
+    }
+    const videoEnCours = () => [...container.querySelectorAll('video')].some(video => !video.paused && !video.ended);
+    if(!container.dataset.videoEndedHandlerAttached){
+      container.addEventListener('ended', () => {
+        if(rechargementFormationsEnAttente && !videoEnCours()){
+          const prochainChargementAutomatique = rechargementFormationsAutomatique;
+          rechargementFormationsEnAttente = false;
+          rechargementFormationsAutomatique = true;
+          loadFormations(prochainChargementAutomatique);
+        }
+      }, true);
+      container.dataset.videoEndedHandlerAttached = 'true';
+    }
+    dernierChargementFormations = Date.now();
+    if(videoEnCours()){
+      rechargementFormationsEnAttente = true;
+      if(!automatique) rechargementFormationsAutomatique = false;
+      return;
+    }
+    formationsEnChargement = true;
+    if(!automatique) container.innerHTML = '<div class="empty state-loading"><h3>Chargement…</h3></div>';
+    try{
+      await chargerFormations(container, automatique, videoEnCours);
+    } finally {
+      formationsEnChargement = false;
+      if(rechargementFormationsEnAttente){
+        const prochainChargementAutomatique = automatique && rechargementFormationsAutomatique;
+        rechargementFormationsEnAttente = false;
+        rechargementFormationsAutomatique = true;
+        loadFormations(prochainChargementAutomatique);
+      }
+    }
+  }
+  async function chargerFormations(container, automatique, videoEnCours){
     const { data, error } = await sb.from('formations').select('*').order('created_at', { ascending: false });
-    if(error){ container.innerHTML = '<div class="empty"><h3>Erreur de chargement</h3><p>' + escapeHtml(error.message) + '</p></div>'; return; }
-    if(!data || data.length === 0){ container.innerHTML = '<div class="empty"><h3>Aucune formation publiée pour le moment</h3></div>'; return; }
+    if(videoEnCours()){
+      rechargementFormationsEnAttente = true;
+      if(!automatique) rechargementFormationsAutomatique = false;
+      return;
+    }
+    if(error){ container.innerHTML = '<div class="empty state-error"><h3>Erreur de chargement</h3><p>' + escapeHtml(error.message) + '</p></div>'; return; }
+    if(!data || data.length === 0){ container.innerHTML = '<div class="empty state-empty"><h3>Aucune formation publiée pour le moment</h3></div>'; return; }
     container.innerHTML = data.map(f => {
       let mediaHtml = '';
       const mediaUrl = safeHttpUrl(f.media_url);
