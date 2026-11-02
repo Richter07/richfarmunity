@@ -2134,7 +2134,7 @@
   let pendingMembers = [];
 
   function compteActif(profile){
-    return !!profile && !!profile.type_acteur && !profile.compte_rejete &&
+    return !!profile && !!profile.type_acteur && !profile.compte_rejete && !profile.compte_banni &&
       !(profile.type_acteur === "Membre d'institution" && !profile.compte_approuve);
   }
 
@@ -2319,6 +2319,14 @@
     const telephone = document.getElementById('regTelephone').value.trim();
     const type_acteur = document.getElementById('regType').value;
     const domaine = document.getElementById('regDomaine').value.trim();
+
+    const { data: profilsBannisEmail } = await sb.from('profiles').select('id').ilike('email', email).eq('compte_banni', true).limit(1);
+    const { data: profilsBannisTelephone } = await sb.from('profiles').select('id').eq('telephone', telephone).eq('compte_banni', true).limit(1);
+    if((profilsBannisEmail && profilsBannisEmail.length) || (profilsBannisTelephone && profilsBannisTelephone.length)){
+      showMsg('msgInscription', 'Numéro banni définitivement', 'error');
+      btn.disabled = false;
+      return;
+    }
 
     const { data, error } = await sb.auth.signUp({
       email, password,
@@ -2507,6 +2515,17 @@
         return;
       }
       const profile = profileResult.data;
+      if(profile && profile.compte_banni){
+        await sb.auth.signOut();
+        if(!isCurrentRequest()) return;
+        currentUser = null;
+        currentProfile = null;
+        alert("Compte banni définitivement, contactez l'admin");
+        document.getElementById('accountLabel').textContent = '';
+        document.getElementById('compteConnecte').style.display = 'none';
+        document.getElementById('compteNonConnecte').style.display = 'block';
+        return;
+      }
       if(profile && profile.compte_rejete){
         await sb.auth.signOut();
         if(!isCurrentRequest()) return;
@@ -3440,16 +3459,23 @@
   async function loadSuggestions(){
     const container = document.getElementById('suggestionsContainer');
     container.innerHTML = '<div class="empty state-loading"><h3>Chargement…</h3></div>';
-    const { data, error } = await sb.from('suggestions').select('*, profiles(prenom, nom, telephone)').order('created_at', { ascending: false });
+    const { data, error } = await sb.from('suggestions').select('*').order('created_at', { ascending: false });
     if(error){ container.innerHTML = '<div class="empty state-error"><h3>Erreur</h3><p>' + escapeHtml(error.message) + '</p></div>'; return; }
     if(!data || data.length === 0){ container.innerHTML = '<div class="empty state-empty"><h3>Aucune suggestion pour le moment</h3></div>'; return; }
+    const ids = [...new Set(data.map(s => s.user_id).filter(Boolean))];
+    const profilesMap = {};
+    if(ids.length){
+      const { data: profiles } = await sb.from('profiles').select('id, prenom, nom, telephone').in('id', ids);
+      (profiles || []).forEach(p => { profilesMap[p.id] = p; });
+    }
     container.innerHTML = data.map(s => {
-      const auteur = s.profiles ? (s.profiles.prenom + ' ' + s.profiles.nom) : 'Utilisateur';
+      const profil = profilesMap[s.user_id];
+      const auteur = profil ? (profil.prenom + ' ' + profil.nom) : 'Utilisateur';
       const date = s.created_at ? new Date(s.created_at).toLocaleDateString('fr-FR') : '';
       const statutColor = s.statut === 'traite' ? 'var(--vert-rich)' : (s.statut === 'lu' ? 'var(--or)' : 'var(--encre-douce)');
       return `<div class="pub-card">
         <p class="desc">${escapeHtml(s.contenu)}</p>
-        <div class="pub-footer">Par ${escapeHtml(auteur)}${s.profiles && s.profiles.telephone ? ' · ' + escapeHtml(s.profiles.telephone) : ''} · ${date} · <span style="color:${statutColor};font-weight:600;">${escapeHtml(s.statut)}</span></div>
+        <div class="pub-footer">Par ${escapeHtml(auteur)}${profil && profil.telephone ? ' · ' + escapeHtml(profil.telephone) : ''} · ${date} · <span style="color:${statutColor};font-weight:600;">${escapeHtml(s.statut)}</span></div>
         <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;">
           <button class="btn-outline-small" onclick="changerStatutSuggestion('${s.id}', 'lu')">Marquer comme lu</button>
           <button class="btn-outline-small" onclick="changerStatutSuggestion('${s.id}', 'traite')">Marquer comme traité</button>
@@ -3818,10 +3844,10 @@
       console.log("Prix:", prix.produit, "auto:", prix.auto_source, "user_id:", prix.user_id, "nom final:", nomAffiche);
       const fourchette = prix.prix_max ? `${prix.prix_min} - ${prix.prix_max} FCFA` : `${prix.prix_min} FCFA`;
       return `<div class="pub-card">
-        <div class="pub-top"><div><span class="pub-tag">${escapeHtml(prix.categorie)}</span><h3>${escapeHtml(prix.produit)}</h3></div><span class="pub-statut reserve">En attente</span></div>
+        <div class="pub-top"><div><span class="pub-tag">${escapeHtml(prix.categorie)}</span><h3>${escapeHtml(prix.produit)}</h3></div><span class="pub-statut ${prix.approuve ? '' : 'reserve'}" style="${prix.approuve ? 'background:#E6F1E6;color:var(--vert-rich);' : ''}">${prix.approuve ? 'Validé' : 'En attente'}</span></div>
         <div class="pub-meta"><span><strong>Prix :</strong> ${fourchette} / ${escapeHtml(prix.unite)}</span><span><strong>Lieu :</strong> ${escapeHtml(prix.departement)}</span></div>
         <div class="pub-footer">${htmlProposePar}</div>
-        <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap;"><button class="btn-small" onclick="approuverPrix('${prix.id}')">Approuver</button><button class="btn-outline-small" style="border-color:var(--rouge);color:var(--rouge);" onclick="rejeterPrix('${prix.id}')">Rejeter</button></div>
+        <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap;">${prix.approuve ? `<button class="btn-outline-small" style="border-color:var(--rouge);color:var(--rouge);" onclick="supprimerPrixValide('${prix.id}')">Supprimer définitivement</button>` : `<button class="btn-small" onclick="approuverPrix('${prix.id}')">Approuver</button><button class="btn-outline-small" style="border-color:var(--rouge);color:var(--rouge);" onclick="rejeterPrix('${prix.id}')">Rejeter</button>`}</div>
       </div>`;
     }).join('');
   }
@@ -3832,6 +3858,11 @@
   window.rejeterPrix = async function(id){
     if(!confirm('Rejeter et supprimer cette proposition de prix ?')) return;
     const { error } = await sb.from('prix_marche').delete().eq('id', id);
+    if(!error){ loadModerationPrix(); }
+  };
+  window.supprimerPrixValide = async function(id){
+    if(!confirm('Supprimer définitivement ce prix validé ?')) return;
+    const { error } = await sb.from('prix_marche').delete().eq('id', id).eq('approuve', true);
     if(!error){ loadModerationPrix(); }
   };
   window.approuverAnnonce = async function(id){
@@ -3934,23 +3965,27 @@
     }
     if(list.length === 0){ container.innerHTML = '<div class="empty state-empty"><h3>Aucun membre trouvé</h3></div>'; return; }
     container.innerHTML = list.map(p => {
-      const statutLabel = p.compte_rejete ? 'Suspendu' : 'Actif';
-      const statutClass = '';
-      const statutStyle = p.compte_rejete ? 'background:#F0E8E0;color:var(--encre-douce);' : '';
+      const estBanni = !!p.compte_banni;
+      const estSuspendu = !estBanni && !!p.compte_rejete;
+      const statutLabel = estBanni ? 'BANNI DÉFINITIF' : (estSuspendu ? 'Suspendu' : 'Actif');
+      const statutStyle = estBanni
+        ? 'background:#FBE9E7;color:var(--rouge);border-color:#F3B7B0;'
+        : (estSuspendu ? 'background:#FBF0DC;color:var(--or-fonce);' : 'background:#E6F1E6;color:var(--vert-rich);');
       const date = p.created_at ? new Date(p.created_at).toLocaleDateString('fr-FR') : '';
+      const actions = estBanni
+        ? `<button class="btn-outline-small" onclick="reactiverCompte('${p.id}')">Réactiver quand même</button>`
+        : estSuspendu
+          ? `<button class="btn-outline-small" onclick="reactiverCompte('${p.id}')">Réactiver</button><button class="btn-outline-small" style="border-color:var(--rouge);color:var(--rouge);" onclick="bannirCompte('${p.id}')">Bannir définitif</button>`
+          : `<button class="btn-outline-small" style="border-color:var(--or-fonce);color:var(--or-fonce);" onclick="rejeterCompte('${p.id}')">Suspendre</button><button class="btn-outline-small" style="border-color:var(--rouge);color:var(--rouge);" onclick="bannirCompte('${p.id}')">Bannir définitif</button>`;
       return `<div class="pub-card">
-        <div class="pub-top"><div><span class="pub-tag">${escapeHtml(p.type_acteur || '')}</span><h3>${escapeHtml((p.prenom || '') + ' ' + (p.nom || ''))}</h3></div><span class="pub-statut ${statutClass}" style="${statutStyle}">${statutLabel}</span></div>
+        <div class="pub-top"><div><span class="pub-tag">${escapeHtml(p.type_acteur || '')}</span><h3>${escapeHtml((p.prenom || '') + ' ' + (p.nom || ''))}</h3></div><span class="pub-statut" style="${statutStyle}">${statutLabel}</span></div>
         <div class="pub-meta">
           <span><strong>Téléphone :</strong> ${escapeHtml(p.telephone || '')}</span>
           <span><strong>Email :</strong> ${escapeHtml(p.email || '')}</span>
           ${p.domaine ? '<span><strong>Domaine :</strong> ' + escapeHtml(p.domaine) + '</span>' : ''}
         </div>
         <div class="pub-footer">Inscrit le ${date}${p.is_admin ? ' · Administrateur' : ''}</div>
-        ${!p.is_admin ? `<div style="margin-top:10px;">
-          ${p.compte_rejete
-            ? `<button class="btn-outline-small" onclick="reactiverCompte('${p.id}')">Réactiver ce compte</button>`
-            : `<button class="btn-outline-small" style="border-color:var(--rouge);color:var(--rouge);" onclick="rejeterCompte('${p.id}')">Suspendre ce compte</button>`}
-        </div>` : ''}
+        ${!p.is_admin ? `<div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;">${actions}</div>` : ''}
       </div>`;
     }).join('');
   }
@@ -4208,13 +4243,19 @@
 
   window.rejeterCompte = async function(id){
     if(!confirm('Suspendre ce compte ? La personne ne pourra plus se connecter ni publier d\'annonces.')) return;
-    const { error } = await sb.from('profiles').update({ compte_rejete: true }).eq('id', id);
+    const { error } = await sb.from('profiles').update({ compte_approuve: false, compte_rejete: true, compte_banni: false }).eq('id', id);
     if(!error){ loadMembres(); }
   };
 
   window.reactiverCompte = async function(id){
     if(!confirm('Réactiver ce compte ?')) return;
-    const { error } = await sb.from('profiles').update({ compte_rejete: false }).eq('id', id);
+    const { error } = await sb.from('profiles').update({ compte_approuve: true, compte_rejete: false, compte_banni: false }).eq('id', id);
+    if(!error){ loadMembres(); }
+  };
+
+  window.bannirCompte = async function(id){
+    if(!confirm('Bannir définitivement ce compte ? Cette action bloque sa connexion et ses coordonnées.')) return;
+    const { error } = await sb.from('profiles').update({ compte_approuve: false, compte_rejete: false, compte_banni: true }).eq('id', id);
     if(!error){ loadMembres(); }
   };
 

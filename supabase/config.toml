@@ -1,0 +1,2 @@
+[functions.ia-prix-auto]
+schedule = "0 5 * * 1,4"
