@@ -67,6 +67,7 @@
   h3{font-size:1.25rem;line-height:1.28;}
   p{line-height:1.6;}
   a{color:inherit; text-decoration:none;}
+  nav a{ white-space:nowrap; }
   img{max-width:100%; display:block;}
   :focus-visible{outline:2px solid var(--vert-nuit); outline-offset:2px; box-shadow:0 0 0 5px var(--or-clair);}
   .wrap{max-width:1180px; margin:0 auto; padding:0 32px;}
@@ -74,7 +75,7 @@
 
   /* ---------- HEADER / TABS (commun à tout le site) ---------- */
   header{
-    position:sticky; top:0; z-index:100;
+    position:sticky; top:0; z-index:9999 !important;
     background:linear-gradient(180deg, rgba(8,26,11,0.97), rgba(15,44,19,0.93));
     border-bottom:1px solid rgba(217,166,43,0.22);
     box-shadow:0 4px 24px rgba(0,0,0,0.18);
@@ -93,6 +94,9 @@
   .logo .mark::after{ width:12px; height:1.4px; top:11px; left:5.5px; transform:rotate(20deg);}
 
   nav.tabs{ display:flex; gap:4px; flex-wrap:wrap; }
+  #map, .leaflet-container, .leaflet-map-pane, #carteInteractive { position:relative; z-index:10 !important; }
+  nav a { white-space: nowrap; }
+  header { z-index:9999 !important; }
   nav.tabs button{
     position:relative;
     background:transparent; border:1px solid rgba(245,239,224,0.2); color:rgba(245,239,224,0.85);
@@ -118,17 +122,17 @@
     .menu-backdrop{
       display:none;
       position:fixed; inset:0; background:rgba(0,0,0,0.5);
-      z-index:149; opacity:0; transition:opacity .3s ease;
+      z-index:9998; opacity:0; transition:opacity .3s ease;
     }
     .menu-backdrop.open{ display:block; opacity:1; }
     nav.tabs{
       display:flex;
       position:fixed; top:0; right:0; left:auto; bottom:0;
-      width:82%; max-width:320px;
+      width:85vw; max-width:85vw;
       background:linear-gradient(180deg, rgba(6,20,9,0.99), rgba(12,36,16,0.98));
       backdrop-filter:blur(10px);
       flex-direction:column; align-items:stretch; gap:8px;
-      padding:24px 18px 24px; overflow-y:auto; z-index:150;
+      height:100vh; padding:24px 18px 24px; overflow-y:auto; z-index:9999; background:#1a2e1a;
       transform:translateX(100%);
       visibility:hidden; transition:transform .3s cubic-bezier(.2,.7,.2,1), visibility 0s linear .3s;
       box-shadow:-8px 0 30px rgba(0,0,0,0.3);
@@ -150,7 +154,8 @@
     header > nav:not(.tabs) > .account-box{ grid-column:2; grid-row:1; }
     header > nav:not(.tabs) > .menu-toggle{ display:none; }
     header > nav:not(.tabs) > nav.tabs{
-      grid-column:1 / -1; grid-row:2; justify-content:center; flex-wrap:nowrap;
+      position:static !important; right:auto !important; top:auto !important; width:100% !important; height:auto !important; background:transparent !important; overflow:visible !important;
+      grid-column:1 / -1; grid-row:2; justify-content:center; flex-wrap:wrap;
       min-width:0; width:100%; gap:4px; padding-bottom:12px;
     }
     header > nav:not(.tabs) > nav.tabs button{
@@ -354,6 +359,8 @@
 
   /* ---------- APP (Annonces / Formations / Compte) ---------- */
   .app-main{ max-width:920px; min-width:0; margin:0 auto; padding:48px 24px 80px; }
+  nav.tabs.flex{ gap:0.5rem 1rem; max-width:80vw; }
+  #view-carte .app-main.pt-4{ padding-top:64px; }
   .page-head{ margin-bottom:28px; }
   .page-head h2{ font-size:clamp(1.875rem,3.4vw,2.625rem); line-height:1.16; }
   .page-head p{ margin-top:8px; color:var(--encre-douce); font-size:1rem; line-height:1.6; }
@@ -499,6 +506,9 @@
   .formation-card .eyebrow{ font-family:'IBM Plex Mono',monospace; font-size:0.75rem; color:var(--or); text-transform:uppercase; letter-spacing:0.06em; font-weight:500; }
   .formation-card h3{ margin-top:8px; }
   .formation-card p{ margin-top:10px; color:var(--encre-douce); line-height:1.6; font-size:0.94rem; }
+  .formation-card .formation-content{ margin-top:10px; }
+  .formation-card .formation-content p{ margin:0 0 16px; }
+  .formation-card .formation-content p:last-child{ margin-bottom:0; }
   .toolbar{ display:flex; justify-content:space-between; align-items:center; margin-bottom:22px; flex-wrap:wrap; gap:12px; }
 
   .gallery-section{
@@ -608,10 +618,10 @@
 </head>
 <body>
 
-<header>
-  <nav>
+<header class="relative z-[9999]">
+  <nav class="relative z-[9999]">
     <a href="#" class="logo" onclick="showView('accueil'); return false;"><img src="https://richfarmunity.com/icon-192.png" alt="Rĩch Farm Unity" style="height:40px;width:auto;border-radius:6px;">Rĩch Farm Unity</a>
-    <nav class="tabs">
+    <nav class="tabs hidden md:flex flex-wrap gap-x-4 gap-y-2 items-center max-w-[75vw] relative z-[9999]" id="menuMobile" style="position:fixed; top:0; right:0; width:85vw; height:100vh; z-index:9999; background:#1a2e1a; overflow-y:auto">
       <button class="menu-close" id="menuClose" aria-label="Fermer le menu">✕</button>
       <button data-view="accueil" class="active">Accueil</button>
       <button data-view="publications">Annonces</button>
@@ -633,7 +643,7 @@
     <div class="account-box" id="accountLabel"></div>
     <button class="menu-toggle" id="menuToggle" aria-label="Ouvrir le menu">☰</button>
   </nav>
-  <div class="menu-backdrop" id="menuBackdrop"></div>
+  <div class="menu-backdrop fixed inset-0 bg-black/50" id="menuOverlay" onclick="closeMenu()"></div>
 
   <div class="avis-modal-backdrop" id="avisModalBackdrop">
     <div class="avis-modal">
@@ -656,16 +666,19 @@
   // (ex: connexion lente empêchant le SDK Supabase de charger à temps).
   (function(){
     function openMenu(){
-      document.querySelector('nav.tabs').classList.add('open');
-      document.getElementById('menuBackdrop').classList.add('open');
+      document.getElementById('menuMobile').classList.add('open');
+      document.getElementById('menuOverlay').classList.add('open');
+      document.body.style.overflow = 'hidden';
     }
     function closeMenu(){
-      document.querySelector('nav.tabs').classList.remove('open');
-      document.getElementById('menuBackdrop').classList.remove('open');
+      document.getElementById('menuMobile').classList.remove('open');
+      document.getElementById('menuOverlay').classList.remove('open');
+      document.body.style.overflow = '';
     }
+    window.closeMenu = closeMenu;
     document.getElementById('menuToggle').addEventListener('click', openMenu);
     document.getElementById('menuClose').addEventListener('click', closeMenu);
-    document.getElementById('menuBackdrop').addEventListener('click', closeMenu);
+    document.getElementById('menuOverlay').addEventListener('click', closeMenu);
     document.querySelectorAll('nav.tabs button').forEach(function(btn){
       btn.addEventListener('click', closeMenu);
     });
@@ -1292,7 +1305,7 @@
 
   <!-- ==================== VUE CARTE INTERACTIVE ==================== -->
   <div class="view" id="view-carte">
-    <div class="app-main">
+    <div class="app-main pt-4">
       <div class="page-head"><h2>Carte des annonces</h2><p>Retrouvez les annonces publiées autour de vous.</p></div>
       <div class="filters">
         <select id="filterCarteCategorie">
@@ -1418,7 +1431,7 @@
             <div class="field"><label for="pubOrdre">Ordre d'affichage</label><input type="number" id="pubOrdre" value="0"></div>
           </div>
           <div class="field-row">
-            <div class="field"><label for="pubImageUrl">Lien de l'image (URL)</label><input type="text" id="pubImageUrl" required placeholder="https://..."></div>
+            <div class="field"><label for="input-pub-images">Photos de la publicité</label><input type="file" id="input-pub-images" multiple accept="image/*" required></div>
             <div class="field"><label for="pubDateExpiration">Expire le (optionnel)</label><input type="date" id="pubDateExpiration"></div>
           </div>
           <div class="field"><label for="pubLien">Lien de destination (optionnel)</label><input type="text" id="pubLien" placeholder="https://... ou https://wa.me/..."></div>
@@ -1575,7 +1588,13 @@
         <form id="formFormation">
           <input type="hidden" id="formationEditId" value="">
           <div class="field"><label for="formTitre">Titre</label><input type="text" id="formTitre" required></div>
+          <div class="field-row">
+            <div class="field"><label for="formTypeFormation">Type de formation</label><select id="formTypeFormation"><option value="">Sélectionner</option><option>Théorique</option><option>Pratique</option><option>Théorique et Pratique</option><option>En ligne</option></select></div>
+            <div class="field"><label for="formLieuFormation">Lieu de formation</label><input type="text" id="formLieuFormation" placeholder="Ex: Cotonou, Abomey-Calavi"></div>
+          </div>
+          <div class="field"><label for="formTypeCulture">Type de culture</label><input type="text" id="formTypeCulture" placeholder="Ex: Maïs, Manioc, Maraîchage"></div>
           <div class="field"><label for="formContenu">Contenu</label><textarea id="formContenu" required style="min-height:160px;"></textarea></div>
+          <div class="field"><label for="formImageCouverture">Photos de la formation</label><input type="file" id="formImageCouverture" multiple accept="image/*"></div>
           <div class="field"><label for="formMedia">Photo ou vidéo (optionnel)</label><input type="file" id="formMedia" accept="image/*,video/*"></div>
           <button type="submit" class="btn-main" id="btnFormationSubmit">Publier</button>
           <div class="msg" id="msgFormation"></div>
@@ -2923,7 +2942,7 @@
   const TAXONOMIE_PRODUITS = {
     "Production végétale": {
       "Céréales": ["Maïs","Riz","Sorgho","Mil"],
-      "Racines et tubercules": ["Manioc","Igname","Patate douce","Taro"],
+      "Racines et tubercules": ["Manioc","Igname","Patate douce","Taro","Gari","Tapioca"],
       "Légumineuses": ["Niébé","Soja","Arachide"],
       "Cultures maraîchères": ["Tomate","Piment","Oignon","Carotte","Chou","Laitue","Gombo","Grande morelle (Gboma)","Amarante","Basilic africain (Tchayo)","Concombre","Aubergine","Poivron","Corète potagère (Crincrin)","Menthe","Vernonia (Amanvivê)","Cornichon","Pastèque"],
       "Cultures de rente": ["Coton","Anacarde","Ananas","Palmier à huile","Karité"],
@@ -3652,7 +3671,13 @@
     };
     const { error } = await sb.from('publications').insert(payload);
     if(error){ showMsg('msgPublication', error.message, 'error'); }
-    else { showMsg('msgPublication', 'Annonce publiée !', 'success'); pageActuelle = 1; loadPublications(); e.target.reset(); document.getElementById('pubCertifWrap').style.display = 'none'; document.getElementById('notifPromptPublication').style.display = 'block'; pubVoiceRecorder.reset(); document.getElementById('pubModeTexteBtn').click(); document.getElementById('geolocStatus').textContent = ''; await checkNotifStatus(); }
+    else {
+      const { data: admins } = await sb.from('profiles').select('email').eq('is_admin', true);
+      const adminEmails = [...new Set((admins || []).map(admin => admin.email).filter(Boolean))];
+      if(adminEmails.length){
+        await sb.functions.invoke('send-email', { body: { recipients: adminEmails, subject: 'Nouvelle annonce à valider', announcement: payload } });
+      }
+      showMsg('msgPublication', 'Annonce publiée !', 'success'); pageActuelle = 1; loadPublications(); e.target.reset(); document.getElementById('pubCertifWrap').style.display = 'none'; document.getElementById('notifPromptPublication').style.display = 'block'; pubVoiceRecorder.reset(); document.getElementById('pubModeTexteBtn').click(); document.getElementById('geolocStatus').textContent = ''; await checkNotifStatus(); }
     btn.disabled = false;
     btn.textContent = "Publier l'annonce";
   });
@@ -3754,17 +3779,49 @@
     const container = document.getElementById('moderationPrixContainer');
     if(!container) return;
     container.innerHTML = '<div class="empty state-loading"><h3>Chargement…</h3></div>';
-    const { data, error } = await sb.from('prix_marche').select('*, profiles(prenom, nom, telephone)').eq('approuve', false).eq('rejete', false).order('created_at', { ascending: true });
+    const { data: prixList, error } = await sb.from('prix_marche').select('*').order('created_at', { ascending: false });
     if(error){ container.innerHTML = '<div class="empty state-error"><h3>Erreur</h3><p>' + escapeHtml(error.message) + '</p></div>'; return; }
-    if(!data || data.length === 0){ container.innerHTML = '<div class="empty state-empty"><h3>Aucun prix en attente</h3></div>'; return; }
-    container.innerHTML = data.map(p => {
-      const auteur = p.profiles ? (p.profiles.prenom + ' ' + p.profiles.nom) : 'Utilisateur';
-      const fourchette = p.prix_max ? `${p.prix_min} - ${p.prix_max} FCFA` : `${p.prix_min} FCFA`;
+    if(!prixList || prixList.length === 0){ container.innerHTML = '<div class="empty state-empty"><h3>Aucun prix en attente</h3></div>'; return; }
+    const userIds = [...new Set(prixList.map(prix => prix.user_id).filter(Boolean))];
+    console.log('userIds à chercher', userIds);
+    const profilesMap = {};
+    if(userIds.length){
+      const { data: profs, error: errProf } = await sb.from('profiles').select('*').in('id', userIds);
+      console.log('profiles trouvés', profs, 'erreur', errProf);
+      (profs || []).forEach(pr => {
+        profilesMap[pr.id] = pr;
+      });
+    }
+    prixList.forEach(prix => {
+      if(prix.user_id && !profilesMap[prix.user_id]){
+        console.log('Profil non trouvé pour le prix', prix.id, 'user_id:', prix.user_id);
+      }
+    });
+    container.innerHTML = prixList.map(prix => {
+      let nomAffiche = 'Utilisateur';
+      let badge = '';
+
+      if(prix.auto_source === 'ia_auto'){
+        nomAffiche = '🤖 IA Auto (Google)';
+        const sourceUrl = safeHttpUrl(prix.source_url);
+        badge = `<span style="background:#10B981;color:white;padding:2px 8px;border-radius:12px;font-size:11px;margin-left:6px">AUTO - Lundi/Jeudi 6h</span> ${sourceUrl ? `<a href="${escapeHtml(sourceUrl)}" target="_blank" rel="noopener noreferrer" style="font-size:11px">Voir source</a>` : ''}`;
+      } else if(prix.user_id){
+        const prof = profilesMap[prix.user_id];
+        if(prof){
+          nomAffiche = prof.nom_complet || prof.full_name || prof.name || prof.username || prof.email?.split('@')[0] || 'Producteur';
+        } else {
+          nomAffiche = prix.lieu ? `Producteur ${prix.lieu}` : `Producteur ${prix.departement || ''}`.trim() || 'Producteur';
+        }
+      }
+
+      const htmlProposePar = `Proposé par ${escapeHtml(nomAffiche)} ${badge}`;
+      console.log("Prix:", prix.produit, "auto:", prix.auto_source, "user_id:", prix.user_id, "nom final:", nomAffiche);
+      const fourchette = prix.prix_max ? `${prix.prix_min} - ${prix.prix_max} FCFA` : `${prix.prix_min} FCFA`;
       return `<div class="pub-card">
-        <div class="pub-top"><div><span class="pub-tag">${escapeHtml(p.categorie)}</span><h3>${escapeHtml(p.produit)}</h3></div><span class="pub-statut reserve">En attente</span></div>
-        <div class="pub-meta"><span><strong>Prix :</strong> ${fourchette} / ${escapeHtml(p.unite)}</span><span><strong>Lieu :</strong> ${escapeHtml(p.departement)}</span></div>
-        <div class="pub-footer">Proposé par ${escapeHtml(auteur)}${p.profiles && p.profiles.telephone ? ' · ' + escapeHtml(p.profiles.telephone) : ''}</div>
-        <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap;"><button class="btn-small" onclick="approuverPrix('${p.id}')">Approuver</button><button class="btn-outline-small" style="border-color:var(--rouge);color:var(--rouge);" onclick="rejeterPrix('${p.id}')">Rejeter</button></div>
+        <div class="pub-top"><div><span class="pub-tag">${escapeHtml(prix.categorie)}</span><h3>${escapeHtml(prix.produit)}</h3></div><span class="pub-statut reserve">En attente</span></div>
+        <div class="pub-meta"><span><strong>Prix :</strong> ${fourchette} / ${escapeHtml(prix.unite)}</span><span><strong>Lieu :</strong> ${escapeHtml(prix.departement)}</span></div>
+        <div class="pub-footer">${htmlProposePar}</div>
+        <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap;"><button class="btn-small" onclick="approuverPrix('${prix.id}')">Approuver</button><button class="btn-outline-small" style="border-color:var(--rouge);color:var(--rouge);" onclick="rejeterPrix('${prix.id}')">Rejeter</button></div>
       </div>`;
     }).join('');
   }
@@ -4205,6 +4262,12 @@
       }
     }
   }
+  function formatLongText(rawText){
+    const safeText = escapeHtml(rawText == null ? '' : String(rawText));
+    let formatted = safeText.replace(/\r\n?/g, '\n').replace(/\n\n/g, '</p><p class="mb-4">').replace(/\n/g, '<br>');
+    return '<div class="prose max-w-none space-y-4 whitespace-pre-wrap leading-7"><p class="mb-4">' + formatted + '</p></div>';
+  }
+
   async function chargerFormations(container, automatique, videoEnCours){
     const { data, error } = await sb.from('formations').select('*').order('created_at', { ascending: false });
     if(videoEnCours()){
@@ -4217,7 +4280,15 @@
     container.innerHTML = data.map(f => {
       let mediaHtml = '';
       const mediaUrl = safeHttpUrl(f.media_url);
-      if(mediaUrl && f.media_type === 'video'){
+      let images = f.images;
+      if(typeof images === 'string'){
+        try { images = JSON.parse(images); } catch(e) { images = []; }
+      }
+      const imageUrls = Array.isArray(images) ? images.map(safeHttpUrl).filter(Boolean) : [];
+      if(!imageUrls.length && safeHttpUrl(f.image_url)) imageUrls.push(safeHttpUrl(f.image_url));
+      if(imageUrls.length){
+        mediaHtml = `<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin-top:12px;">${imageUrls.map((url, index) => `<img src="${url}" alt="Photo ${index + 1} de ${escapeHtml(f.titre)}" style="width:100%;height:220px;object-fit:cover;background:var(--ivoire-2);border-radius:10px;">`).join('')}</div>`;
+      } else if(mediaUrl && f.media_type === 'video'){
         mediaHtml = `<video src="${mediaUrl}" controls style="width:100%;border-radius:10px;margin-top:12px;"></video>`;
       } else if(mediaUrl){
         mediaHtml = `<img src="${mediaUrl}" alt="${escapeHtml(f.titre)}" style="width:100%;height:auto;max-height:420px;object-fit:contain;background:var(--ivoire-2);border-radius:10px;margin-top:12px;">`;
@@ -4226,7 +4297,8 @@
       const shareText = `🌾 ${f.titre}\n\n${f.contenu}\n\nVoir plus sur Rĩch Farm Unity :\n${shareUrl}`;
       const shareBtn = `<a href="https://wa.me/?text=${encodeURIComponent(shareText)}" target="_blank" class="btn-outline-small" style="display:inline-block;margin-top:12px;">📤 Partager sur WhatsApp</a>`;
       const adminBtns = (currentProfile && currentProfile.is_admin) ? `<div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap;"><button class="btn-outline-small" onclick="modifierFormation('${f.id}')">Modifier</button><button class="btn-outline-small" style="border-color:var(--rouge);color:var(--rouge);" onclick="supprimerFormation('${f.id}')">Supprimer</button></div>` : '';
-      return `<div class="formation-card"><span class="eyebrow">Rĩch Farm Unity</span><h3>${escapeHtml(f.titre)}</h3><p>${escapeHtml(f.contenu)}</p>${mediaHtml}${shareBtn}${adminBtns}</div>`;
+      const infosFormation = [f.type_formation ? '<span><strong>Type :</strong> ' + escapeHtml(f.type_formation) + '</span>' : '', f.lieu_formation ? '<span><strong>Lieu :</strong> ' + escapeHtml(f.lieu_formation) + '</span>' : '', f.type_culture ? '<span><strong>Culture :</strong> ' + escapeHtml(f.type_culture) + '</span>' : ''].filter(Boolean).join(' · ');
+      return `<div class="formation-card"><span class="eyebrow">Rĩch Farm Unity</span><h3>${escapeHtml(f.titre)}</h3>${infosFormation ? '<div class="formation-info pub-meta" style="margin-top:10px;">' + infosFormation + '</div>' : ''}<div class="formation-content">${formatLongText(f.contenu)}</div>${mediaHtml}${shareBtn}${adminBtns}</div>`;
     }).join('');
   }
 
@@ -4242,12 +4314,34 @@
     document.getElementById('formationEditId').value = data.id;
     document.getElementById('formTitre').value = data.titre;
     document.getElementById('formContenu').value = data.contenu;
+    document.getElementById('formTypeFormation').value = data.type_formation || '';
+    document.getElementById('formLieuFormation').value = data.lieu_formation || '';
+    document.getElementById('formTypeCulture').value = data.type_culture || '';
     document.getElementById('formationFormTitle').textContent = 'Modifier la formation';
     document.getElementById('btnFormationSubmit').textContent = 'Enregistrer les modifications';
     showView('nouvelle-formation');
   };
 
   // ---- Bannière publicitaire défilante ----
+  function publiciteImageUrls(publicite){
+    let images = publicite.images;
+    if(typeof images === 'string'){
+      try { images = JSON.parse(images); } catch(e) { images = []; }
+    }
+    const candidates = Array.isArray(images) ? images : [];
+    const validImages = candidates.map(safeHttpUrl).filter(Boolean);
+    return validImages.length ? validImages : (safeHttpUrl(publicite.image_url) ? [safeHttpUrl(publicite.image_url)] : []);
+  }
+
+  async function ensurePubliciteBucket(){
+    const { data: buckets, error: listError } = await sb.storage.listBuckets();
+    if(listError) throw new Error('Impossible de vérifier le stockage publicitaire : ' + listError.message);
+    if(!buckets || !buckets.some(bucket => bucket.name === 'publicites')){
+      const { error: createError } = await sb.storage.createBucket('publicites', { public: true });
+      if(createError && !/already exists/i.test(createError.message)) throw createError;
+    }
+  }
+
   async function loadPublicites(){
     const aujourdHui = new Date().toISOString().slice(0,10);
     const { data, error } = await sb.from('publicites').select('*').eq('actif', true).or(`date_expiration.is.null,date_expiration.gte.${aujourdHui}`).order('ordre', { ascending: true });
@@ -4261,11 +4355,12 @@
     }
     else{
       const cardsHtml = data.map(p => {
-        const imageUrl = safeHttpUrl(p.image_url);
-        if(!imageUrl) return '';
-        const img = `<div class="bandeau-pub-card"><img src="${imageUrl}" alt="${escapeHtml(p.annonceur)}"></div>`;
+        const images = publiciteImageUrls(p);
         const lien = safeHttpUrl(p.lien);
-        return lien ? `<a href="${lien}" target="_blank" rel="noopener noreferrer">${img}</a>` : img;
+        return images.map(imageUrl => {
+          const img = `<div class="bandeau-pub-card"><img src="${imageUrl}" alt="${escapeHtml(p.annonceur)}"></div>`;
+          return lien ? `<a href="${lien}" target="_blank" rel="noopener noreferrer">${img}</a>` : img;
+        }).join('');
       }).join('');
       // Le contenu est dupliqué une fois pour permettre une boucle visuelle continue (translateX -50%).
       track.innerHTML = `<div class="bandeau-pub-inner">${cardsHtml}${cardsHtml}</div>`;
@@ -4286,7 +4381,7 @@
       const expTxt = p.date_expiration ? ` · Expire le ${p.date_expiration}` : '';
       return `
       <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid rgba(28,26,20,0.12);">
-        ${safeHttpUrl(p.image_url) ? `<img src="${safeHttpUrl(p.image_url)}" style="width:70px;height:40px;object-fit:cover;border-radius:6px;">` : ''}
+        ${(publiciteImageUrls(p)[0]) ? `<img src="${publiciteImageUrls(p)[0]}" style="width:70px;height:40px;object-fit:cover;border-radius:6px;">` : ''}
         <div style="flex:1;"><strong>${escapeHtml(p.annonceur)}</strong><br><span style="font-size:0.8rem;color:${estExpiree ? 'var(--rouge)' : 'var(--encre-douce)'};">Ordre : ${p.ordre} ${statutTxt}${expTxt}</span></div>
         <button class="btn-outline-small" onclick="togglePublicite('${p.id}', ${!p.actif})">${p.actif ? 'Désactiver' : 'Activer'}</button>
         <button class="btn-outline-small" onclick="copierLienPublicite('${p.id}')">📤 Lien</button>
@@ -4316,18 +4411,43 @@
 
   document.getElementById('formPublicite').addEventListener('submit', async (e) => {
     e.preventDefault();
-    const payload = {
-      annonceur: document.getElementById('pubAnnonceur').value.trim(),
-      image_url: document.getElementById('pubImageUrl').value.trim(),
-      lien: document.getElementById('pubLien').value.trim() || null,
-      ordre: parseInt(document.getElementById('pubOrdre').value) || 0,
-      date_expiration: document.getElementById('pubDateExpiration').value || null,
-      actif: true
-    };
-    const { error } = await sb.from('publicites').insert(payload);
-    if(error){ alert('Erreur : ' + error.message); return; }
-    document.getElementById('formPublicite').reset();
-    loadPublicites();
+    const submitButton = e.submitter;
+    const files = Array.from(document.getElementById('input-pub-images').files);
+    if(!files.length){ alert('Sélectionnez au moins une photo pour la publicité.'); return; }
+    submitButton.disabled = true;
+    submitButton.textContent = 'Envoi des photos…';
+    try {
+      await ensurePubliciteBucket();
+      const imageUrls = [];
+      for(let i = 0; i < files.length; i++){
+        const file = files[i];
+        const extension = (file.name.split('.').pop() || 'jpg').replace(/[^a-z0-9]/gi, '').toLowerCase();
+        const path = `${currentUser.id}/${Date.now()}-${i}-${Math.random().toString(36).slice(2)}.${extension}`;
+        const { error: uploadError } = await sb.storage.from('publicites').upload(path, file, { contentType: file.type, cacheControl: '3600', upsert: false });
+        if(uploadError) throw new Error('Erreur d’envoi de ' + file.name + ' : ' + uploadError.message);
+        const { data: publicData } = sb.storage.from('publicites').getPublicUrl(path);
+        if(publicData && publicData.publicUrl) imageUrls.push(publicData.publicUrl);
+      }
+      if(!imageUrls.length){ throw new Error('Aucune image n’a pu être envoyée.'); }
+      const payload = {
+        annonceur: document.getElementById('pubAnnonceur').value.trim(),
+        images: imageUrls,
+        image_url: imageUrls[0],
+        lien: document.getElementById('pubLien').value.trim() || null,
+        ordre: parseInt(document.getElementById('pubOrdre').value) || 0,
+        date_expiration: document.getElementById('pubDateExpiration').value || null,
+        actif: true
+      };
+      const { error } = await sb.from('publicites').insert(payload);
+      if(error) throw error;
+      document.getElementById('formPublicite').reset();
+      loadPublicites();
+    } catch(error){
+      alert('Erreur : ' + error.message);
+    } finally {
+      submitButton.disabled = false;
+      submitButton.textContent = 'Ajouter la publicité';
+    }
   });
   document.getElementById('btnNouvelleFormation').addEventListener('click', () => {
     document.getElementById('formationEditId').value = '';
@@ -4365,10 +4485,47 @@
       media_url = publicData.publicUrl;
     }
 
+    let image_url = null;
+    let formationImages = [];
+    const coverFiles = Array.from(document.getElementById('formImageCouverture').files);
+    if(coverFiles.length){
+      btn.textContent = 'Envoi des photos…';
+      const { data: buckets, error: bucketsError } = await sb.storage.listBuckets();
+      if(bucketsError){ showMsg('msgFormation', 'Erreur stockage : ' + bucketsError.message, 'error'); btn.disabled = false; btn.textContent = 'Publier'; return; }
+      const formationsBucket = buckets && buckets.find(bucket => bucket.name === 'formations');
+      if(!formationsBucket){
+        const { error: bucketError } = await sb.storage.createBucket('formations', { public: true });
+        if(bucketError && !/already exists/i.test(bucketError.message)){ showMsg('msgFormation', 'Erreur bucket : ' + bucketError.message, 'error'); btn.disabled = false; btn.textContent = 'Publier'; return; }
+      } else if(formationsBucket.public === false){
+        const { error: bucketError } = await sb.storage.updateBucket('formations', { public: true });
+        if(bucketError){ showMsg('msgFormation', 'Erreur du bucket : ' + bucketError.message, 'error'); btn.disabled = false; btn.textContent = 'Publier'; return; }
+      }
+      for(let i = 0; i < coverFiles.length; i++){
+        const compressedCover = await compressImage(coverFiles[i]);
+        const ext = (compressedCover.name.split('.').pop() || 'jpg').replace(/[^a-z0-9]/gi, '').toLowerCase();
+        const coverPath = currentUser.id + '/photos/' + Date.now() + '-' + i + '-' + Math.random().toString(36).slice(2) + '.' + ext;
+        const { error: coverUploadError } = await sb.storage.from('formations').upload(coverPath, compressedCover, { contentType: compressedCover.type, cacheControl: '3600', upsert: false });
+        if(coverUploadError){ showMsg('msgFormation', 'Erreur photo : ' + coverUploadError.message, 'error'); btn.disabled = false; btn.textContent = 'Publier'; return; }
+        const { data: coverData } = sb.storage.from('formations').getPublicUrl(coverPath);
+        if(coverData && coverData.publicUrl) formationImages.push(coverData.publicUrl);
+      }
+      image_url = formationImages[0] || null;
+    }
+
     btn.textContent = 'Publication…';
     const editId = document.getElementById('formationEditId').value;
-    const payload = { titre: document.getElementById('formTitre').value.trim(), contenu: document.getElementById('formContenu').value.trim() };
+    const payload = {
+      titre: document.getElementById('formTitre').value.trim(),
+      contenu: document.getElementById('formContenu').value.trim(),
+      type_formation: document.getElementById('formTypeFormation').value,
+      lieu_formation: document.getElementById('formLieuFormation').value.trim(),
+      type_culture: document.getElementById('formTypeCulture').value.trim()
+    };
     if(media_url){ payload.media_url = media_url; payload.media_type = media_type; }
+    if(image_url){
+      payload.image_url = image_url;
+      payload.images = formationImages;
+    }
 
     let error;
     if(editId){
@@ -4502,6 +4659,7 @@
 
   function safeHttpUrl(value){
     if(typeof value !== 'string' || !value.trim()) return '';
+    if(/^data:image\/[^;,]+;base64,[A-Za-z0-9+/=]+$/.test(value.trim())) return escapeHtml(value.trim());
     try{
       const url = new URL(value, window.location.origin);
       if(url.protocol !== 'https:' && !(url.protocol === 'http:' && url.origin === window.location.origin)) return '';
