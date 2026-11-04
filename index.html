@@ -2085,10 +2085,17 @@
           <div class="empty state-loading"><h3>Chargement…</h3></div>
         </div>
         <div style="display:grid;grid-template-columns:1.5fr 0.9fr;gap:16px;align-items:stretch;">
-          <div class="card" style="margin:0;">
+          <div class="card affluence-chart-card" style="margin:0;align-self:start;">
             <h4 style="margin:0 0 12px;">Visites par jour (7 jours)</h4>
-            <canvas id="affluenceChart" height="140"></canvas>
+            <div class="affluence-chart-wrap" style="height:200px;overflow:hidden;">
+              <canvas id="affluenceChart" style="display:block;width:100%!important;height:100%!important;"></canvas>
+            </div>
           </div>
+          <style>
+            @media (max-width: 560px){
+              .affluence-chart-card .affluence-chart-wrap{height:180px!important;}
+            }
+          </style>
           <div class="card" style="margin:0;">
             <h4 style="margin:0 0 12px;">Top 5 pages</h4>
             <div id="topPagesList" style="display:flex;flex-direction:column;gap:8px;"></div>
@@ -4165,7 +4172,7 @@
           labels: days.map(d => d.label),
           datasets: [{
             label: 'Visites',
-            data: days.map(d => d.count),
+            data: days.map(d => Math.min(Math.max(Number(d.count) || 0, 0), 140)),
             backgroundColor: 'rgba(42, 118, 52, 0.75)',
             borderRadius: 6
           }]
@@ -4173,10 +4180,12 @@
         options: {
           responsive: true,
           maintainAspectRatio: false,
+          layout: { padding: { top: 8, bottom: 12 } },
           plugins: { legend: { display: false } },
           scales: {
             y: {
               beginAtZero: true,
+              max: 140,
               ticks: { precision: 0 }
             }
           }
