@@ -191,11 +191,13 @@
     header > nav:not(.tabs) > nav.tabs{
       position:static !important; right:auto !important; top:auto !important; width:100% !important; max-width:100% !important; height:auto !important; background:transparent !important; overflow:visible !important;
       grid-column:1 / -1; grid-row:2; justify-content:center; flex-wrap:wrap;
-      min-width:0; width:100%; gap:4px; padding-bottom:12px;
+      min-width:0; width:100%; gap:8px; padding-bottom:12px;
+      overflow:visible;
     }
     header > nav:not(.tabs) > nav.tabs button{
-      flex:0 1 auto; min-width:0; padding:9px clamp(5px,0.55vw,8px);
-      font-size:clamp(0.72rem,0.86vw,0.8rem);
+      flex:0 0 auto; min-width:0; max-width:none;
+      margin:0; position:relative; overflow:visible;
+      white-space:nowrap; padding:8px 12px; font-size:min(14px,1rem);
     }
   }
 
