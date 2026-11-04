@@ -115,6 +115,19 @@
     min-height:44px; padding:9px 12px; border-radius:100px; cursor:pointer; font-size:0.82rem; line-height:1.3; white-space:nowrap; transition:background-color .2s ease, border-color .2s ease, color .2s ease, box-shadow .2s ease;
   }
   nav.tabs button.active{ background:rgba(27,94,32,0.34); color:var(--ivoire); border-color:var(--vert-clair); font-weight:600; box-shadow:inset 0 -2px 0 var(--or-clair); }
+  .nav-notification-badge{
+    position:absolute; top:-7px; right:-7px; z-index:2;
+    min-width:18px; height:18px; padding:0 4px; box-sizing:border-box;
+    display:none; align-items:center; justify-content:center;
+    border:2px solid var(--ivoire); border-radius:999px;
+    background:#FF3B30; color:#fff; font-size:16px; line-height:14px; font-weight:800;
+    pointer-events:none; white-space:nowrap;
+  }
+  .nav-notification-badge.is-visible{ display:inline-flex; }
+  @media (max-width:1200px){
+    nav.tabs button .nav-notification-badge{ top:-4px; right:-4px; }
+    nav.tabs{ overflow-x:hidden; }
+  }
   nav.tabs button:hover:not(.active){ background:rgba(27,94,32,0.22); border-color:var(--vert-clair); color:var(--ivoire); }
   header a:focus-visible, header button:focus-visible{ outline:2px solid var(--or-clair); outline-offset:2px; box-shadow:0 0 0 4px rgba(15,44,19,0.9); }
 
@@ -2375,7 +2388,124 @@
     if(autoRefreshTimer){ clearInterval(autoRefreshTimer); autoRefreshTimer = null; }
   }
 
+  const BADGE_LAST_VISIT_PREFIX = 'lastVisit_';
+  const badgeCounts = {};
+  let badgeRefreshRequest = 0;
+
+  function badgeStorageKey(view){
+    return view === 'publications' ? 'annonces' : view;
+  }
+
+  function badgeLastVisit(view){
+    const key = BADGE_LAST_VISIT_PREFIX + badgeStorageKey(view);
+    let stored = localStorage.getItem(key);
+    if(!stored){
+      stored = new Date().toISOString();
+      localStorage.setItem(key, stored);
+    }
+    return new Date(stored);
+  }
+
+  function markBadgeVisited(view){
+    localStorage.setItem(BADGE_LAST_VISIT_PREFIX + badgeStorageKey(view), new Date().toISOString());
+    badgeCounts[view] = 0;
+    setMenuBadge(view, 0);
+  }
+
+  function setMenuBadge(view, count){
+    const value = Math.max(0, Number(count) || 0);
+    badgeCounts[view] = value;
+    const button = document.querySelector('nav.tabs button[data-view="' + view + '"]');
+    if(!button) return;
+    let badge = button.querySelector('.nav-notification-badge');
+    if(!badge){
+      badge = document.createElement('span');
+      badge.className = 'nav-notification-badge';
+      badge.setAttribute('aria-hidden', 'true');
+      button.appendChild(badge);
+    }
+    badge.textContent = value > 9 ? '9+' : String(value);
+    badge.classList.toggle('is-visible', value > 0);
+  }
+
+  async function badgeCount(query){
+    try{
+      const { count, error } = await query;
+      return error ? 0 : (count || 0);
+    }catch(_error){
+      return 0;
+    }
+  }
+
+  async function refreshBadges(){
+    const request = ++badgeRefreshRequest;
+    const isCurrent = () => request === badgeRefreshRequest;
+    const user = window.currentUser;
+    const isoSince = (view) => badgeLastVisit(view).toISOString();
+    let sinceAnnonce = isoSince('annonces');
+    let sincePrix = isoSince('prixmarche');
+    let sinceFormation = isoSince('formations');
+    let sinceForum = isoSince('forums');
+    let sinceSuggestions = isoSince('suggestions');
+    let sinceMembres = isoSince('membres');
+    let sinceCompte = isoSince('compte');
+
+    const results = await Promise.all([
+      badgeCount(sb.from('publications').select('id', { count: 'exact', head: true }).eq('approuve', true).gte('created_at', sinceAnnonce)),
+      badgeCount(sb.from('prix_marche').select('id', { count: 'exact', head: true }).eq('approuve', true).gte('created_at', sincePrix)),
+      badgeCount(sb.from('formations').select('id', { count: 'exact', head: true }).gte('created_at', sinceFormation)),
+      badgeCount(sb.from('forum_sujets').select('id', { count: 'exact', head: true }).gte('created_at', sinceForum)),
+      badgeCount(sb.from('profiles').select('id', { count: 'exact', head: true }).eq('is_verified', true).gte('created_at', sinceMembres)),
+      (async () => {
+        if(!user) return 0;
+        const { data: sujets } = await sb.from('forum_sujets').select('id').eq('user_id', user.id);
+        const ids = (sujets || []).map(s => s.id);
+        if(!ids.length) return 0;
+        return badgeCount(sb.from('forum_reponses').select('id', { count: 'exact', head: true }).in('sujet_id', ids).gte('created_at', sinceForum));
+      })(),
+      (async () => {
+        if(!user) return 0;
+        const { count, error } = await sb.from('suggestions').select('id', { count: 'exact', head: true }).eq('user_id', user.id).gte('updated_at', sinceSuggestions);
+        return error ? 0 : (count || 0);
+      })(),
+      (async () => {
+        if(!user) return 0;
+        let count = 0;
+        const [verification, profile, messages] = await Promise.all([
+          sb.from('profiles').select('id').eq('id', user.id).in('compte_approuve', [false]).in('compte_rejete', [true]).limit(1),
+          sb.from('profiles').select('id, prenom, nom, telephone, domaine, type_acteur').eq('id', user.id).maybeSingle(),
+          sb.from('messages').select('id', { count: 'exact', head: true }).eq('to_user', user.id).gte('created_at', sinceCompte)
+        ]);
+        if(!verification.error && verification.data && verification.data.length) count++;
+        const p = profile.data;
+        if(p && (!p.prenom || !p.nom || !p.telephone || !p.domaine || !p.type_acteur)) count++;
+        count += messages.error ? 0 : (messages.count || 0);
+        return count;
+      })(),
+      (async () => {
+        if(!currentProfile || !currentProfile.is_admin) return 0;
+        const [annonces, prix, institutions] = await Promise.all([
+          badgeCount(sb.from('publications').select('id', { count: 'exact', head: true }).eq('approuve', false).eq('rejete', false)),
+          badgeCount(sb.from('prix_marche').select('id', { count: 'exact', head: true }).eq('approuve', false)),
+          badgeCount(sb.from('profiles').select('id', { count: 'exact', head: true }).eq('type_acteur', 'Membre d\'institution').eq('compte_approuve', false).eq('compte_rejete', false))
+        ]);
+        return annonces + prix + institutions;
+      })()
+    ]);
+    if(!isCurrent()) return;
+    setMenuBadge('publications', results[0]);
+    setMenuBadge('prixmarche', results[1]);
+    setMenuBadge('formations', results[2]);
+    setMenuBadge('forums', results[3] + results[5]);
+    setMenuBadge('membres', results[4]);
+    setMenuBadge('suggestions', results[6]);
+    setMenuBadge('compte', results[7]);
+    setMenuBadge('moderation', results[8]);
+  }
+  window.refreshBadges = refreshBadges;
+
   function showView(name){
+    markBadgeVisited(name);
     trackEvent('page_view', name);
     document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
     document.getElementById('view-' + name).classList.add('active');
@@ -3481,6 +3611,7 @@
     if(error){ showMsg('msgPrixMarche', error.message, 'error'); }
     else {
       showMsg('msgPrixMarche', 'Merci ! Votre proposition sera vérifiée avant publication.', 'success');
+      refreshBadges();
       e.target.reset();
       document.getElementById('prixCategorie').innerHTML = '<option value="">Choisir d\'abord une filière</option>';
       document.getElementById('prixCategorie').disabled = true;
@@ -3648,8 +3779,8 @@
     if(!contenu) return;
     const { error } = await sb.from('suggestions').insert({ user_id: currentUser.id, contenu });
     if(error){ showMsg('msgSuggestion', error.message, 'error'); }
-    else { showMsg('msgSuggestion', 'Merci pour votre suggestion !', 'success'); e.target.reset(); }
-  });
+    else {     showMsg('msgSuggestion', 'Merci pour votre suggestion !', 'success'); e.target.reset(); refreshBadges();
+ }  });
 
   async function loadSuggestions(){
     const container = document.getElementById('suggestionsContainer');
@@ -3898,7 +4029,7 @@
       if(adminEmails.length){
         await sb.functions.invoke('send-email', { body: { recipients: adminEmails, subject: 'Nouvelle annonce à valider', announcement: payload } });
       }
-      showMsg('msgPublication', 'Annonce publiée !', 'success'); pageActuelle = 1; loadPublications(); e.target.reset(); document.getElementById('pubCertifWrap').style.display = 'none'; document.getElementById('notifPromptPublication').style.display = 'block'; pubVoiceRecorder.reset(); document.getElementById('pubModeTexteBtn').click(); document.getElementById('geolocStatus').textContent = ''; await checkNotifStatus(); }
+      showMsg('msgPublication', 'Annonce publiée !', 'success'); pageActuelle = 1; loadPublications(); refreshBadges(); e.target.reset(); document.getElementById('pubCertifWrap').style.display = 'none'; document.getElementById('notifPromptPublication').style.display = 'block'; pubVoiceRecorder.reset(); document.getElementById('pubModeTexteBtn').click(); document.getElementById('geolocStatus').textContent = ''; await checkNotifStatus(); }
     btn.disabled = false;
     btn.textContent = "Publier l'annonce";
   });
@@ -4585,6 +4716,7 @@
       e.target.reset();
       sujetVoiceRecorder.reset();
       document.getElementById('sujetModeTexteBtn').click();
+      refreshBadges();
       setTimeout(() => showView('forums'), 900);
     }
     btn.disabled = false;
@@ -4933,7 +5065,7 @@
       error = res.error;
     }
     if(error){ showMsg('msgFormation', error.message, 'error'); }
-    else { showMsg('msgFormation', editId ? 'Formation modifiée !' : 'Formation publiée !', 'success'); e.target.reset(); document.getElementById('formationEditId').value = ''; setTimeout(() => showView('formations'), 900); }
+    else { showMsg('msgFormation', editId ? 'Formation modifiée !' : 'Formation publiée !', 'success'); e.target.reset(); document.getElementById('formationEditId').value = ''; refreshBadges(); setTimeout(() => showView('formations'), 900); }
     btn.disabled = false;
     btn.textContent = 'Publier';
   });
@@ -5072,9 +5204,10 @@
 
   sb.auth.onAuthStateChange((event) => {
     if(event === 'PASSWORD_RECOVERY'){ showRecoveryScreen(); return; }
-    refreshSession();
+    refreshSession().finally(() => refreshBadges());
   });
-  refreshSession();
+  refreshSession().finally(() => refreshBadges());
+  setInterval(refreshBadges, 30000);
 
   const urlParams = new URLSearchParams(window.location.search);
   const targetView = urlParams.get('view');
