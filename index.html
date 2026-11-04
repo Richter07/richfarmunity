@@ -64,6 +64,11 @@
   .benefit-icon{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;background:#E8F1E8;font-size:1.25rem;}
   @media (max-width:980px){.benefit-grid{grid-template-columns:repeat(2,minmax(0,1fr));}}
   @media (max-width:560px){.benefit-grid{grid-template-columns:1fr}.benefit-card{padding:18px}.app-main{padding-left:16px!important;padding-right:16px!important}.toolbar,.filters,.field-row,.pub-top{overflow-wrap:anywhere}.admin-table{display:block;overflow-x:auto}.verified-badge--large{font-size:.92rem;}}
+  @media (max-width:767px){
+    .app-main, main, section, .card, .page-head, [class*="-grid"]{min-width:0;max-width:100%;}
+    .pillars, .acteurs-grid, .benefit-grid, .formation-grid, .annonces-grid, .cards-grid,
+    [class$="-grid"], .grid{grid-template-columns:1fr!important;}
+  }
   html{scroll-behavior:smooth;}
   body{
     font-family:'Work Sans',sans-serif;color:var(--encre);font-size:1rem;
@@ -161,6 +166,8 @@
       transform:translateX(100%);
       visibility:hidden; transition:transform .3s cubic-bezier(.2,.7,.2,1), visibility 0s linear .3s;
       box-shadow:-8px 0 30px rgba(0,0,0,0.3);
+      overscroll-behavior:contain;
+      -webkit-overflow-scrolling:touch;
     }
     nav.tabs.open{ transform:translateX(0); visibility:visible; transition:transform .3s cubic-bezier(.2,.7,.2,1), visibility 0s; }
     nav.tabs button{
@@ -1723,6 +1730,8 @@
           <div id="etatBadgeVerifie" style="margin-bottom:12px;"></div>
           <p style="color:var(--encre-douce);line-height:1.65;margin-bottom:14px;">La vérification confirme votre identité et votre rôle. Elle renforce la confiance, améliore votre visibilité et rassure vos partenaires.</p>
           <button type="button" id="btn-badge-verifie" class="btn-main" onclick="payerBadge()">Demander la vérification · 2000 F</button>
+          <button type="button" id="btn-badge-deja-paye" class="btn-main" style="margin-top:10px;background:#fff;color:#0f5d2f;border:1px solid #0f5d2f;" onclick="ouvrirWhatsAppVerification()">J'ai déjà payé, je suis prêt pour la vérification</button>
+          <div id="badge-payment-status" class="msg" role="status" style="margin-top:10px;"></div>
         </div>
         <div class="card" style="margin-bottom:20px;">
           <h3 style="margin-bottom:14px;">Avantages débloqués</h3>
@@ -2210,8 +2219,13 @@
 #rich-fab-btn{width:60px;height:60px;border-radius:50%;background:#0f5d2f;display:flex;align-items:center;justify-content:center;color:white;font-size:28px;box-shadow:0 4px 12px rgba(0,0,0,.3);cursor:pointer;border:none}
 #rich-tooltip{position:absolute;bottom:70px;right:0;background:#111;color:#fff;padding:8px 14px;border-radius:20px;font-size:13px;white-space:nowrap;opacity:0;transition:.2s;pointer-events:none;transform:translateY(10px)}
 #rich-fab:hover #rich-tooltip{opacity:1;transform:translateY(0)}
-#rich-window{position:fixed;bottom:100px;right:24px;width:380px;max-width:92vw;height:520px;max-height:80vh;background:#fff;border-radius:20px;box-shadow:0 10px 40px rgba(0,0,0,.25);z-index:9999;display:flex;flex-direction:column;overflow:hidden;border:1px solid #e5e7eb}
+#rich-window{position:fixed;bottom:100px;right:12px;left:12px;width:calc(100% - 24px);max-width:420px;margin:12px;height:520px;max-height:80vh;background:#fff;border-radius:20px;box-shadow:0 10px 40px rgba(0,0,0,.25);z-index:9999;display:flex;flex-direction:column;overflow:hidden;border:1px solid #e5e7eb;box-sizing:border-box}
 #rich-window.hidden{display:none}
+#rich-window #rich-chat > div{max-width:100%!important;word-break:break-word;overflow-wrap:anywhere;}
+#rich-window input, #rich-window button{box-sizing:border-box;}
+#rich-window #rich-input{flex:1 1 auto;min-width:0;}
+#rich-window .rich-send{flex:0 0 auto;white-space:nowrap;}
+@media (min-width:768px){#rich-window{left:auto;right:24px;margin:12px;width:420px;}}
 </style>
 <div id="rich-fab"><div id="rich-tooltip">Discuter avec Rĩch</div><button id="rich-fab-btn" onclick="toggleRich()">🌱</button></div>
 <div id="rich-window" class="hidden">
@@ -2224,8 +2238,8 @@
     <div style="display:flex;gap:8px;align-items:center">
       <button id="rich-mic" onclick="startVoice()" style="width:38px;height:38px;border-radius:50%;border:1px solid #ddd;background:#fff">🎤</button>
       <label style="width:38px;height:38px;border-radius:50%;border:1px solid #ddd;background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer">📷<input id="rich-photo" type="file" accept="image/*" hidden onchange="sendPhoto(this)"></label>
-      <input id="rich-input" placeholder="Parlez à Rĩch..." style="flex:1;border:1px solid #ddd;border-radius:20px;padding:10px 14px" onkeydown="if(event.key==='Enter') sendRich()">
-      <button onclick="sendRich()" style="background:#0f5d2f;color:white;border:none;border-radius:20px;padding:10px 14px;font-weight:bold">Envoyer</button>
+      <input id="rich-input" placeholder="Parlez à Rĩch..." style="flex:1 1 auto;min-width:0;border:1px solid #ddd;border-radius:20px;padding:10px 14px" onkeydown="if(event.key==='Enter') sendRich()">
+      <button class="rich-send" onclick="sendRich()" style="background:#0f5d2f;color:white;border:none;border-radius:20px;padding:10px 14px;font-weight:bold;flex-shrink:0">Envoyer</button>
     </div>
     <div id="richLangSelector" style="display:flex;justify-content:center;gap:6px;margin-top:7px">
       <button type="button" data-lang="francais" style="border:1px solid #0f5d2f;background:#0f5d2f;color:white;border-radius:16px;padding:4px 9px;font-size:11px;font-weight:bold">🇫🇷 FR</button>
@@ -5311,7 +5325,7 @@
     const base64=await new Promise((resolve,reject)=>{ const reader=new FileReader(); reader.onload=()=>resolve(reader.result.split(',')[1]); reader.onerror=reject; reader.readAsDataURL(file); });
     richBubble('📷 Photo agricole envoyée',true);
     try{
-      const response=await fetch(`${SUPABASE_URL}/functions/v1/agent-ia`,{method:'POST',headers:{'Content-Type':'application/json',apikey:SUPABASE_ANON_KEY,Authorization:'Bearer '+SUPABASE_ANON_KEY},body:JSON.stringify({question:'Analyse cette photo agricole.',lang:richLang,image_base64:base64})});
+const response=await fetch(`${SUPABASE_URL}/functions/v1/agent-ia`,{method:'POST',headers:{'Content-Type':'application/json',apikey:SUPABASE_ANON_KEY,Authorization:'Bearer '+SUPABASE_ANON_KEY},body:JSON.stringify({question,image_base64})});
       const result=await response.json(); richBubble(result.reponse || result.message || 'Rĩch n\'a pas pu analyser la photo.',false);
     }catch(e){ richBubble('Erreur lors de l’analyse de la photo.',false); }
     input.value='';
@@ -5335,7 +5349,7 @@
 
     if(!displayMsg){
       try{
-        const res=await fetch(SUPABASE_URL+'/functions/v1/agent-ia',{method:'POST',headers:{'Content-Type':'application/json',apikey:SUPABASE_ANON_KEY,Authorization:'Bearer '+SUPABASE_ANON_KEY},body:JSON.stringify({question:'bonjour'})});
+const response=await fetch(`${SUPABASE_URL}/functions/v1/agent-ia`,{method:'POST',headers:{'Content-Type':'application/json',apikey:SUPABASE_ANON_KEY,Authorization:'Bearer '+SUPABASE_ANON_KEY},body:JSON.stringify({question,image_base64})});
         const data=await res.json();
         chat.innerHTML += '<div style="background:white;border:1px solid #eee;padding:10px 14px;border-radius:18px;margin-bottom:8px;white-space:pre-wrap">'+escapeHtml(data.reponse||'Bonjour 🌱')+'</div>';
       }catch(e){ console.error(e); }
@@ -5346,7 +5360,7 @@
     const loadingId='loading-'+Date.now();
     chat.innerHTML += '<div id="'+loadingId+'" style="background:#f5f5f5;padding:10px 14px;border-radius:18px;margin-bottom:8px;display:inline-block">Rĩch écrit...</div>';
     try{
-      const res=await fetch(SUPABASE_URL+'/functions/v1/agent-ia',{method:'POST',headers:{'Content-Type':'application/json',apikey:SUPABASE_ANON_KEY,Authorization:'Bearer '+SUPABASE_ANON_KEY},body:JSON.stringify({question:displayMsg})});
+const response=await fetch(`${SUPABASE_URL}/functions/v1/agent-ia`,{method:'POST',headers:{'Content-Type':'application/json',apikey:SUPABASE_ANON_KEY,Authorization:'Bearer '+SUPABASE_ANON_KEY},body:JSON.stringify({question,image_base64})});
       const text=await res.text(); let data;
       try{data=JSON.parse(text);}catch{data={reponse:text||'Réponse reçue'};}
       document.getElementById(loadingId)?.remove();
@@ -5387,7 +5401,7 @@
     const zone=document.getElementById('iaChatZone'); zone.insertAdjacentHTML('beforeend',`<div style="margin:8px 0 8px auto;max-width:80%;background:#207A3D;color:white;padding:10px;border-radius:12px;">${escapeHtml(question)}</div>`); input.value='';
     let image_base64=''; const f=document.getElementById('iaImage').files[0]; if(f) image_base64=await lireImageBase64(f);
     try{
-      const response=await fetch(`${SUPABASE_URL}/functions/v1/agent-ia`,{method:'POST',headers:{'Authorization':`Bearer ${SUPABASE_ANON_KEY}`,'Content-Type':'application/json'},body:JSON.stringify({question,image_base64})});
+const response=await fetch(`${SUPABASE_URL}/functions/v1/agent-ia`,{method:'POST',headers:{'Content-Type':'application/json',apikey:SUPABASE_ANON_KEY,Authorization:'Bearer '+SUPABASE_ANON_KEY},body:JSON.stringify({question,image_base64})});
       const result=await response.json();
       zone.insertAdjacentHTML('beforeend',`<div style="margin:8px auto 8px 0;max-width:80%;background:white;padding:10px;border-radius:12px;box-shadow:0 1px 4px rgba(0,0,0,.08);">${escapeHtml(result.reponse || result.message || 'Réponse indisponible')}</div>`);
     }catch(e){ zone.insertAdjacentHTML('beforeend','<div style="margin:8px 0;background:white;padding:10px;border-radius:12px;">Service IA indisponible.</div>'); }
@@ -5396,18 +5410,25 @@
 
   async function payerBadge(){
     const btn=document.getElementById('btn-badge-verifie');
+    const status=document.getElementById('badge-payment-status');
     if(!currentUser){ alert('Connectez-vous pour obtenir le badge vérifié.'); return; }
-    btn.innerText='Chargement...'; btn.disabled=true;
+    btn.innerText='Chargement...'; btn.disabled=true; status.textContent='';
     try{
-      const res=await fetch(`${SUPABASE_URL}/functions/v1/payer-badge`,{method:'POST',headers:{'Content-Type':'application/json',apikey:SUPABASE_ANON_KEY,Authorization:`Bearer ${SUPABASE_ANON_KEY}`},body:JSON.stringify({user_id:currentUser.id})});
-      const data=await res.json(); console.log(data);
+      const profileName=[currentProfile?.prenom,currentProfile?.nom].filter(Boolean).join(' ').trim() || currentUser.email || 'Utilisateur';
+      const res=await fetch(`${SUPABASE_URL}/functions/v1/payer-badge`,{method:'POST',headers:{'Content-Type':'application/json',apikey:SUPABASE_ANON_KEY,Authorization:'Bearer '+SUPABASE_ANON_KEY},body:JSON.stringify({user_id:currentUser.id,user_name:profileName})});
+      const data=await res.json();
       if(!res.ok) throw new Error(data.error || 'Paiement indisponible');
-      window.open(data.payment_url,'_blank');
-      setTimeout(()=>window.open(data.whatsapp_redirect || data.whatsapp_url,'_blank'),2000);
-    }catch(e){ alert('Erreur paiement: '+e.message); console.error(e); }
+      window.location.href=data.payment_url;
+    }catch(e){ status.textContent='Paiement échoué, réessayez'; status.style.color='#b42318'; console.error(e); }
     finally{ btn.innerText='Badge vérifié - 2000F (paiement unique)'; btn.disabled=false; }
   }
 
+  function ouvrirWhatsAppVerification(){
+    if(!currentUser){ alert('Connectez-vous pour obtenir le badge vérifié.'); return; }
+    const name=[currentProfile?.prenom,currentProfile?.nom].filter(Boolean).join(' ').trim() || currentUser.email || 'Utilisateur';
+    const message=`Bonjour, je viens de payer 2000F pour le badge vérifié sur Rich Farm Unity. Je suis prêt pour la vérification. Mon nom : ${name} - Mon ID : ${currentUser.id}`;
+    window.open(`https://wa.me/2290146471497?text=${encodeURIComponent(message)}`,'_blank','noopener');
+  }
   window.addEventListener('showView', () => setTimeout(chargerConversations, 100));
   setTimeout(chargerConversations, 500);
 </script>

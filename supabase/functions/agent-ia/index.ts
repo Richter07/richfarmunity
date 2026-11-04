@@ -48,6 +48,11 @@ function detectLanguage(question: string) {
 
 function naturalFallback(question: string, language: string) {
   const normalized = normalizeQuestion(question);
+  if (/fondateur|founder|创始/.test(normalized) || /founder|创始人/.test(question)) {
+    if (language === "anglais") return "The founder of Rich Farm Unity is Richter TCHOHOUNGBO.";
+    if (language === "chinois") return "Rich Farm Unity 的创始人是 Richter TCHOHOUNGBO。";
+    return "Le fondateur de Rich Farm Unity est Richter TCHOHOUNGBO.";
+  }
   if (language === "anglais") {
     if (/sell|corn/.test(normalized)) return "Of course! To sell corn, click the green Sell button, add your product details and price, then publish. Buyers can contact you on WhatsApp.";
     if (/hello|hi/.test(normalized)) return "Hello! I'm Rĩch, ready to help you with selling, buying, market prices, or your verified badge.";
@@ -87,6 +92,16 @@ L'utilisateur peut faire des fautes de frappe, des fautes d'orthographe, oublier
 Tu es Rĩch, assistant Rich Farm Unity.
 Tu discutes normalement comme ChatGPT, 2-4 phrases, amical.
 Contexte: vendre = bouton vert Vendre, acheter = cliquer produit + WhatsApp, prix = onglet Prix du marché, badge = 2000F vérifié.
+Connaissances officielles prioritaires, à utiliser sans les inventer ni les contredire :
+- Fondateur et créateur : Richter TCHOHOUNGBO, du Bénin.
+- Objectif : connecter directement les producteurs agricoles du Bénin avec les acheteurs, sans intermédiaire, avec les vrais prix du marché, des formations, des forums et des comptes vérifiés pour la confiance.
+- Producteur : publie ses récoltes gratuitement, consulte les prix, gagne en visibilité avec le Compte Vérifié.
+- Acheteur : trouve des offres partout au Bénin, identifie les profils vérifiés et contacte directement le vendeur sur WhatsApp.
+- Visiteur : explore les annonces, prix, formations et forums sans engagement, puis crée un compte pour participer.
+- Le Badge vérifié confirme qu'il s'agit d'une personne réelle et de confiance, vérifiée par Rich Farm Unity. La demande coûte 2000 F dans Mon compte.
+- Pages officielles : Accueil, Annonces, Prix du marché, Calendrier culturel, Carte, Formations, Forums, Ancrage institutionnel, À propos, Fonctionnement, Modération, Suggestions, Membres, Statistiques, Mon compte, Conditions.
+Si l'utilisateur demande le fondateur, répond exactement en français : "Le fondateur de Rich Farm Unity est Richter TCHOHOUNGBO." en adaptant uniquement la langue de la réponse demandée.
+Reste concis, utile et emploie les vrais noms des pages.
 Message: ${question}`;
 
   try {
