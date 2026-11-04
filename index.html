@@ -129,7 +129,7 @@
     pointer-events:none; white-space:nowrap;
   }
   .nav-notification-badge.is-visible{ display:inline-flex; }
-  @media (max-width:1200px){
+  @media (max-width:767px){
     nav.tabs button .nav-notification-badge{ top:-4px; right:-4px; }
     nav.tabs{ overflow-x:auto !important; overflow-y:auto !important; touch-action:pan-x pan-y !important; -webkit-overflow-scrolling:touch; }
   }
@@ -147,7 +147,7 @@
     width:44px; height:44px; border-radius:12px; align-items:center; justify-content:center; font-size:1.2rem; cursor:pointer;
     margin-bottom:6px;
   }
-  @media (max-width:1200px){
+  @media (max-width:767px){
     .menu-toggle{ display:flex; }
     .menu-backdrop{
       display:none;
@@ -157,12 +157,12 @@
     .menu-backdrop.open{ display:block; opacity:1; }
     nav.tabs{
       display:flex;
-      position:fixed; top:0; right:0; left:auto; bottom:0;
-      width:85vw; max-width:85vw;
+      position:fixed; top:64px; right:0; left:0; bottom:auto;
+      width:100vw; max-width:100vw;
       background:linear-gradient(180deg, rgba(6,20,9,0.99), rgba(12,36,16,0.98));
       backdrop-filter:blur(10px);
-      flex-direction:column; flex-wrap:nowrap; align-items:stretch; gap:8px;
-      height:100vh; padding:24px 18px 24px;
+      flex-direction:row; flex-wrap:nowrap; align-items:center; gap:8px;
+      height:auto; padding:10px 12px;
       overflow-x:auto !important; overflow-y:auto !important; touch-action:pan-x pan-y !important;
       z-index:9999; background:#1a2e1a;
       transform:translateX(100%);
@@ -173,13 +173,13 @@
     }
     nav.tabs.open{ transform:translateX(0); visibility:visible; transition:transform .3s cubic-bezier(.2,.7,.2,1), visibility 0s; }
     nav.tabs button{
-      width:100%; flex:0 0 auto; flex-shrink:0;
-      text-align:left; padding:15px 18px; font-size:0.98rem; border-radius:14px;
+      width:auto; flex:0 0 auto; flex-shrink:0;
+      text-align:center; padding:10px 14px; font-size:0.98rem; border-radius:14px;
     }
     .menu-close{ display:none; }
     nav.tabs.open .menu-close{ display:flex; }
   }
-  @media (min-width:1201px){
+  @media (min-width:768px){
     header > nav:not(.tabs){
       display:grid; grid-template-columns:minmax(0,1fr) auto; align-items:center;
       width:100%; max-width:1440px; padding:12px clamp(24px,3vw,48px) 0;
@@ -189,7 +189,7 @@
     header > nav:not(.tabs) > .account-box{ grid-column:2; grid-row:1; }
     header > nav:not(.tabs) > .menu-toggle{ display:none; }
     header > nav:not(.tabs) > nav.tabs{
-      position:static !important; right:auto !important; top:auto !important; width:100% !important; height:auto !important; background:transparent !important; overflow:visible !important;
+      position:static !important; right:auto !important; top:auto !important; width:100% !important; max-width:100% !important; height:auto !important; background:transparent !important; overflow:visible !important;
       grid-column:1 / -1; grid-row:2; justify-content:center; flex-wrap:wrap;
       min-width:0; width:100%; gap:4px; padding-bottom:12px;
     }
@@ -656,7 +656,7 @@
 <header class="relative z-[9999]">
   <nav class="relative z-[9999]">
     <a href="#" class="logo" onclick="showView('accueil'); return false;"><img src="https://richfarmunity.com/icon-192.png" alt="Rĩch Farm Unity" style="height:40px;width:auto;border-radius:6px;">Rĩch Farm Unity</a>
-    <nav class="tabs hidden md:flex flex-wrap gap-x-4 gap-y-2 items-center max-w-[75vw] relative z-[9999]" id="menuMobile" style="position:fixed; top:0; right:0; width:85vw; max-width:85vw; height:100vh; z-index:9999; background:#1a2e1a; overflow-x:auto!important; overflow-y:auto!important; touch-action:pan-x pan-y!important; -webkit-overflow-scrolling:touch; display:flex; flex-direction:column; flex-wrap:nowrap;">
+    <nav class="tabs hidden md:flex flex-wrap gap-x-4 gap-y-2 items-center max-w-[75vw] relative z-[9999]" id="menuMobile" style="position:fixed; top:64px; right:0; left:0; width:100vw; max-width:100vw; height:auto; z-index:9999; background:#1a2e1a; overflow-x:auto!important; overflow-y:hidden!important; touch-action:pan-x!important; -webkit-overflow-scrolling:touch; display:flex; flex-direction:row!important; flex-wrap:nowrap!important;">
       <button class="menu-close" id="menuClose" aria-label="Fermer le menu">✕</button>
       <button data-view="accueil" class="active">Accueil</button>
       <button data-view="publications">Annonces</button>
