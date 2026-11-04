@@ -52,6 +52,18 @@
     --ombre-douce: 0 8px 24px rgba(15,44,19,0.08);
   }
   *{margin:0;padding:0;box-sizing:border-box;}
+  html,body{max-width:100%;overflow-x:hidden;}
+  img,video,canvas,table,iframe{max-width:100%;}
+  .view,.app-main,.card,.toolbar,.page-head{min-width:0;}
+  .verified-badge{display:inline-flex;align-items:center;gap:5px;max-width:100%;padding:4px 9px;border-radius:999px;background:#E5F4E7;color:#166534;font-size:.78rem;font-weight:800;line-height:1.2;vertical-align:middle;white-space:normal;}
+  .verified-badge--large{padding:9px 14px;font-size:1rem;}
+  .benefit-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin-top:22px;}
+  .benefit-card{min-width:0;background:#fff;border:1px solid rgba(27,94,32,.14);border-radius:16px;padding:22px;box-shadow:var(--ombre-douce);}
+  .benefit-card h3{font-size:1.05rem;margin:10px 0 8px;}
+  .benefit-card p{font-size:.92rem;color:var(--encre-douce);line-height:1.55;}
+  .benefit-icon{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;background:#E8F1E8;font-size:1.25rem;}
+  @media (max-width:980px){.benefit-grid{grid-template-columns:repeat(2,minmax(0,1fr));}}
+  @media (max-width:560px){.benefit-grid{grid-template-columns:1fr}.benefit-card{padding:18px}.app-main{padding-left:16px!important;padding-right:16px!important}.toolbar,.filters,.field-row,.pub-top{overflow-wrap:anywhere}.admin-table{display:block;overflow-x:auto}.verified-badge--large{font-size:.92rem;}}
   html{scroll-behavior:smooth;}
   body{
     font-family:'Work Sans',sans-serif;color:var(--encre);font-size:1rem;
@@ -626,7 +638,7 @@
       <button data-view="accueil" class="active">Accueil</button>
       <button data-view="publications">Annonces</button>
       <button data-view="prixmarche">Prix du marché</button>
-      <button data-view="calendrier">Calendrier cultural</button>
+      <button data-view="calendrier">Calendrier culturel</button>
       <button data-view="carte">Carte</button>
       <button data-view="formations">Formations</button>
       <button data-view="forums">Forums</button>
@@ -890,7 +902,27 @@
       </div>
     </section>
 
-    
+    <section class="benefits-section" style="padding:64px 0;background:#fff;">
+      <div class="wrap">
+        <div class="section-head reveal"><span class="eyebrow">Votre réseau agricole</span><h2>Pourquoi rejoindre Rich Farm Unity ?</h2><p>Un espace utile pour vendre, acheter, apprendre et construire des relations de confiance.</p></div>
+        <div class="benefit-grid">
+          <div class="benefit-card"><span class="benefit-icon">📣</span><h3>Publier des annonces</h3><p>Présentez gratuitement vos produits, outils, services ou besoins à toute la communauté.</p></div>
+          <div class="benefit-card"><span class="benefit-icon">📊</span><h3>Connaître les prix du marché</h3><p>Consultez des informations de prix en temps réel pour négocier sur des bases plus sûres.</p></div>
+          <div class="benefit-card"><span class="benefit-icon">🎓</span><h3>Apprendre ensemble</h3><p>Accédez aux formations et rejoignez les forums pour échanger avec les acteurs agricoles.</p></div>
+          <div class="benefit-card"><span class="benefit-icon">🛡️</span><h3>Gagner la confiance</h3><p>Obtenez le <span class="verified-badge">✓ Compte vérifié</span> et rassurez vos partenaires.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section style="padding:64px 0;background:#F3F7F2;">
+      <div class="wrap" style="text-align:center;">
+        <span class="eyebrow">Confiance vérifiée</span>
+        <h2 style="margin-top:8px;">Comptes Vérifiés</h2>
+        <p style="max-width:720px;margin:14px auto 0;color:var(--encre-douce);line-height:1.7;">Un compte vérifié représente une personne réelle, confirmée comme producteur, acheteur ou acteur de confiance. Le badge aide les membres à identifier des partenaires plus transparents.</p>
+        <div style="margin-top:18px;"><span class="verified-badge verified-badge--large">🛡️ Compte Vérifié</span></div>
+      </div>
+    </section>
+
     <section class="gallery-section">
       <div class="wrap">
         <div class="section-head reveal">
@@ -1068,6 +1100,7 @@
         <div class="page-head" style="margin-bottom:0;">
           <h2>Annonces</h2>
           <p>Semences, outils, récoltes, bétail, produits transformés — tout ce qui se propose au Bénin.</p>
+          <div class="benefit-card" style="margin-top:14px;padding:14px 16px;box-shadow:none;"><strong>Publiez gratuitement, touchez tout le Bénin.</strong> Votre annonce peut être vue par des producteurs, acheteurs et commerçants de chaque département.</div>
         </div>
       </div>
       <div class="pub-type-filters">
@@ -1164,7 +1197,7 @@
   <!-- ==================== VUE PRIX DU MARCHÉ ==================== -->
   <div class="view" id="view-prixmarche">
     <div class="app-main">
-      <div class="page-head"><h2>Prix du marché</h2><p>Prix indicatifs constatés par la communauté et l'équipe Rĩch Farm Unity.</p></div>
+      <div class="page-head"><h2>Prix du marché</h2><p>Prix indicatifs constatés par la communauté et l'équipe Rĩch Farm Unity.</p><div class="benefit-card" style="margin-top:14px;padding:14px 16px;box-shadow:none;"><strong>Ne vous faites plus arnaquer :</strong> connaissez le vrai prix pratiqué et négociez en toute connaissance de cause.</div></div>
 
       <div style="margin-bottom:20px;">
         <button type="button" class="btn-main" id="btnOuvrirProposerPrix">+ Proposer un prix</button>
@@ -1266,7 +1299,7 @@
   <!-- ==================== VUE CALENDRIER CULTURAL ==================== -->
   <div class="view" id="view-calendrier">
     <div class="app-main">
-      <div class="page-head"><h2>Calendrier cultural agricole</h2><p>Périodes indicatives de préparation, semis, entretien et récolte au Bénin.</p></div>
+      <div class="page-head"><h2>Calendrier culturel agricole</h2><p>Périodes indicatives de préparation, semis, entretien et récolte au Bénin.</p></div>
 
       <div class="field">
         <label for="calProduit">Choisir une culture</label>
@@ -1420,7 +1453,7 @@
         </div>
       </a>
       <div class="toolbar">
-        <div class="page-head" style="margin-bottom:0;"><h2>Formations &amp; astuces</h2><p>Conseils de production et actualités publiés par Rĩch Farm Unity.</p></div>
+        <div class="page-head" style="margin-bottom:0;"><h2>Formations &amp; astuces</h2><p>Conseils de production et actualités publiés par Rĩch Farm Unity.</p><div style="margin-top:10px;font-size:.88rem;color:var(--encre-douce);">Apprenez, progressez et augmentez votre crédibilité jusqu'à devenir <span class="verified-badge">✓ vérifié</span>.</div></div>
         <button class="btn-small" id="btnNouvelleFormation" style="display:none;">+ Nouvelle formation</button>
       </div>
       <div class="card" id="carteAjoutPub" style="margin-bottom:20px;display:none;">
@@ -1672,10 +1705,18 @@
             <div class="msg" id="msgSuggestion"></div>
           </form>
         </div>
+        <div class="card" id="carteStatutVerifie" style="margin-bottom:20px;border-color:#A7D7AD;background:#F4FAF5;">
+          <h3 style="margin-bottom:14px;">Compte vérifié</h3>
+          <div id="etatBadgeVerifie" style="margin-bottom:12px;"></div>
+          <p style="color:var(--encre-douce);line-height:1.65;margin-bottom:14px;">La vérification confirme votre identité et votre rôle. Elle renforce la confiance, améliore votre visibilité et rassure vos partenaires.</p>
+          <button type="button" id="btn-badge-verifie" class="btn-main" onclick="payerBadge()">Demander la vérification · 2000 F</button>
+        </div>
         <div class="card" style="margin-bottom:20px;">
-          <h3 style="margin-bottom:14px;">Badge vérifié</h3>
-          <p style="color:var(--encre-douce);font-size:0.86rem;">Renforcez la confiance accordée à votre profil.</p>
-          <button type="button" id="btn-badge-verifie" class="btn-main" onclick="payerBadge()">Badge vérifié - 2000F (paiement unique)</button>
+          <h3 style="margin-bottom:14px;">Avantages débloqués</h3>
+          <div class="benefit-grid" style="grid-template-columns:repeat(2,minmax(0,1fr));margin-top:12px;">
+            <div class="benefit-card"><h3>✓ Vous pouvez publier</h3><p>Présentez gratuitement vos offres et vos besoins aux acteurs du Bénin.</p></div>
+            <div class="benefit-card"><h3>🤝 Vous gagnez en confiance</h3><p id="avantageVerificationCompte">Demandez la vérification pour augmenter votre crédibilité.</p></div>
+          </div>
         </div>
         <div class="card" style="margin-bottom:20px;">
           <h3 style="margin-bottom:14px;">Modifier mon profil</h3>
@@ -1829,7 +1870,12 @@
   <!-- ==================== VUE FONCTIONNEMENT DU SITE (DÉTAILLÉ) ==================== -->
   <div class="view" id="view-fonctionnement">
     <div class="app-main">
-      <div class="page-head"><h2>Comment fonctionne Rĩch Farm Unity ?</h2><p>Le parcours complet, étape par étape, à travers un exemple concret.</p></div>
+      <div class="page-head"><h2>Comment fonctionne Rĩch Farm Unity ?</h2><p>Des outils simples pour vendre, acheter et apprendre, avec des profils de confiance.</p></div>
+      <div class="benefit-grid" style="grid-template-columns:repeat(3,minmax(0,1fr));margin-bottom:24px;">
+        <div class="benefit-card"><span class="benefit-icon">🌾</span><h3>Producteur</h3><p>Publiez vos récoltes gratuitement, consultez les vrais prix et gagnez en visibilité avec un <span class="verified-badge">🛡️ Compte vérifié</span>.</p></div>
+        <div class="benefit-card"><span class="benefit-icon">🤝</span><h3>Acheteur</h3><p>Trouvez des offres partout au Bénin, identifiez les profils vérifiés et contactez directement les vendeurs sur WhatsApp.</p></div>
+        <div class="benefit-card"><span class="benefit-icon">👀</span><h3>Visiteur</h3><p>Explorez les annonces, les prix, les formations et les forums sans engagement. Créez un compte pour participer.</p></div>
+      </div>
 
       <div class="reel-progress" id="reelProgress"></div>
 
@@ -2060,6 +2106,9 @@
       <div class="field" style="margin-bottom:16px;">
         <input type="text" id="searchMembres" placeholder="Rechercher (nom, email, téléphone, type...)" style="width:100%;padding:13px 16px;border-radius:100px;border:1px solid rgba(27,94,32,0.3);background:#fff;">
       </div>
+      <label style="display:flex;align-items:center;gap:8px;margin:-4px 0 16px;color:var(--encre-douce);font-size:.9rem;cursor:pointer;">
+        <input type="checkbox" id="filterMembresVerifies" style="width:auto;"> Voir uniquement les vérifiés
+      </label>
       <div id="membresContainer" class="pub-list"><div class="empty state-loading"><h3>Chargement…</h3></div></div>
     </div>
   </div>
@@ -2668,9 +2717,20 @@
       const profilAvis = profile ? await getAvisUtilisateur(profile.id) : { moyenne: 0, nombre: 0 };
       document.getElementById('compteResume').innerHTML = profile
         ? escapeHtml(profile.type_acteur + (profile.domaine ? ' — ' + profile.domaine : '')) +
-          (profile.is_verified ? ' · <span style="color:var(--vert-rich);font-weight:700;">✓ Vérifié 🛡️</span>' : '') +
+          (profile.is_verified ? ' · <span class="verified-badge verified-badge--large">🛡️ Compte Vérifié</span>' : '') +
           (profilAvis.nombre ? ` · <span style="color:#a26a00;">${starsHtml(profilAvis.moyenne)} ${Number(profilAvis.moyenne).toFixed(1)} (${profilAvis.nombre})</span>` : '')
         : '';
+      const verificationEtat = document.getElementById('etatBadgeVerifie');
+      const verificationBouton = document.getElementById('btn-badge-verifie');
+      if(profile && profile.is_verified){
+        verificationEtat.innerHTML = '<span class="verified-badge verified-badge--large">🛡️ Compte Vérifié</span>';
+        verificationBouton.style.display = 'none';
+        document.getElementById('avantageVerificationCompte').textContent = 'Votre badge vérifié est actif : vos partenaires voient votre profil comme plus fiable.';
+      } else {
+        verificationEtat.innerHTML = '<span style="display:inline-block;padding:6px 10px;border-radius:999px;background:#FFF2DB;color:#8A5A00;font-weight:700;">Compte non vérifié</span>';
+        verificationBouton.style.display = 'inline-block';
+        document.getElementById('avantageVerificationCompte').textContent = 'Demandez la vérification pour augmenter votre crédibilité.';
+      }
       if(profile){
         document.getElementById('editPrenom').value = profile.prenom || '';
         document.getElementById('editNom').value = profile.nom || '';
@@ -3082,6 +3142,7 @@
   });
   // ---- Prix du marché : taxonomie des produits ----
   document.getElementById('searchMembres').addEventListener('input', renderMembres);
+  document.getElementById('filterMembresVerifies').addEventListener('change', renderMembres);
 
   const TAXONOMIE_PRODUITS = {
     "Production végétale": {
@@ -3438,13 +3499,21 @@
     const { data, error } = await query;
     if(error){ container.innerHTML = '<div class="empty state-error"><h3>Erreur</h3><p>' + escapeHtml(error.message) + '</p></div>'; return; }
     if(!data || data.length === 0){ container.innerHTML = '<div class="empty state-empty"><h3>Aucun prix disponible pour ces critères</h3></div>'; return; }
+    const userIds = [...new Set((data || []).map(p => p.user_id).filter(Boolean))];
+    let profilsPrix = {};
+    if(userIds.length){
+      const { data: profiles } = await sb.from('profiles').select('id, prenom, nom, is_verified').in('id', userIds);
+      (profiles || []).forEach(profil => profilsPrix[profil.id] = profil);
+    }
     container.innerHTML = data.map(p => {
       const date = p.created_at ? new Date(p.created_at).toLocaleDateString('fr-FR') : '';
       const fourchette = p.prix_max ? `${p.prix_min} - ${p.prix_max} FCFA` : `${p.prix_min} FCFA`;
+      const auteurPrix = profilsPrix[p.user_id];
+      const badgePrix = auteurPrix && auteurPrix.is_verified ? ' <span class="verified-badge">🛡️ Vérifié</span>' : '';
       return `<div class="pub-card">
         <div class="pub-top"><div><span class="pub-tag">${escapeHtml(p.categorie)}</span><h3><button type="button" onclick="ouvrirHistoriquePrix('${escapeHtml(p.produit)}')" style="border:0;background:none;padding:0;color:var(--vert-nuit);cursor:pointer;text-align:left;font:inherit;">${escapeHtml(p.produit)}</button></h3></div></div>
         <div class="pub-meta"><span><strong>Prix :</strong> ${fourchette} / ${escapeHtml(p.unite)}</span><span><strong>Lieu :</strong> ${escapeHtml(p.departement)}</span></div>
-        <div class="pub-footer">Mis à jour le ${date}</div>
+        <div class="pub-footer">Mis à jour le ${date}${badgePrix}</div>
         <button class="btn-outline-small" style="margin-top:12px;" onclick="ouvrirHistoriquePrix('${escapeHtml(p.produit)}')">Voir l'évolution du prix</button>
       </div>`;
     }).join('');
@@ -3915,7 +3984,7 @@
   async function loadModeration(){
     const container = document.getElementById('moderationContainer');
     container.innerHTML = '<div class="empty state-loading"><h3>Chargement…</h3></div>';
-    const { data, error } = await sb.from('publications').select('*, profiles(prenom, nom, telephone, type_acteur)').eq('approuve', false).eq('rejete', false).order('created_at', { ascending: true });
+    const { data, error } = await sb.from('publications').select('*, profiles(prenom, nom, telephone, type_acteur, is_verified)').eq('approuve', false).eq('rejete', false).order('created_at', { ascending: true });
     if(error){ container.innerHTML = '<div class="empty state-error"><h3>Erreur</h3><p>' + escapeHtml(error.message) + '</p></div>'; return; }
     if(!data || data.length === 0){ container.innerHTML = '<div class="empty state-empty"><h3>Aucune annonce en attente</h3></div>'; return; }
     container.innerHTML = data.map(p => {
@@ -3923,7 +3992,8 @@
       const photoHtml = galleryHtml(p, 220);
       const audioUrl = safeHttpUrl(p.audio_url);
       const audioHtmlMod = audioUrl ? `<audio src="${audioUrl}" controls style="width:100%;margin:10px 0;"></audio>` : '';
-      return `<div class="pub-card"><div class="pub-top"><div><span class="pub-tag">${escapeHtml(p.categorie)}</span><h3>${escapeHtml(p.titre)}</h3></div><span class="pub-statut reserve">En attente</span></div>${photoHtml}${p.description ? '<p class="desc">' + escapeHtml(p.description) + '</p>' : ''}${audioHtmlMod}<div class="pub-footer">Publié par ${escapeHtml(auteur)}${p.profiles && p.profiles.telephone ? ' · ' + escapeHtml(p.profiles.telephone) : ''}</div><div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap;"><button class="btn-small" onclick="approuverAnnonce('${p.id}')">Approuver et publier</button><button class="btn-outline-small" style="border-color:var(--rouge);color:var(--rouge);" onclick="rejeterAnnonce('${p.id}')">Rejeter</button></div></div>`;
+      const badgeAuteurMod = p.profiles && p.profiles.is_verified ? ' <span class="verified-badge">🛡️ Vérifié</span>' : '';
+      return `<div class="pub-card"><div class="pub-top"><div><span class="pub-tag">${escapeHtml(p.categorie)}</span><h3>${escapeHtml(p.titre)}</h3></div><span class="pub-statut reserve">En attente</span></div>${photoHtml}${p.description ? '<p class="desc">' + escapeHtml(p.description) + '</p>' : ''}${audioHtmlMod}<div class="pub-footer">Publié par ${escapeHtml(auteur)}${badgeAuteurMod}${p.profiles && p.profiles.telephone ? ' · ' + escapeHtml(p.profiles.telephone) : ''}</div><div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap;"><button class="btn-small" onclick="approuverAnnonce('${p.id}')">Approuver et publier</button><button class="btn-outline-small" style="border-color:var(--rouge);color:var(--rouge);" onclick="rejeterAnnonce('${p.id}')">Rejeter</button></div></div>`;
     }).join('');
   }
 
@@ -3967,7 +4037,8 @@
         }
       }
 
-      const htmlProposePar = `Proposé par ${escapeHtml(nomAffiche)} ${badge}`;
+      const badgeVerifieModeration = prof && prof.is_verified ? ' <span class="verified-badge">🛡️ Vérifié</span>' : '';
+      const htmlProposePar = `Proposé par ${escapeHtml(nomAffiche)} ${badge}${badgeVerifieModeration}`;
       console.log("Prix:", prix.produit, "auto:", prix.auto_source, "user_id:", prix.user_id, "nom final:", nomAffiche);
       const fourchette = prix.prix_max ? `${prix.prix_min} - ${prix.prix_max} FCFA` : `${prix.prix_min} FCFA`;
       return `<div class="pub-card">
@@ -4185,7 +4256,7 @@
           scales: {
             y: {
               beginAtZero: true,
-              max: 140,
+              suggestedMax: 140,
               ticks: { precision: 0 }
             }
           }
@@ -4226,6 +4297,9 @@
     const container = document.getElementById('membresContainer');
     const search = (document.getElementById('searchMembres').value || '').toLowerCase().trim();
     let list = window._allMembres || [];
+    if(document.getElementById('filterMembresVerifies').checked){
+      list = list.filter(p => !!p.is_verified);
+    }
     if(search){
       list = list.filter(p =>
         (p.nom || '').toLowerCase().includes(search) ||
@@ -4251,7 +4325,7 @@
           ? `<button class="btn-outline-small" onclick="reactiverCompte('${p.id}')">Réactiver</button><button class="btn-outline-small" style="border-color:var(--rouge);color:var(--rouge);" onclick="bannirCompte('${p.id}')">Bannir définitif</button>`
           : `<button class="btn-outline-small" style="border-color:var(--or-fonce);color:var(--or-fonce);" onclick="rejeterCompte('${p.id}')">Suspendre</button><button class="btn-outline-small" style="border-color:var(--rouge);color:var(--rouge);" onclick="bannirCompte('${p.id}')">Bannir définitif</button>`;
       return `<div class="pub-card">
-        <div class="pub-top"><div><span class="pub-tag">${escapeHtml(p.type_acteur || '')}</span><h3>${escapeHtml((p.prenom || '') + ' ' + (p.nom || ''))}</h3></div><span class="pub-statut" style="${statutStyle}">${statutLabel}</span></div>
+        <div class="pub-top"><div><span class="pub-tag">${escapeHtml(p.type_acteur || '')}</span><h3>${escapeHtml((p.prenom || '') + ' ' + (p.nom || ''))}${p.is_verified ? ' <span class="verified-badge verified-badge--large">🛡️ Vérifié</span>' : ''}</h3></div><span class="pub-statut" style="${statutStyle}">${statutLabel}</span></div>
         <div class="pub-meta">
           <span><strong>Téléphone :</strong> ${escapeHtml(p.telephone || '')}</span>
           <span><strong>Email :</strong> ${escapeHtml(p.email || '')}</span>
@@ -4272,7 +4346,7 @@
     const container = document.getElementById('sujetsContainer');
     const pagination = document.getElementById('forumPagination');
     if(!silencieux) container.innerHTML = '<div class="empty state-loading"><h3>Chargement…</h3></div>';
-    let query = sb.from('forum_sujets').select('*, profiles(prenom, nom)', { count: 'exact' }).order('created_at', { ascending: false });
+    let query = sb.from('forum_sujets').select('*, profiles(prenom, nom, is_verified)', { count: 'exact' }).order('created_at', { ascending: false });
     const secteur = document.getElementById('filterForumSecteur').value;
     if(secteur) query = query.eq('secteur', secteur);
     const debut = (pageSujetsActuelle - 1) * limiteSujetsForum;
@@ -4291,13 +4365,14 @@
     container.innerHTML = data.map(s => {
       const auteur = s.profiles ? (s.profiles.prenom + ' ' + s.profiles.nom) : 'Utilisateur';
       const date = s.created_at ? new Date(s.created_at).toLocaleDateString('fr-FR') : '';
+      const verifiedBadgeForum = s.profiles && s.profiles.is_verified ? ' <span class="verified-badge">🛡️ Vérifié</span>' : '';
       const audioUrl = safeHttpUrl(s.audio_url);
       const audioHtmlSujet = audioUrl ? `<audio src="${audioUrl}" controls style="width:100%;margin:8px 0;"></audio>` : '';
       return `<div class="pub-card">
         <div class="pub-top"><div>${s.secteur ? '<span class="pub-tag">' + escapeHtml(s.secteur) + '</span>' : ''}<h3>${escapeHtml(s.titre)}</h3></div></div>
         ${s.contenu ? '<p class="desc">' + escapeHtml(s.contenu) + '</p>' : ''}
         ${audioHtmlSujet}
-        <div class="pub-footer">Par ${escapeHtml(auteur)} · ${date}</div>
+        <div class="pub-footer">Par ${escapeHtml(auteur)}${verifiedBadgeForum} · ${date}</div>
         <button class="btn-outline-small" style="margin-top:12px;" onclick="toggleReponses('${s.id}')">💬 Voir les réponses</button>
         <div id="reponses-${s.id}" style="display:none;margin-top:14px;padding-top:14px;border-top:1px solid rgba(27,94,32,0.14);">
           <div id="reponsesListe-${s.id}"></div>
@@ -4371,7 +4446,7 @@
   async function chargerReponses(sujetId){
     const liste = document.getElementById('reponsesListe-' + sujetId);
     liste.innerHTML = '<p class="inline-state state-loading">Chargement…</p>';
-    const { data, error } = await sb.from('forum_reponses').select('*, profiles(prenom, nom)').eq('sujet_id', sujetId).order('created_at', { ascending: true });
+    const { data, error } = await sb.from('forum_reponses').select('*, profiles(prenom, nom, is_verified)').eq('sujet_id', sujetId).order('created_at', { ascending: true });
     if(error){ liste.innerHTML = '<p class="inline-state state-error">Erreur : ' + escapeHtml(error.message) + '</p>'; return; }
     if(!data || data.length === 0){ liste.innerHTML = '<p class="inline-state state-empty">Aucune réponse pour le moment.</p>'; return; }
     liste.innerHTML = data.map(r => {
@@ -4379,7 +4454,8 @@
       const date = r.created_at ? new Date(r.created_at).toLocaleDateString('fr-FR') : '';
       const audioUrl = safeHttpUrl(r.audio_url);
       const audioHtml = audioUrl ? `<audio src="${audioUrl}" controls style="width:100%;margin-top:6px;"></audio>` : '';
-      return `<div style="padding:10px 0;border-bottom:1px solid rgba(27,94,32,0.08);">${r.contenu ? '<p style="font-size:0.9rem;color:var(--encre);">' + escapeHtml(r.contenu) + '</p>' : ''}${audioHtml}<p style="font-size:0.76rem;color:var(--encre-douce);margin-top:4px;font-family:'IBM Plex Mono',monospace;">${escapeHtml(auteur)} · ${date}</p></div>`;
+      const verifiedBadgeReponse = r.profiles && r.profiles.is_verified ? ' <span class="verified-badge">🛡️ Vérifié</span>' : '';
+      return `<div style="padding:10px 0;border-bottom:1px solid rgba(27,94,32,0.08);">${r.contenu ? '<p style="font-size:0.9rem;color:var(--encre);">' + escapeHtml(r.contenu) + '</p>' : ''}${audioHtml}<p style="font-size:0.76rem;color:var(--encre-douce);margin-top:4px;font-family:'IBM Plex Mono',monospace;">${escapeHtml(auteur)}${verifiedBadgeReponse} · ${date}</p></div>`;
     }).join('');
   }
 
