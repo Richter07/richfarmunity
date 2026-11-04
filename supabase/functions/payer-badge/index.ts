@@ -48,7 +48,7 @@ Deno.serve(async (req) => {
     const paymentUrl = tokenData?.url || tokenData?.token?.url;
     if (!paymentUrl) throw new Error("URL de paiement FedaPay manquante");
 
-    return new Response(JSON.stringify({ payment_url: paymentUrl, whatsapp_redirect: whatsappRedirect }), { headers: cors });
+    return new Response(JSON.stringify({ url: paymentUrl, payment_url: paymentUrl, whatsapp_redirect: whatsappRedirect }), { headers: cors });
   } catch (error) {
     console.error(error);
     return new Response(JSON.stringify({
