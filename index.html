@@ -3,6 +3,18 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>[id*="rich"],[class*="rich"],[id*="chat"],[class*="chat"],iframe[src*="chat"]{display:none!important}</style>
+/* 2. Bouton totalement à gauche */
+header, [class*="header"], [class*="top"]{display:flex!important;justify-content:flex-start!important;align-items:center!important;text-align:left!important}
+header button, header div, header a{margin-left:0!important;margin-right:auto!important}
+button{margin-left:0!important;margin-right:auto!important;text-align:left!important;align-self:flex-start!important}
+
+/* 3. Menu vertical qui défile */
+nav, [class*="menu"], [class*="drawer"], [class*="sidebar"]{display:flex!important;flex-direction:column!important;overflow-y:auto!important;overflow-x:hidden!important;width:100%!important}
+nav a, [class*="menu"] a, [class*="drawer"] a{width:100%!important;display:block!important;white-space:normal!important}
+</style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Rĩch Farm Unity — Bénin, terre connectée</title>
 <meta name="google-site-verification" content="v8ZEKWyuqfAcaiPynsZSwDQaX0bbhykWiLHx65PzXmY" />
 <meta property="og:title" content="Rĩch Farm Unity — Bénin, terre connectée">
@@ -3510,7 +3522,7 @@
     try{
       const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,precipitation,relative_humidity_2m&daily=precipitation_sum&past_days=7&forecast_days=3&timezone=Africa%2FLagos`;
       const res = await fetch(url);
-      const data = await res.json();
+      const data = await response.json();
       const pluie7j = data.daily.precipitation_sum.slice(0,7).reduce((a,b) => a + (b||0), 0);
       const pluiePrevue = data.daily.precipitation_sum.slice(7).reduce((a,b) => a + (b||0), 0);
       zone.innerHTML = `
@@ -4178,12 +4190,13 @@
       let nomAffiche = 'Utilisateur';
       let badge = '';
 
-      if(prix.auto_source === 'ia_auto'){
+      let prof = null;
+    if(prix.auto_source === 'ia_auto'){
         nomAffiche = '🤖 IA Auto (Google)';
         const sourceUrl = safeHttpUrl(prix.source_url);
         badge = `<span style="background:#10B981;color:white;padding:2px 8px;border-radius:12px;font-size:11px;margin-left:6px">AUTO - Lundi/Jeudi 6h</span> ${sourceUrl ? `<a href="${escapeHtml(sourceUrl)}" target="_blank" rel="noopener noreferrer" style="font-size:11px">Voir source</a>` : ''}`;
       } else if(prix.user_id){
-        const prof = profilesMap[prix.user_id];
+        prof = profilesMap[prix.user_id];
         if(prof){
           nomAffiche = prof.nom_complet || prof.full_name || prof.name || prof.username || prof.email?.split('@')[0] || 'Producteur';
         } else {
@@ -5334,7 +5347,7 @@
     const base64=await new Promise((resolve,reject)=>{ const reader=new FileReader(); reader.onload=()=>resolve(reader.result.split(',')[1]); reader.onerror=reject; reader.readAsDataURL(file); });
     richBubble('📷 Photo agricole envoyée',true);
     try{
-const response=await fetch(`${SUPABASE_URL}/functions/v1/agent-ia`,{method:'POST',headers:{'Content-Type':'application/json',apikey:SUPABASE_ANON_KEY,Authorization:'Bearer '+SUPABASE_ANON_KEY},body:JSON.stringify({question,image_base64})});
+const response=await fetch(`${SUPABASE_URL}/functions/v1/agent-ia`,{method:'POST',headers:{'Content-Type':'application/json',apikey:SUPABASE_ANON_KEY,Authorization:'Bearer '+SUPABASE_ANON_KEY},body:JSON.stringify({question: question})});
       const result=await response.json(); richBubble(result.reponse || result.message || 'Rĩch n\'a pas pu analyser la photo.',false);
     }catch(e){ richBubble('Erreur lors de l’analyse de la photo.',false); }
     input.value='';
@@ -5345,6 +5358,7 @@ const response=await fetch(`${SUPABASE_URL}/functions/v1/agent-ia`,{method:'POST
     const raw=input.value.trim(); if(!raw) return;
 
     const displayMsg=raw.replace(/#[a-zéèêàâîïôûùç]+/gi,'').replace(/#[\p{Script=Han}\p{Script=Latin}\p{Script=Common}\w]+/giu,'').trim();
+    const question = displayMsg || raw;
     input.value=''; chat.scrollTop=chat.scrollHeight;
     console.log('Rĩch langue active:',richLang);
 
@@ -5358,8 +5372,8 @@ const response=await fetch(`${SUPABASE_URL}/functions/v1/agent-ia`,{method:'POST
 
     if(!displayMsg){
       try{
-const response=await fetch(`${SUPABASE_URL}/functions/v1/agent-ia`,{method:'POST',headers:{'Content-Type':'application/json',apikey:SUPABASE_ANON_KEY,Authorization:'Bearer '+SUPABASE_ANON_KEY},body:JSON.stringify({question,image_base64})});
-        const data=await res.json();
+const response=await fetch(`${SUPABASE_URL}/functions/v1/agent-ia`,{method:'POST',headers:{'Content-Type':'application/json',apikey:SUPABASE_ANON_KEY,Authorization:'Bearer '+SUPABASE_ANON_KEY},body:JSON.stringify({question: question})});
+        const data=await response.json();
         chat.innerHTML += '<div style="background:white;border:1px solid #eee;padding:10px 14px;border-radius:18px;margin-bottom:8px;white-space:pre-wrap">'+escapeHtml(data.reponse||'Bonjour 🌱')+'</div>';
       }catch(e){ console.error(e); }
       chat.scrollTop=chat.scrollHeight;
@@ -5369,19 +5383,18 @@ const response=await fetch(`${SUPABASE_URL}/functions/v1/agent-ia`,{method:'POST
     const loadingId='loading-'+Date.now();
     chat.innerHTML += '<div id="'+loadingId+'" style="background:#f5f5f5;padding:10px 14px;border-radius:18px;margin-bottom:8px;display:inline-block">Rĩch écrit...</div>';
     try{
-const response=await fetch(`${SUPABASE_URL}/functions/v1/agent-ia`,{method:'POST',headers:{'Content-Type':'application/json',apikey:SUPABASE_ANON_KEY,Authorization:'Bearer '+SUPABASE_ANON_KEY},body:JSON.stringify({question,image_base64})});
-      const text=await res.text(); let data;
+const response=await fetch(`${SUPABASE_URL}/functions/v1/agent-ia`,{method:'POST',headers:{'Content-Type':'application/json',apikey:SUPABASE_ANON_KEY,Authorization:'Bearer '+SUPABASE_ANON_KEY},body:JSON.stringify({question: question})});
+      const text=await response.text(); let data;
       try{data=JSON.parse(text);}catch{data={reponse:text||'Réponse reçue'};}
       document.getElementById(loadingId)?.remove();
       chat.innerHTML += '<div style="background:white;border:1px solid #eee;padding:10px 14px;border-radius:18px;margin-bottom:8px;white-space:pre-wrap">'+escapeHtml(data.reponse||data.error||'Je suis là 🌱')+'</div>';
     }catch(e){
-      document.getElementById(loadingId)?.remove();
-      chat.innerHTML += '<div style="background:white;border:1px solid #eee;padding:10px 14px;border-radius:18px;margin-bottom:8px">Bien sûr ! Je suis là pour échanger avec toi. Que veux-tu savoir sur Rich Farm Unity ?</div>';
-      console.error(e);
+  document.getElementById(loadingId)?.remove();
+  chat.innerHTML += '<div style="background:white;border:1px solid #eee;padding:10px 14px;border-radius:18px;margin-bottom:8px">Erreur : '+escapeHtml(e.message || e)+'<br>URL : '+escapeHtml(SUPABASE_URL)+'</div>';
+  console.error('ERREUR sendRich:', e);
+}chat.scrollTop=chat.scrollHeight;
     }
-    chat.scrollTop=chat.scrollHeight;
-  }
-
+    
   function updateRichLanguageUI(){
     document.querySelectorAll('#richLangSelector button').forEach(btn=>{
       const active=btn.dataset.lang===richLang;
@@ -5410,7 +5423,7 @@ const response=await fetch(`${SUPABASE_URL}/functions/v1/agent-ia`,{method:'POST
     const zone=document.getElementById('iaChatZone'); zone.insertAdjacentHTML('beforeend',`<div style="margin:8px 0 8px auto;max-width:80%;background:#207A3D;color:white;padding:10px;border-radius:12px;">${escapeHtml(question)}</div>`); input.value='';
     let image_base64=''; const f=document.getElementById('iaImage').files[0]; if(f) image_base64=await lireImageBase64(f);
     try{
-const response=await fetch(`${SUPABASE_URL}/functions/v1/agent-ia`,{method:'POST',headers:{'Content-Type':'application/json',apikey:SUPABASE_ANON_KEY,Authorization:'Bearer '+SUPABASE_ANON_KEY},body:JSON.stringify({question,image_base64})});
+const response=await fetch(`${SUPABASE_URL}/functions/v1/agent-ia`,{method:'POST',headers:{'Content-Type':'application/json',apikey:SUPABASE_ANON_KEY,Authorization:'Bearer '+SUPABASE_ANON_KEY},body:JSON.stringify({question: question})});
       const result=await response.json();
       zone.insertAdjacentHTML('beforeend',`<div style="margin:8px auto 8px 0;max-width:80%;background:white;padding:10px;border-radius:12px;box-shadow:0 1px 4px rgba(0,0,0,.08);">${escapeHtml(result.reponse || result.message || 'Réponse indisponible')}</div>`);
     }catch(e){ zone.insertAdjacentHTML('beforeend','<div style="margin:8px 0;background:white;padding:10px;border-radius:12px;">Service IA indisponible.</div>'); }
