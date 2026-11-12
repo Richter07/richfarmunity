@@ -84,13 +84,11 @@
   h3{font-size:1.25rem;line-height:1.28;}
   p{line-height:1.6;}
   a{color:inherit; text-decoration:none;}
- nav{ display:flex; flex-wrap:wrap; gap:10px; }
-nav a{ white-space:normal; }
-@media (max-width:900px){
-  nav{ flex-direction:column!important; align-items:stretch!important; gap:12px!important; background:#122e1e!important; padding:20px!important; }
-  nav a{ width:100%!important; display:block!important; padding:14px 18px!important; border:1px solid rgba(255,255,255,.3)!important; border-radius:16px!important; color:#fff!important; background:transparent!important; text-align:left!important; }
-  nav a:first-child{ background:#eab308!important; color:#000!important; border-color:#eab308!important; font-weight:700!important; }
-}
+  nav a{ white-space:nowrap; }
+  img{max-width:100%; display:block;}
+  :focus-visible{outline:2px solid var(--vert-nuit); outline-offset:2px; box-shadow:0 0 0 5px var(--or-clair);}
+  .wrap{max-width:1180px; margin:0 auto; padding:0 32px;}
+  input,select,textarea,button{font-family:'Work Sans',sans-serif; font-size:0.95rem;}
 
   /* ---------- HEADER / TABS (commun à tout le site) ---------- */
   header{
