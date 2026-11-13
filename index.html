@@ -497,6 +497,30 @@
   .forum-pagination[hidden]{ display:none; }
   .forum-pagination-status{ color:var(--encre-douce); font-size:0.9rem; font-weight:600; text-align:center; }
   .pub-card{ min-width:0; background:var(--creme); border:1px solid var(--bordure); border-radius:var(--rayon-carte); padding:24px; box-shadow:var(--ombre-douce); }
+  .publicites-zone{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:16px;margin:0 0 24px;}
+  .publicite-card{min-width:0;overflow:hidden;padding:0;background:#fff;border:1px solid var(--bordure);border-radius:var(--rayon-carte);box-shadow:var(--ombre-douce);}
+  .publicite-cta{display:flex;align-items:center;gap:14px;min-height:100%;padding:18px 22px;border:1px dashed var(--or);border-radius:var(--rayon-carte);background:linear-gradient(90deg,var(--vert-profond),var(--vert-rich));color:var(--ivoire);}
+  .publicite-cta strong{display:block;color:var(--or-clair);}
+  .publicite-cta span{display:block;margin-top:3px;color:rgba(245,239,224,.85);font-size:.86rem;}
+  .publicite-carousel{position:relative;background:#fff;}
+  .publicite-carousel img{display:block;width:100%;height:auto;object-fit:contain;background:#fff;}
+  .publicite-carousel img[hidden]{display:none;}
+  .publicite-carousel-controls{display:flex;align-items:center;justify-content:center;gap:12px;padding:8px;}
+  .publicite-card-content{padding:16px;}
+  .publicite-card-title{overflow-wrap:anywhere;margin:0 0 12px;font-size:1.05rem;font-weight:700;color:var(--vert-nuit);}
+  .publicite-actions,.publicite-share-options,.publicite-rating{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:12px;}
+  .publicite-share-options[hidden]{display:none;}
+  .publicite-rating-stars{display:inline-flex;gap:2px;}
+  .publicite-star{min-height:36px;padding:2px 4px;border:0;background:transparent;color:#9b8e73;font-size:1.3rem;cursor:pointer;}
+  .publicite-star.is-selected,.publicite-star.is-average{color:#d39b16;}
+  .publicite-rating-summary,.publicite-admin-stats{font-size:.84rem;color:var(--encre-douce);}
+  .publicite-admin-sort{margin:12px 0;}
+  .publicite-preview-backdrop{position:fixed;inset:0;z-index:10001;display:none;align-items:center;justify-content:center;padding:16px;background:rgba(0,0,0,.62);}
+  .publicite-preview-backdrop.is-open{display:flex;}
+  .publicite-preview-dialog{position:relative;width:min(760px,100%);max-height:90vh;overflow:auto;padding:20px;background:#fff;border-radius:16px;}
+  .publicite-preview-close{position:absolute;top:10px;right:12px;z-index:2;border:0;background:transparent;font-size:1.7rem;cursor:pointer;}
+  .publicite-preview-actions{display:flex;justify-content:flex-end;gap:10px;flex-wrap:wrap;margin-top:16px;}
+  @media(max-width:600px){.publicite-card-content{padding:14px}.publicite-preview-dialog{padding:16px}}
   .pub-top{ display:flex; justify-content:space-between; align-items:flex-start; gap:12px; flex-wrap:wrap; min-width:0; }
   .pub-card h3{ font-size:1.25rem; line-height:1.3; overflow-wrap:anywhere; }
   .pub-tag{ font-family:var(--font-principale); font-size:0.75rem; line-height:1.4; text-transform:uppercase; letter-spacing:0; color:var(--terre); margin-bottom:6px; display:block; font-weight:600; }
@@ -908,6 +932,10 @@
       </div>
     </section>
 
+    <section class="wrap" aria-label="Publicités">
+      <div id="publicitesAccueil" class="publicites-zone"></div>
+    </section>
+
     <section class="apercu-fonct-section">
       <div class="wrap">
         <div class="section-head reveal">
@@ -1147,6 +1175,32 @@
   <!-- ==================== VUE ANNONCES ==================== -->
   <div class="view" id="view-publications">
     <div class="app-main">
+      <div id="publicitesAnnonces" class="publicites-zone" aria-label="Publicités"></div>
+      <div class="card" id="carteAjoutPub" style="margin-bottom:20px;display:none;">
+        <h3 style="margin-bottom:14px;">Gérer les publicités (admin)</h3>
+        <form id="formPublicite">
+          <div class="field-row">
+            <div class="field"><label for="pubAnnonceur">Nom de l'annonceur</label><input type="text" id="pubAnnonceur" required placeholder="Ex : Agro-Intrants Bénin"></div>
+            <div class="field"><label for="pubOrdre">Ordre d'affichage</label><input type="number" id="pubOrdre" value="0"></div>
+          </div>
+          <div class="field-row">
+            <div class="field"><label for="input-pub-images">Photos de la publicité</label><input type="file" id="input-pub-images" multiple accept="image/*" required></div>
+            <div class="field"><label for="pubDateExpiration">Date et heure d’expiration</label><input type="datetime-local" id="pubDateExpiration"></div>
+          </div>
+          <div class="field"><label for="pubLien">Lien de destination (optionnel)</label><input type="text" id="pubLien" placeholder="https://... ou https://wa.me/..."></div>
+          <button type="button" class="btn-main" id="btnVoirApercuPub" style="margin-top:10px;">Voir l’aperçu</button>
+        </form>
+        <label class="publicite-admin-sort" for="triPublicitesAdmin">Trier :
+          <select id="triPublicitesAdmin">
+            <option value="ordre">Ordre d’affichage</option>
+            <option value="vues">Les plus vues</option>
+            <option value="clics">Les plus cliquées</option>
+          </select>
+        </label>
+        <div id="listePublicitesAdmin" style="margin-top:12px;"></div>
+        <h4 style="margin-top:22px;">Publicités expirées</h4>
+        <div id="listePublicitesExpireesAdmin" style="margin-top:10px;"></div>
+      </div>
       <div class="toolbar">
         <div class="page-head" style="margin-bottom:0;">
           <h2>Annonces</h2>
@@ -1494,67 +1548,25 @@
   <!-- ==================== VUE FORMATIONS ==================== -->
   <div class="view" id="view-formations">
     <div class="app-main">
-      <div id="pubBandeauWrap" style="display:none;margin-bottom:24px;">
-        <div class="bandeau-pub-track" id="bandeauPubTrack"></div>
-      </div>
-      <a href="https://wa.me/2290146471497?text=Bonjour%2C%20je%20souhaite%20faire%20de%20la%20publicit%C3%A9%20sur%20R%C4%A9ch%20Farm%20Unity." target="_blank" id="bandeauPubCTA" style="display:none;margin-bottom:24px;text-decoration:none;">
-        <div style="background:linear-gradient(90deg, var(--vert-profond), var(--vert-rich));border:1px dashed var(--or); border-radius:14px;padding:16px 20px;display:flex;align-items:center;gap:14px;">
-          <span style="font-size:1.6rem;">📣</span>
-          <div>
-            <p style="color:var(--or-clair);font-weight:700;margin:0;">Faites votre publicité ici !</p>
-            <p style="color:rgba(245,239,224,0.8);font-size:0.85rem;margin:2px 0 0;">Touchez tous les acteurs agricoles de Rĩch Farm Unity. Contactez-nous sur WhatsApp →</p>
-          </div>
-        </div>
-      </a>
       <div class="toolbar">
         <div class="page-head" style="margin-bottom:0;"><h2>Formations &amp; astuces</h2><p>Conseils de production et actualités publiés par Rĩch Farm Unity.</p><div style="margin-top:10px;font-size:.88rem;color:var(--encre-douce);">Apprenez, progressez et augmentez votre crédibilité jusqu'à devenir <span class="verified-badge">✓ vérifié</span>.</div></div>
         <button class="btn-small" id="btnNouvelleFormation" style="display:none;">+ Nouvelle formation</button>
-      </div>
-      <div class="card" id="carteAjoutPub" style="margin-bottom:20px;display:none;">
-        <h3 style="margin-bottom:14px;">Gérer les publicités (admin)</h3>
-        <form id="formPublicite">
-          <div class="field-row">
-            <div class="field"><label for="pubAnnonceur">Nom de l'annonceur</label><input type="text" id="pubAnnonceur" required placeholder="Ex : Agro-Intrants Bénin"></div>
-            <div class="field"><label for="pubOrdre">Ordre d'affichage</label><input type="number" id="pubOrdre" value="0"></div>
-          </div>
-          <div class="field-row">
-            <div class="field"><label for="input-pub-images">Photos de la publicité</label><input type="file" id="input-pub-images" multiple accept="image/*" required></div>
-            <div class="field"><label for="pubDateExpiration">Date et heure d’expiration</label><input type="datetime-local" id="pubDateExpiration"></div>
-          </div>
-          <div class="field"><label for="pubLien">Lien de destination (optionnel)</label><input type="text" id="pubLien" placeholder="https://... ou https://wa.me/..."></div>
-          <button type="submit" class="btn-main" style="margin-top:10px;">Ajouter la publicité</button>
-        </form>
-        <div id="listePublicitesAdmin" style="margin-top:18px;"></div>
-        <h4 style="margin-top:22px;">Publicités expirées</h4>
-        <div id="listePublicitesExpireesAdmin" style="margin-top:10px;"></div>
       </div>
       <div id="formationsContainer"><div class="empty state-loading"><h3>Chargement…</h3></div></div>
     </div>
   </div>
   <style>
-    .bandeau-pub-track{
-      display:flex; gap:16px; overflow:hidden; position:relative;
-      -webkit-mask-image:linear-gradient(90deg,transparent,#000 4%,#000 96%,transparent);
-      mask-image:linear-gradient(90deg,transparent,#000 4%,#000 96%,transparent);
-    }
-    .bandeau-pub-inner{ display:flex; gap:16px; flex-shrink:0; animation:bandeauPubScrollLoop 30s linear infinite; }
-    .bandeau-pub-track:hover .bandeau-pub-inner{ animation-play-state:paused; }
-    .bandeau-pub-card{ position:relative; flex-shrink:0; width:220px; height:120px; border-radius:8px; overflow:hidden; box-shadow:0 8px 20px rgba(15,44,19,0.15); }
-    .bandeau-pub-card>img{ width:100%; height:100%; object-fit:cover; display:block; }
-    @keyframes bandeauPubScrollLoop{ from{ transform:translateX(0); } to{ transform:translateX(-50%); } }
     .expiration-info{display:flex;flex-wrap:wrap;align-items:center;gap:4px 10px;margin:10px 0;padding:9px 11px;border:1px solid rgba(27,94,32,.14);border-radius:8px;background:#f4f8f2;color:var(--vert-nuit);font-size:.82rem;line-height:1.45;}
     .expiration-info strong{color:var(--terre);font-size:.78rem;font-weight:700;}
-    .bandeau-pub-card .expiration-info{position:absolute;right:5px;bottom:5px;left:5px;display:block;margin:0;padding:5px 7px;background:rgba(8,26,11,.88);border:0;color:#fff;font-size:.68rem;}
-    .bandeau-pub-card .expiration-info strong{display:block;color:#f5cf72;font-size:.68rem;}
     .publicite-admin-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid var(--bordure);}
     .publicite-admin-info{display:flex;align-items:center;gap:12px;min-width:0;}
-    .publicite-admin-info>img{width:70px;height:48px;object-fit:cover;border-radius:6px;}
+    .publicite-admin-info>img{width:70px;height:auto;max-height:70px;object-fit:contain;background:#fff;border-radius:6px;}
     .publicite-admin-info>div{min-width:0;}
     .publicite-admin-info>div>span{display:block;color:var(--encre-douce);font-size:.8rem;margin-top:3px;}
     .publicite-admin-info .expiration-info{margin-bottom:0;}
     .publicite-admin-actions{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:6px;}
     .mes-annonce-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;}
-    @media (max-width:600px){.bandeau-pub-card{width:180px;height:100px}.publicite-admin-row{align-items:flex-start;flex-direction:column}.publicite-admin-actions{width:100%;justify-content:flex-start}.publicite-admin-actions button{flex:1 1 auto}}
+    @media (max-width:600px){.publicite-admin-row{align-items:flex-start;flex-direction:column}.publicite-admin-actions{width:100%;justify-content:flex-start}.publicite-admin-actions button{flex:1 1 auto}}
   </style>
 
   <!-- ==================== VUE ANCRAGE INSTITUTIONNEL ==================== -->
@@ -2394,6 +2406,8 @@
   window.addEventListener('offline', majBandeauConnexion);
   majBandeauConnexion();
   let currentProfile = null;
+  let sessionProfileResolved = false;
+  let sessionProfileFailed = false;
   let isPasswordRecovery = false;
 
   function showRecoveryScreen(){
@@ -2563,11 +2577,15 @@
     tabButtons.forEach(b => b.classList.toggle('active', b.dataset.view === name));
     window.scrollTo({top:0, behavior:'instant'});
     arreterAutoRefresh();
+    if(name === 'publications' || name === 'accueil'){
+      publiciteVueesVueCourante.clear();
+      loadPublicites();
+    }
     if(name === 'publications') loadPublications();
     if(name === 'prixmarche') loadPrixMarche();
     if(name === 'calendrier'){ remplirMenuCalendrier(); afficherCalendrier(); }
     if(name === 'carte'){ initOrRafraichirCarte(); }
-    if(name === 'formations'){ loadFormations(); loadPublicites(); }
+    if(name === 'formations') loadFormations();
     if(name === 'moderation'){ loadPending(); loadModeration(); loadExpiredPublications(); loadModerationPrix(); }
     if(name === 'suggestions'){ loadSuggestions(); }
     if(name === 'forums'){ loadSujets(); demarrerAutoRefresh(rafraichirSujetsAutomatiquement); }
@@ -2820,6 +2838,9 @@
       if(!isCurrentRequest()) return;
       console.error('Impossible de charger la session ou le profil', error);
       currentProfile = null;
+      sessionProfileFailed = true;
+      sessionProfileResolved = true;
+      reprendreSuiviVuesPublicites();
       document.getElementById('accountLabel').textContent = currentUser ? currentUser.email : '';
       document.getElementById('compteConnecte').style.display = 'none';
       document.getElementById('compteNonConnecte').style.display = 'none';
@@ -2846,6 +2867,7 @@
       return;
     }
     const session = sessionResult.data && sessionResult.data.session;
+    sessionProfileResolved = false;
     currentUser = session ? session.user : null;
     window.currentUser = currentUser;
     if(currentUser){
@@ -2868,6 +2890,9 @@
         currentUser = null;
         window.currentUser = currentUser;
         currentProfile = null;
+        sessionProfileFailed = false;
+        sessionProfileResolved = true;
+        reprendreSuiviVuesPublicites();
         alert("Compte banni définitivement, contactez l'admin");
         document.getElementById('accountLabel').textContent = '';
         document.getElementById('compteConnecte').style.display = 'none';
@@ -2880,6 +2905,9 @@
         currentUser = null;
         window.currentUser = currentUser;
         currentProfile = null;
+        sessionProfileFailed = false;
+        sessionProfileResolved = true;
+        reprendreSuiviVuesPublicites();
         alert("Votre compte n'a pas été validé et n'est plus accessible. Vous pouvez créer un nouveau compte si besoin, ou nous contacter sur WhatsApp.");
         document.getElementById('accountLabel').textContent = '';
         document.getElementById('compteConnecte').style.display = 'none';
@@ -2892,12 +2920,16 @@
       }
       errorCard.style.display = 'none';
       currentProfile = profile;
+      sessionProfileFailed = false;
+      sessionProfileResolved = true;
+      reprendreSuiviVuesPublicites();
       document.getElementById('accountLabel').textContent = profile ? (profile.prenom + ' ' + profile.nom) : currentUser.email;
       document.getElementById('compteConnecte').style.display = 'block';
       document.getElementById('compteNonConnecte').style.display = 'none';
       checkNotifStatus();
       document.getElementById('carteAjoutContactInstit').style.display = (profile && profile.is_admin) ? 'block' : 'none';
       document.getElementById('carteAjoutPub').style.display = (profile && profile.is_admin) ? 'block' : 'none';
+      if(['accueil', 'publications'].includes(getActiveViewName())) loadPublicites();
       const profilAvis = profile ? await getAvisUtilisateur(profile.id) : { moyenne: 0, nombre: 0 };
       document.getElementById('compteResume').innerHTML = profile
         ? escapeHtml(profile.type_acteur + (profile.domaine ? ' — ' + profile.domaine : '')) +
@@ -3004,6 +3036,9 @@
       }
     } else {
       currentProfile = null;
+      sessionProfileFailed = false;
+      sessionProfileResolved = true;
+      reprendreSuiviVuesPublicites();
       errorCard.style.display = 'none';
       document.getElementById('accountLabel').textContent = '';
       document.getElementById('compteConnecte').style.display = 'none';
@@ -5019,7 +5054,7 @@
     showView('nouvelle-formation');
   };
 
-  // ---- Bannière publicitaire défilante ----
+  // ---- Publicités ----
   function publiciteImageUrls(publicite){
     let images = publicite.images;
     if(typeof images === 'string'){
@@ -5030,63 +5065,176 @@
     return validImages.length ? validImages : (safeHttpUrl(publicite.image_url) ? [safeHttpUrl(publicite.image_url)] : []);
   }
 
+  const publiciteVueesVueCourante = new Set();
+  const publiciteViewsObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if(!entry.isIntersecting) return;
+      if(!sessionProfileResolved) return;
+      const card = entry.target;
+      publiciteViewsObserver.unobserve(card);
+      const id = card.dataset.publiciteId;
+      if(!id || currentProfile?.is_admin || (currentUser && sessionProfileFailed) || publiciteVueesVueCourante.has(id)) return;
+      publiciteVueesVueCourante.add(id);
+      recordPubliciteStat(id, 'vue');
+    });
+  }, { threshold: 0.5 });
+
+  function reprendreSuiviVuesPublicites(){
+    document.querySelectorAll('[data-publicite-card]').forEach(card => publiciteViewsObserver.observe(card));
+  }
+
+  function publiciteShareUrl(id){
+    const url = new URL(window.location.pathname, window.location.origin);
+    url.searchParams.set('view', 'publications');
+    url.searchParams.set('publicite', id);
+    return url.href;
+  }
+
+  function publiciteCardHtml(publicite, options={}){
+    const images = options.preview
+      ? options.images
+      : publiciteImageUrls(publicite);
+    const id = options.preview ? '' : escapeHtml(publicite.id);
+    const lien = options.preview ? safeHttpUrl(publicite.lien) : safeHttpUrl(publicite.lien);
+    const shareUrl = options.preview ? window.location.href : publiciteShareUrl(publicite.id);
+    const avg = Number(options.moyenne || 0);
+    const votes = Number(options.votes || 0);
+    const stars = Array.from({length:5}, (_, index) =>
+      `<button type="button" class="publicite-star${index < Math.round(avg) ? ' is-average' : ''}" aria-label="Noter ${index + 1} sur 5" ${options.preview ? 'disabled' : ''} data-publicite-rating="${index + 1}">★</button>`
+    ).join('');
+    const photo = images.length ? `<div class="publicite-carousel" data-carousel-index="0">
+      ${images.map((image, index) => `<img src="${options.preview ? escapeHtml(image) : image}" alt="${escapeHtml(publicite.annonceur)} — photo ${index + 1}" data-carousel-image="${index}"${index ? ' hidden' : ''}>`).join('')}
+      ${images.length > 1 ? `<div class="publicite-carousel-controls"><button type="button" class="btn-outline-small" data-carousel-prev aria-label="Photo précédente">‹</button><span>1 / ${images.length}</span><button type="button" class="btn-outline-small" data-carousel-next aria-label="Photo suivante">›</button></div>` : ''}
+    </div>` : '';
+    return `<article class="publicite-card"${options.preview ? '' : ` data-publicite-card data-publicite-id="${id}"`}>
+      ${photo}
+      <div class="publicite-card-content">
+        <h3 class="publicite-card-title">${escapeHtml(publicite.annonceur || 'Publicité')}</h3>
+        ${lien ? `<div><a class="btn-outline-small" href="${lien}" target="_blank" rel="noopener noreferrer" ${options.preview ? '' : 'data-publicite-link'}>Découvrir</a></div>` : ''}
+        <div class="publicite-actions">
+          <button type="button" class="btn-outline-small" data-publicite-share ${options.preview ? 'disabled' : ''}>Partager</button>
+          ${lien ? `<a class="btn-main" href="${lien}" target="_blank" rel="noopener noreferrer" ${options.preview ? '' : 'data-publicite-link'}>Visiter le lien</a>` : ''}
+        </div>
+        <div class="publicite-share-options" hidden>
+          <a class="btn-outline-small" href="https://wa.me/?text=${encodeURIComponent((publicite.annonceur || 'Publicité') + ' ' + shareUrl)}" target="_blank" rel="noopener noreferrer" data-publicite-share-option>WhatsApp</a>
+          <button type="button" class="btn-outline-small" data-publicite-copy="${escapeHtml(shareUrl)}" ${options.preview ? 'disabled' : ''}>Copier le lien</button>
+          <a class="btn-outline-small" href="https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}" target="_blank" rel="noopener noreferrer" data-publicite-share-option>Facebook</a>
+        </div>
+        <div class="publicite-rating">
+          <span class="publicite-rating-stars">${stars}</span>
+          <button type="button" class="btn-outline-small" data-publicite-rate ${options.preview ? 'disabled' : ''}>Noter</button>
+          <span class="publicite-rating-summary">★ ${avg.toFixed(1)} (${votes} votes)</span>
+        </div>
+      </div>
+    </article>`;
+  }
+
   async function loadPublicites(){
     const maintenant = new Date().toISOString();
     const { data, error } = await sb.from('publicites').select('*').eq('actif', true).or(`expire_at.is.null,expire_at.gt.${maintenant}`).order('ordre', { ascending: true });
-    const wrap = document.getElementById('pubBandeauWrap');
-    const track = document.getElementById('bandeauPubTrack');
-    const cta = document.getElementById('bandeauPubCTA');
-    if(error || !data || data.length === 0){
-      wrap.style.display = 'none';
-      track.innerHTML = '';
-      cta.style.display = 'block';
+    const targets = ['publicitesAccueil', 'publicitesAnnonces'].map(id => document.getElementById(id));
+    if(error){
+      console.error('Impossible de charger les publicités', error);
+      targets.forEach(target => { target.innerHTML = '<div class="empty state-error">Publicités momentanément indisponibles.</div>'; });
+      return;
     }
-    else{
-      const cardsHtml = data.map(p => {
-        const images = publiciteImageUrls(p);
-        const lien = safeHttpUrl(p.lien);
-        return images.map(imageUrl => {
-          const expiration = p.expire_at ? htmlExpiration(p.expire_at, 'publicite') : '';
-          const img = `<div class="bandeau-pub-card"><img src="${imageUrl}" alt="${escapeHtml(p.annonceur)}">${expiration}</div>`;
-          return lien ? `<a href="${lien}" target="_blank" rel="noopener noreferrer">${img}</a>` : img;
-        }).join('');
-      }).join('');
-      // Le contenu est dupliqué une fois pour permettre une boucle visuelle continue (translateX -50%).
-      track.innerHTML = `<div class="bandeau-pub-inner">${cardsHtml}${cardsHtml}</div>`;
-      wrap.style.display = 'block';
-      cta.style.display = 'none';
-      demarrerCompteARebours();
+    const ads = data || [];
+    const { data: notes, error: notesError } = await sb.from('publicite_notes').select('publicite_id,user_id,note');
+    if(notesError) console.error('Impossible de charger les notes publicitaires', notesError);
+    const notesByAd = new Map();
+    (notes || []).forEach(note => {
+      const aggregate = notesByAd.get(note.publicite_id) || { total: 0, votes: 0, mine: false };
+      aggregate.total += Number(note.note);
+      aggregate.votes += 1;
+      if(currentUser && note.user_id === currentUser.id) aggregate.mine = true;
+      notesByAd.set(note.publicite_id, aggregate);
+    });
+    const cards = ads.map(ad => {
+      const aggregate = notesByAd.get(ad.id) || { total: 0, votes: 0, mine: false };
+      return publiciteCardHtml(ad, { moyenne: aggregate.votes ? aggregate.total / aggregate.votes : 0, votes: aggregate.votes });
+    }).join('');
+    const content = cards || '<a class="publicite-cta" href="https://wa.me/2290146471497?text=Bonjour%2C%20je%20souhaite%20faire%20de%20la%20publicit%C3%A9%20sur%20R%C4%A9ch%20Farm%20Unity." target="_blank" rel="noopener noreferrer"><span aria-hidden="true" style="font-size:1.6rem;">📣</span><span><strong>Faites votre publicité ici !</strong>Touchez tous les acteurs agricoles de Rĩch Farm Unity. Contactez-nous sur WhatsApp →</span></a>';
+    targets.forEach(target => {
+      target.innerHTML = content;
+      target.querySelectorAll('[data-publicite-card]').forEach(card => publiciteViewsObserver.observe(card));
+      target.querySelectorAll('[data-publicite-id]').forEach(card => {
+        const aggregate = notesByAd.get(card.dataset.publiciteId);
+        if(aggregate?.mine) card.querySelectorAll('[data-publicite-rating], [data-publicite-rate]').forEach(button => {
+          button.disabled = true;
+          button.title = 'Vous avez déjà noté cette publicité';
+        });
+      });
+    });
+    if(currentProfile?.is_admin) await loadPublicitesAdmin();
+    const requestedId = new URLSearchParams(window.location.search).get('publicite');
+    if(requestedId && document.querySelector('#publicitesAnnonces [data-publicite-id="' + CSS.escape(requestedId) + '"]')){
+      requestAnimationFrame(() => document.querySelector('#publicitesAnnonces [data-publicite-id="' + CSS.escape(requestedId) + '"]')?.scrollIntoView({behavior:'smooth', block:'center'}));
     }
-    if(currentProfile && currentProfile.is_admin) loadPublicitesAdmin();
   }
 
   async function loadPublicitesAdmin(){
-    const { data, error } = await sb.from('publicites').select('*').order('ordre', { ascending: true });
+    const [{ data, error }, { data: stats, error: statsError }, { data: notes, error: notesError }] = await Promise.all([
+      sb.from('publicites').select('*').order('ordre', { ascending: true }),
+      sb.from('publicite_stats').select('publicite_id,event_type'),
+      sb.from('publicite_notes').select('publicite_id,note')
+    ]);
     const list = document.getElementById('listePublicitesAdmin');
     const expiredList = document.getElementById('listePublicitesExpireesAdmin');
     const emptyMessage = '<p style="color:var(--encre-douce);font-size:0.9rem;">Aucune publicité.</p>';
-    if(error || !data){ list.innerHTML = emptyMessage; expiredList.innerHTML = emptyMessage; return; }
+    if(error || statsError || notesError){
+      const message = escapeHtml(error?.message || statsError?.message || notesError?.message || 'Erreur de chargement.');
+      list.innerHTML = `<div class="empty state-error">Impossible de charger les publicités et leurs statistiques : ${message}</div>`;
+      expiredList.innerHTML = '';
+      return;
+    }
+    const aggregates = new Map();
+    (stats || []).forEach(row => {
+      const item = aggregates.get(row.publicite_id) || { vues: 0, clics: 0, partages: 0 };
+      if(row.event_type === 'vue') item.vues += 1;
+      if(row.event_type === 'clic') item.clics += 1;
+      if(row.event_type === 'partage') item.partages += 1;
+      aggregates.set(row.publicite_id, item);
+    });
+    const ratings = new Map();
+    (notes || []).forEach(row => {
+      const item = ratings.get(row.publicite_id) || { total: 0, votes: 0 };
+      item.total += Number(row.note);
+      item.votes += 1;
+      ratings.set(row.publicite_id, item);
+    });
     const maintenant = Date.now();
     const estExpiree = p => p.expire_at && new Date(p.expire_at).getTime() <= maintenant;
     const rendrePublicite = (p, expiree) => {
       const image = publiciteImageUrls(p)[0];
       const expiration = p.expire_at ? htmlExpiration(p.expire_at, expiree ? 'expired-publicite' : 'admin-publicite') : '';
       const statut = expiree ? 'Expirée' : (p.actif ? 'Active' : 'Désactivée');
-      return `<div class="publicite-admin-row"><div class="publicite-admin-info">${image ? `<img src="${image}" alt="${escapeHtml(p.annonceur)}">` : ''}<div><strong>${escapeHtml(p.annonceur)}</strong><span>Ordre : ${p.ordre ?? 0} · ${statut}</span>${expiration}</div></div><div class="publicite-admin-actions"><button class="btn-outline-small" ${expiree ? 'disabled' : ''} onclick="togglePublicite('${escapeHtml(p.id)}', ${!p.actif})">${p.actif ? 'Désactiver' : 'Activer'}</button><button class="btn-outline-small" onclick="copierLienPublicite('${escapeHtml(p.id)}')">Lien</button><button class="btn-outline-small" style="border-color:var(--rouge);color:var(--rouge);" onclick="supprimerPublicite('${escapeHtml(p.id)}')">Supprimer</button></div></div>`;
+      const statsForAd = aggregates.get(p.id) || { vues: 0, clics: 0, partages: 0 };
+      const starsForAd = ratings.get(p.id) || { total: 0, votes: 0 };
+      const average = starsForAd.votes ? (starsForAd.total / starsForAd.votes).toFixed(1) : '0.0';
+      return `<div class="publicite-admin-row"><div class="publicite-admin-info">${image ? `<img src="${image}" alt="${escapeHtml(p.annonceur)}">` : ''}<div><strong>${escapeHtml(p.annonceur)}</strong><span>Ordre : ${p.ordre ?? 0} · ${statut}</span>${expiration}<span class="publicite-admin-stats">Vues : ${statsForAd.vues} | Clics : ${statsForAd.clics} | Partages : ${statsForAd.partages} | Total : ${starsForAd.total} étoiles / ${starsForAd.votes} votes / Moy ${average}</span></div></div><div class="publicite-admin-actions"><button class="btn-outline-small" ${expiree ? 'disabled' : ''} onclick="togglePublicite('${escapeHtml(p.id)}', ${!p.actif})">${p.actif ? 'Désactiver' : 'Activer'}</button><button class="btn-outline-small" onclick="copierLienPublicite('${escapeHtml(p.id)}')">Lien</button><button class="btn-outline-small" style="border-color:var(--rouge);color:var(--rouge);" onclick="supprimerPublicite('${escapeHtml(p.id)}')">Supprimer</button></div></div>`;
     };
-    const actives = data.filter(p => !estExpiree(p));
-    const expirees = data.filter(estExpiree);
+    const tri = document.getElementById('triPublicitesAdmin').value;
+    const trier = items => [...items].sort((a, b) => {
+      if(tri === 'vues' || tri === 'clics'){
+        const cle = tri === 'vues' ? 'vues' : 'clics';
+        return (aggregates.get(b.id)?.[cle] || 0) - (aggregates.get(a.id)?.[cle] || 0);
+      }
+      return (a.ordre ?? 0) - (b.ordre ?? 0);
+    });
+    const actives = trier(data.filter(p => !estExpiree(p)));
+    const expirees = trier(data.filter(estExpiree));
     list.innerHTML = actives.length ? actives.map(p => rendrePublicite(p, false)).join('') : emptyMessage;
     expiredList.innerHTML = expirees.length ? expirees.map(p => rendrePublicite(p, true)).join('') : emptyMessage;
     demarrerCompteARebours();
   }
 
   window.togglePublicite = async function(id, nouvelEtat){
-    await sb.from('publicites').update({ actif: nouvelEtat }).eq('id', id);
-    loadPublicites();
+    const { error } = await sb.from('publicites').update({ actif: nouvelEtat }).eq('id', id);
+    if(error){ alert('Impossible de modifier la publicité : ' + error.message); return; }
+    await loadPublicites();
   };
   window.copierLienPublicite = function(id){
-    const lien = `https://richfarmunity.com/share?type=publicite&id=${id}`;
+    const lien = publiciteShareUrl(id);
     if(navigator.clipboard){
       navigator.clipboard.writeText(lien).then(() => alert('Lien copié : ' + lien));
     } else {
@@ -5095,15 +5243,123 @@
   };
   window.supprimerPublicite = async function(id){
     if(!confirm('Supprimer définitivement cette publicité ?')) return;
-    await sb.from('publicites').delete().eq('id', id);
-    loadPublicites();
+    const { error } = await sb.from('publicites').delete().eq('id', id);
+    if(error){ alert('Impossible de supprimer la publicité : ' + error.message); return; }
+    await loadPublicites();
   };
 
-  document.getElementById('formPublicite').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const submitButton = e.submitter;
+  async function recordPubliciteStat(id, eventType){
+    const { error } = await sb.from('publicite_stats').insert({ publicite_id: id, event_type: eventType });
+    if(error) console.error(`Impossible d'enregistrer la statistique ${eventType}`, error);
+  }
+
+  async function noterPublicite(card, note){
+    if(!currentUser){ alert('Connectez-vous pour noter cette publicité.'); return; }
+    const { error } = await sb.from('publicite_notes').insert({ publicite_id: card.dataset.publiciteId, user_id: currentUser.id, note });
+    if(error){
+      if(error.code === '23505'){ alert('Vous avez déjà noté cette publicité.'); }
+      else alert('Impossible d’enregistrer votre note : ' + error.message);
+      return;
+    }
+    await loadPublicites();
+  }
+
+  document.addEventListener('click', async event => {
+    const target = event.target instanceof Element ? event.target : null;
+    if(!target) return;
+    const card = target.closest('[data-publicite-card]');
+    if(target.closest('[data-publicite-share]')){
+      const options = card?.querySelector('.publicite-share-options');
+      if(options){
+        options.hidden = !options.hidden;
+        recordPubliciteStat(card.dataset.publiciteId, 'partage');
+      }
+      return;
+    }
+    const copyButton = target.closest('[data-publicite-copy]');
+    if(copyButton){
+      try{
+        await navigator.clipboard.writeText(new URL(copyButton.dataset.publiciteCopy).href);
+        alert('Lien de la publicité copié.');
+      }catch(error){ prompt('Copiez ce lien :', copyButton.dataset.publiciteCopy); }
+      return;
+    }
+    if(target.closest('[data-publicite-link]') && card){
+      recordPubliciteStat(card.dataset.publiciteId, 'clic');
+      return;
+    }
+    const ratingButton = target.closest('[data-publicite-rating]');
+    if(ratingButton && card){
+      card.dataset.selectedRating = ratingButton.dataset.publiciteRating;
+      card.querySelectorAll('[data-publicite-rating]').forEach(button => {
+        button.classList.remove('is-average');
+        button.classList.toggle('is-selected', Number(button.dataset.publiciteRating) <= Number(card.dataset.selectedRating));
+      });
+      return;
+    }
+    if(target.closest('[data-publicite-rate]') && card){
+      if(!currentUser){ alert('Connectez-vous pour noter cette publicité.'); return; }
+      if(!card.dataset.selectedRating){ alert('Choisissez d’abord une note de 1 à 5 étoiles.'); return; }
+      noterPublicite(card, Number(card.dataset.selectedRating));
+      return;
+    }
+    const carouselButton = target.closest('[data-carousel-prev], [data-carousel-next]');
+    if(carouselButton){
+      const carousel = carouselButton.closest('.publicite-carousel');
+      const images = [...carousel.querySelectorAll('[data-carousel-image]')];
+      if(images.length < 2) return;
+      const currentIndex = Number(carousel.dataset.carouselIndex || 0);
+      const nextIndex = (currentIndex + (carouselButton.hasAttribute('data-carousel-next') ? 1 : -1) + images.length) % images.length;
+      carousel.dataset.carouselIndex = String(nextIndex);
+      images.forEach((image, index) => { image.hidden = index !== nextIndex; });
+      carousel.querySelector('.publicite-carousel-controls span').textContent = `${nextIndex + 1} / ${images.length}`;
+    }
+  });
+  document.getElementById('triPublicitesAdmin').addEventListener('change', loadPublicitesAdmin);
+
+  const publicitePreview = document.createElement('div');
+  publicitePreview.className = 'publicite-preview-backdrop';
+  publicitePreview.innerHTML = '<section class="publicite-preview-dialog" role="dialog" aria-modal="true" aria-labelledby="titreApercuPub"><button type="button" class="publicite-preview-close" aria-label="Fermer">×</button><h2 id="titreApercuPub" style="font-size:1.35rem;margin:0 40px 14px 0;">Aperçu de la publicité</h2><div class="publicite-preview-card"></div><div class="publicite-preview-actions"><button type="button" class="btn-outline-small" data-preview-edit>Modifier</button><button type="button" class="btn-main" data-preview-publish>Publier</button></div></section>';
+  document.body.appendChild(publicitePreview);
+  let publicitePreviewUrls = [];
+  function fermerApercuPublicite(){
+    publicitePreview.classList.remove('is-open');
+    publicitePreviewUrls.forEach(url => URL.revokeObjectURL(url));
+    publicitePreviewUrls = [];
+  }
+  publicitePreview.addEventListener('click', event => {
+    if(event.target === publicitePreview || event.target.closest('.publicite-preview-close') || event.target.closest('[data-preview-edit]')) fermerApercuPublicite();
+  });
+  document.addEventListener('keydown', event => { if(event.key === 'Escape') fermerApercuPublicite(); });
+
+  document.getElementById('btnVoirApercuPub').addEventListener('click', () => {
+    const form = document.getElementById('formPublicite');
+    if(!form.reportValidity()) return;
     const files = Array.from(document.getElementById('input-pub-images').files);
     if(!files.length){ alert('Sélectionnez au moins une photo pour la publicité.'); return; }
+    const dateExpiration = document.getElementById('pubDateExpiration').value;
+    if(dateExpiration && new Date(dateExpiration).getTime() <= Date.now()){
+      alert('La date et l’heure d’expiration doivent être dans le futur.');
+      return;
+    }
+    publicitePreviewUrls.forEach(url => URL.revokeObjectURL(url));
+    publicitePreviewUrls = files.map(file => URL.createObjectURL(file));
+    const data = {
+      annonceur: document.getElementById('pubAnnonceur').value.trim(),
+      lien: document.getElementById('pubLien').value.trim()
+    };
+    publicitePreview.querySelector('.publicite-preview-card').innerHTML = publiciteCardHtml(data, {preview:true, images:publicitePreviewUrls});
+    publicitePreview.classList.add('is-open');
+  });
+
+  document.getElementById('formPublicite').addEventListener('submit', event => {
+    event.preventDefault();
+    document.getElementById('btnVoirApercuPub').click();
+  });
+
+  publicitePreview.querySelector('[data-preview-publish]').addEventListener('click', async event => {
+    const submitButton = event.currentTarget;
+    const files = Array.from(document.getElementById('input-pub-images').files);
     const dateExpiration = document.getElementById('pubDateExpiration').value;
     if(dateExpiration && new Date(dateExpiration).getTime() <= Date.now()){
       alert('La date et l’heure d’expiration doivent être dans le futur.');
@@ -5154,13 +5410,14 @@
         }
         throw error;
       }
+      fermerApercuPublicite();
       document.getElementById('formPublicite').reset();
-      loadPublicites();
+      await loadPublicites();
     } catch(error){
       alert('Erreur : ' + error.message);
     } finally {
       submitButton.disabled = false;
-      submitButton.textContent = 'Ajouter la publicité';
+      submitButton.textContent = 'Publier';
     }
   });
   document.getElementById('btnNouvelleFormation').addEventListener('click', () => {
@@ -5421,10 +5678,6 @@
             if(status){ status.textContent = 'Expirée'; status.classList.add('ecoule'); }
             card?.querySelector('[data-annonce-statut]')?.remove();
           }
-          if(element.dataset.expirationKind === 'publicite' && element.dataset.expired !== 'true'){
-            element.dataset.expired = 'true';
-            element.closest('.bandeau-pub-card')?.remove();
-          }
           if(element.dataset.expirationKind === 'admin-publicite' && element.dataset.expired !== 'true'){
             element.dataset.expired = 'true';
             loadPublicitesAdmin();
@@ -5440,11 +5693,6 @@
       if(annonceExpiree){
         const container = document.getElementById('pubListContainer');
         if(container && !container.querySelector('[data-publication-expiration]')) container.innerHTML = '<div class="empty state-empty"><h3>Aucune annonce disponible pour ces critères</h3></div>';
-      }
-      const track = document.getElementById('bandeauPubTrack');
-      if(track && !track.querySelector('.bandeau-pub-card')){
-        document.getElementById('pubBandeauWrap').style.display = 'none';
-        document.getElementById('bandeauPubCTA').style.display = 'block';
       }
     }, 1000);
   }
@@ -5472,6 +5720,7 @@
   if(targetView && document.getElementById('view-' + targetView)){
     showView(targetView);
   }
+  if(!targetView || !document.getElementById('view-' + targetView)) loadPublicites();
 
   let produitHistoriqueCourant = '';
   let prixHistoryChartInstance = null;
