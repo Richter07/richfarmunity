@@ -24,10 +24,12 @@
 <meta name="apple-mobile-web-app-title" content="Rĩch Farm Unity">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600;9..144,700&family=Work+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
   :root{
+    --font-principale:'Inter','Segoe UI',sans-serif;
+    --font-titres:'Poppins','Segoe UI',sans-serif;
     --vert-nuit:#0F2C13;
     --vert-profond:#081A0B;
     --vert-rich:#1B5E20;
@@ -71,14 +73,14 @@
   }
   html{scroll-behavior:smooth;}
   body{
-    font-family:'Work Sans',sans-serif;color:var(--encre);font-size:1rem;
+    font-family:var(--font-principale);color:var(--encre);font-size:1rem;
     background-color:var(--ivoire);
     background-image:
       repeating-linear-gradient(135deg, rgba(184,134,11,0.045) 0px, rgba(184,134,11,0.045) 1px, transparent 1px, transparent 27px),
       repeating-linear-gradient(45deg, rgba(27,94,32,0.03) 0px, rgba(27,94,32,0.03) 1px, transparent 1px, transparent 27px);
   }
   @media (prefers-reduced-motion: reduce){ *{animation-duration:0.01ms !important; transition-duration:0.01ms !important; scroll-behavior:auto !important;} }
-  h1,h2,h3,.display{font-family:'Fraunces',serif; font-weight:500; letter-spacing:-0.012em; color:var(--vert-nuit);line-height:1.2;}
+  h1,h2,h3,.display{font-family:var(--font-titres); font-weight:500; letter-spacing:0; color:var(--vert-nuit);line-height:1.2;}
   h1{font-size:clamp(2.5rem,5vw,4.25rem);line-height:1.08;}
   h2{font-size:clamp(1.875rem,3.4vw,2.625rem);line-height:1.16;}
   h3{font-size:1.25rem;line-height:1.28;}
@@ -88,7 +90,7 @@
   img{max-width:100%; display:block;}
   :focus-visible{outline:2px solid var(--vert-nuit); outline-offset:2px; box-shadow:0 0 0 5px var(--or-clair);}
   .wrap{max-width:1180px; margin:0 auto; padding:0 32px;}
-  input,select,textarea,button{font-family:'Work Sans',sans-serif; font-size:0.95rem;}
+  input,select,textarea,button{font-family:var(--font-principale); font-size:0.95rem;}
 
   /* ---------- HEADER / TABS (commun à tout le site) ---------- */
   header{
@@ -102,7 +104,7 @@
     padding:14px 24px; max-width:1180px; margin:0 auto; gap:14px; flex-wrap:wrap;
   }
   .logo{
-    font-family:'Fraunces',serif; font-size:1.1rem; font-weight:600; color:var(--ivoire);
+    font-family:var(--font-titres); font-size:1.1rem; font-weight:600; color:var(--ivoire);
     display:flex; align-items:center; gap:10px; flex-shrink:0;
   }
   .logo .mark{ width:24px; height:24px; border-radius:50%; border:1.5px solid var(--or-clair); position:relative; flex-shrink:0; }
@@ -175,7 +177,7 @@
     }
     .menu-close{ display:none; }
     nav.tabs.open .menu-close{ display:flex; }
-    .account-box{ max-width:30vw; overflow:hidden; text-overflow:ellipsis; }
+    .header-actions .account-box{ display:none; }
   }
   @media (min-width:768px){
     header{
@@ -187,8 +189,8 @@
       column-gap:20px; row-gap:8px; overflow:visible; box-sizing:border-box;
     }
     header > nav:not(.tabs) > .logo{ grid-column:1; grid-row:1; }
-    header > nav:not(.tabs) > .account-box{ grid-column:2; grid-row:1; }
-    header > nav:not(.tabs) > .menu-toggle{ display:none; }
+    header > nav:not(.tabs) > .header-actions{ grid-column:2; grid-row:1; }
+    header > nav:not(.tabs) > .header-actions > .menu-toggle{ display:none; }
     header > nav:not(.tabs) > nav.tabs{
       position:static !important; right:auto !important; top:auto !important; width:100% !important; max-width:980px !important; height:auto !important; background:transparent !important; overflow:visible !important; box-sizing:border-box;
       grid-column:1 / -1; grid-row:2; justify-content:center; align-items:center; text-align:center;
@@ -204,6 +206,7 @@
   }
 
   .account-box{ font-size:0.82rem; color:rgba(245,239,224,0.85); white-space:nowrap; }
+  .header-actions{display:flex;align-items:center;justify-content:flex-end;gap:12px;min-width:0;margin-left:auto;}
 
   main{ line-height:1.6; }
   .view{ display:none; }
@@ -229,7 +232,7 @@
   .hero-inner{ max-width:1180px; margin:0 auto; position:relative; display:grid; grid-template-columns:1.15fr 0.85fr; gap:60px; align-items:center; }
   .hero-eyebrow{ display:flex; align-items:center; gap:10px; margin-bottom:22px; }
   .hero-eyebrow .line{ width:32px; height:1.5px; background:var(--grad-or); }
-  .eyebrow{ font-family:'IBM Plex Mono',monospace; font-size:0.75rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--or-clair); font-weight:500; }
+  .eyebrow{ font-family:var(--font-principale); font-size:0.75rem; letter-spacing:0; text-transform:uppercase; color:var(--or-clair); font-weight:600; }
   .hero h1{ font-size:clamp(2.5rem, 5vw, 4.3rem); line-height:1.04; font-weight:500; color:var(--ivoire); letter-spacing:-0.02em; }
   .hero h1 em{
     font-style:italic; font-weight:400;
@@ -267,12 +270,12 @@
     background:rgba(245,239,224,0.07); border:1px solid rgba(217,166,43,0.28); backdrop-filter:blur(6px);
     border-radius:16px; padding:14px 20px; min-width:120px;
   }
-  .hero-stat .num{ font-family:'Fraunces',serif; font-size:1.7rem; color:var(--or-clair); font-weight:500; }
+  .hero-stat .num{ font-family:var(--font-titres); font-size:1.7rem; color:var(--or-clair); font-weight:600; }
   .hero-stat .label{ font-size:0.78rem; color:rgba(245,239,224,0.65); margin-top:2px; }
 
   .hero-weave{ position:relative; aspect-ratio:1/1.05; filter:drop-shadow(0 20px 40px rgba(0,0,0,0.35)); }
   .hero-weave svg{ width:100%; height:100%; }
-  .weave-node-label{ font-family:'IBM Plex Mono',monospace; font-size:0.62rem; fill:rgba(245,239,224,0.7); letter-spacing:0.05em; }
+  .weave-node-label{ font-family:var(--font-principale); font-size:0.62rem; fill:rgba(245,239,224,0.7); letter-spacing:0; }
   @media (max-width:880px){
     .hero{ padding:48px 24px 72px; }
     .hero-inner{ grid-template-columns:1fr; gap:32px; }
@@ -324,7 +327,7 @@
   .chain-step{ position:relative; z-index:1; }
   .chain-num{
     width:64px; height:64px; border-radius:50%; background:var(--grad-vert); color:var(--or-clair);
-    display:flex; align-items:center; justify-content:center; font-family:'Fraunces',serif; font-size:1.3rem; font-weight:500;
+    display:flex; align-items:center; justify-content:center; font-family:var(--font-titres); font-size:1.3rem; font-weight:600;
     border:2px solid var(--or-clair); box-shadow:0 10px 22px rgba(15,44,19,0.25); transition:transform .3s ease;
   }
   .chain-step:hover .chain-num{ transform:scale(1.08) rotate(-4deg); }
@@ -343,7 +346,7 @@
   .acteur-card::before{ content:""; position:absolute; top:0; left:0; right:0; height:5px; background:var(--grad-or); opacity:0; transition:opacity .3s ease; }
   .acteur-card:hover{ border-color:var(--or); transform:translateY(-3px); box-shadow:0 12px 28px rgba(15,44,19,0.12); }
   .acteur-card:hover::before{ opacity:1; }
-  .acteur-card .tag{ font-family:'IBM Plex Mono',monospace; font-size:0.75rem; letter-spacing:0.06em; text-transform:uppercase; color:var(--terre); font-weight:500; }
+  .acteur-card .tag{ font-family:var(--font-principale); font-size:0.75rem; letter-spacing:0; text-transform:uppercase; color:var(--terre); font-weight:600; }
   .acteur-card h3{ margin-top:12px; font-size:1.25rem; font-weight:500; }
   .acteur-card ul{ margin-top:16px; list-style:none; display:flex; flex-direction:column; gap:10px; }
   .acteur-card li{ font-size:0.94rem; line-height:1.6; color:var(--encre-douce); padding-left:18px; position:relative; }
@@ -360,7 +363,7 @@
   .cedeao h2{ color:var(--ivoire); font-size:clamp(1.8rem,3.2vw,2.3rem); }
   .cedeao p{ margin-top:16px; color:rgba(245,239,224,0.78); line-height:1.65; font-size:1rem; }
   .cedeao .countries{ margin-top:26px; display:flex; flex-wrap:wrap; gap:10px; }
-  .cedeao .countries span{ font-family:'IBM Plex Mono',monospace; font-size:0.72rem; border:1px solid rgba(217,166,43,0.45); color:var(--or-clair); padding:7px 13px; border-radius:100px; transition:background .25s ease; }
+  .cedeao .countries span{ font-family:var(--font-principale); font-size:0.72rem; border:1px solid rgba(217,166,43,0.45); color:var(--or-clair); padding:7px 13px; border-radius:100px; transition:background .25s ease; }
   .cedeao .countries span:hover{ background:rgba(217,166,43,0.14); }
   .map-svg{ width:100%; height:auto; position:relative; }
   @media (max-width:820px){ .cedeao{ grid-template-columns:1fr; padding:46px 30px; border-radius:22px; } }
@@ -391,7 +394,7 @@
   }
   .footer-social a:hover{ color:var(--vert-profond); background:var(--grad-or); border-color:transparent; transform:translateY(-2px); }
   .footer-cols{ display:flex; gap:50px; flex-wrap:wrap; }
-  .footer-col h4{ font-family:'IBM Plex Mono',monospace; font-size:0.75rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--or-clair); margin-bottom:14px; }
+  .footer-col h4{ font-family:var(--font-principale); font-size:0.75rem; letter-spacing:0; text-transform:uppercase; color:var(--or-clair); margin-bottom:14px; }
   .footer-col button, .footer-col p{ display:block; font-size:0.875rem; color:rgba(245,239,224,0.68); margin-bottom:10px; background:none; border:none; cursor:pointer; padding:0; font-family:inherit; text-align:left; }
   .footer-col button:hover{ color:var(--or-clair); }
   .footer-bottom{ padding-top:24px; display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px; font-size:0.76rem; color:rgba(245,239,224,0.45); }
@@ -496,7 +499,7 @@
   .pub-card{ min-width:0; background:var(--creme); border:1px solid var(--bordure); border-radius:var(--rayon-carte); padding:24px; box-shadow:var(--ombre-douce); }
   .pub-top{ display:flex; justify-content:space-between; align-items:flex-start; gap:12px; flex-wrap:wrap; min-width:0; }
   .pub-card h3{ font-size:1.25rem; line-height:1.3; overflow-wrap:anywhere; }
-  .pub-tag{ font-family:'IBM Plex Mono',monospace; font-size:0.75rem; line-height:1.4; text-transform:uppercase; letter-spacing:0.06em; color:var(--terre); margin-bottom:6px; display:block; font-weight:500; }
+  .pub-tag{ font-family:var(--font-principale); font-size:0.75rem; line-height:1.4; text-transform:uppercase; letter-spacing:0; color:var(--terre); margin-bottom:6px; display:block; font-weight:600; }
   .pub-type{ display:inline-flex; align-items:center; max-width:100%; min-width:0; min-height:28px; margin-bottom:8px; padding:5px 10px; border:1px solid transparent; border-radius:100px; background:#E6F1E6; color:var(--vert-rich); font-size:0.75rem; line-height:1.35; font-weight:600; letter-spacing:0.02em; white-space:normal; overflow-wrap:anywhere; }
   .pub-type.achat{ background:#FBF0DC; color:var(--or-fonce); }
   .pub-statut{ display:inline-flex; align-items:center; max-width:100%; min-width:0; min-height:28px; padding:5px 10px; border:1px solid #C9DFC9; border-radius:100px; background:#E6F1E6; color:var(--vert-rich); font-size:0.75rem; line-height:1.35; font-weight:600; white-space:normal; overflow-wrap:anywhere; }
@@ -507,7 +510,7 @@
   .pub-meta{ margin-top:14px; display:flex; gap:12px 16px; flex-wrap:wrap; font-size:0.875rem; line-height:1.5; color:var(--encre-douce); }
   .pub-meta-priority{ margin:14px 0 4px; padding:12px 14px; border-radius:12px; background:var(--ivoire-2); gap:10px 20px; }
   .pub-meta strong{ color:var(--vert-nuit); }
-  .pub-footer{ margin-top:12px; font-size:0.75rem; line-height:1.5; color:var(--encre-douce); font-family:'IBM Plex Mono',monospace; font-weight:500; }
+  .pub-footer{ margin-top:12px; font-size:0.75rem; line-height:1.5; color:var(--encre-douce); font-family:var(--font-principale); font-weight:500; }
   .mes-annonce-status{ display:flex; flex-direction:column; gap:6px; min-width:0; margin-top:12px; }
   .mes-annonce-status select{ box-sizing:border-box; width:100%; max-width:100%; min-width:0; min-height:44px; padding:9px 12px; border:1px solid rgba(27,94,32,0.25); border-radius:10px; background:#fff; color:var(--vert-nuit); font:inherit; }
   .mes-annonce-status-message{ margin-top:10px; padding:10px 12px; border-radius:10px; background:#FBE9E7; color:var(--rouge); font-size:0.86rem; }
@@ -525,7 +528,7 @@
   .empty h3{ margin-bottom:8px; color:var(--vert-nuit); font-size:1.25rem; line-height:1.3; overflow-wrap:anywhere; }
   .empty p{ max-width:58ch; margin:0 auto; font-size:0.95rem; line-height:1.65; overflow-wrap:anywhere; }
   .empty.state-loading{ background:#F3EFE5; border-color:var(--bordure); }
-  .empty.state-loading h3{ color:var(--encre-douce); font-family:'Work Sans',sans-serif; font-size:1rem; font-weight:500; }
+  .empty.state-loading h3{ color:var(--encre-douce); font-family:var(--font-principale); font-size:1rem; font-weight:500; }
   .empty.state-error{ background:#FBE9E7; border-color:#EAC8C4; border-left:3px solid var(--rouge); text-align:left; }
   .empty.state-error h3{ color:var(--rouge); }
   .empty.state-error p{ margin-left:0; }
@@ -542,7 +545,7 @@
   .inline-state.state-error{ color:var(--rouge); }
   @media (max-width:600px){ .empty{ padding:24px 16px; } .empty h3{ font-size:1.15rem; } .empty p{ font-size:0.94rem; } }
   .formation-card{ min-width:0; background:var(--creme); border:1px solid var(--bordure); border-radius:var(--rayon-carte); padding:24px; margin-bottom:18px; box-shadow:var(--ombre-douce); }
-  .formation-card .eyebrow{ font-family:'IBM Plex Mono',monospace; font-size:0.75rem; color:var(--or); text-transform:uppercase; letter-spacing:0.06em; font-weight:500; }
+  .formation-card .eyebrow{ font-family:var(--font-principale); font-size:0.75rem; color:var(--or); text-transform:uppercase; letter-spacing:0; font-weight:600; }
   .formation-card h3{ margin-top:8px; }
   .formation-card p{ margin-top:10px; color:var(--encre-douce); line-height:1.6; font-size:0.94rem; }
   .formation-card .formation-content{ margin-top:10px; }
@@ -650,6 +653,22 @@
     #view-accueil .cta-section{ padding-block:64px; }
     #view-accueil .cta-section p{ margin-top:16px; }
   }
+  body,body *{font-family:var(--font-principale)!important;letter-spacing:0!important;}
+  h1,h2,h3,h4,h5,h6,.display{font-family:var(--font-titres)!important;font-weight:600;}
+  .card,.pub-card,.benefit-card,.avis-modal,.prix-history-modal,.formation-card{
+    border-radius:8px;box-shadow:0 4px 16px rgba(15,44,19,.08);border-color:rgba(27,94,32,.14);
+  }
+  .card,.pub-card,.formation-card{background:#fff;}
+  .btn-main,.btn-small,.btn-outline-small,.btn-primary,.btn-ghost,.desc-mode-btn,.voice-rec-btn{
+    min-height:40px;border-radius:8px;font-weight:600;letter-spacing:0;box-shadow:none;
+  }
+  .btn-main,.btn-small,.btn-primary{background:var(--vert-rich);color:#fff;border:1px solid var(--vert-rich);}
+  .btn-outline-small,.btn-ghost,.desc-mode-btn,.voice-rec-btn{border:1px solid var(--bordure);}
+  input:not([type="checkbox"]):not([type="radio"]),select,textarea{
+    border:1px solid #cbd5c5;border-radius:8px;background:#fff;color:var(--encre);padding:11px 12px;
+  }
+  input:focus,select:focus,textarea:focus{border-color:var(--vert-rich);outline:3px solid rgba(63,139,68,.16);}
+  .field label{font-weight:600;color:var(--vert-nuit);}
 </style>
 
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
@@ -679,8 +698,10 @@
       <button data-view="compte">Mon compte</button>
       <button data-view="conditions" style="font-size:0.75rem;opacity:0.6;">Conditions</button>
     </nav>
-    <div class="account-box" id="accountLabel"></div>
-    <button class="menu-toggle" id="menuToggle" aria-label="Ouvrir le menu">☰</button>
+    <div class="header-actions">
+      <div class="account-box" id="accountLabel"></div>
+      <button class="menu-toggle" id="menuToggle" aria-label="Ouvrir le menu" aria-expanded="false">☰</button>
+    </div>
   </nav>
   <div class="avis-modal-backdrop" id="avisModalBackdrop">
     <div class="avis-modal">
@@ -959,7 +980,7 @@
           <span class="eyebrow">Le Bénin qui cultive</span>
           <h2>Des champs réels, des mains réelles.</h2>
         </div>
-        <div class="gallery-grid reveal"><div><img src="https://richfarmunity.com/photo-hero-1.jpg" alt="Vue aerienne exploitation agricole au Benin" style="width:100%;height:100%;object-fit:cover;border-radius:14px;"></div><div><img src="https://richfarmunity.com/photo-hero-2.jpg" alt="Champ de mais au Benin" style="width:100%;height:100%;object-fit:cover;border-radius:14px;"></div><div><img src="https://richfarmunity.com/photo-hero-3.jpg" alt="Eleveur avec ses poussins au Benin" style="width:100%;height:100%;object-fit:cover;border-radius:14px;"></div><div><img src="https://richfarmunity.com/photo-terrain-1.jpg" alt="Agriculteur arrosant une pepiniere au Benin" style="width:100%;height:100%;object-fit:cover;border-radius:14px;"></div><div><img src="https://richfarmunity.com/photo-terrain-2.jpg" alt="Champ de laitue et papayers au Benin" style="width:100%;height:100%;object-fit:cover;border-radius:14px;"></div><div><img src="https://richfarmunity.com/photo-terrain-3.jpg" alt="Champ de concombres au Benin" style="width:100%;height:100%;object-fit:cover;border-radius:14px;"></div><div style="border-radius:14px;background:var(--vert-nuit);display:flex;align-items:center;justify-content:center;padding:20px;text-align:center;"><span style="color:var(--or-clair);font-family:'Fraunces',serif;font-size:1.1rem;">Rejoins la communaute Rich Farm Unity</span></div></div>
+        <div class="gallery-grid reveal"><div><img src="https://richfarmunity.com/photo-hero-1.jpg" alt="Vue aerienne exploitation agricole au Benin" style="width:100%;height:100%;object-fit:cover;border-radius:14px;"></div><div><img src="https://richfarmunity.com/photo-hero-2.jpg" alt="Champ de mais au Benin" style="width:100%;height:100%;object-fit:cover;border-radius:14px;"></div><div><img src="https://richfarmunity.com/photo-hero-3.jpg" alt="Eleveur avec ses poussins au Benin" style="width:100%;height:100%;object-fit:cover;border-radius:14px;"></div><div><img src="https://richfarmunity.com/photo-terrain-1.jpg" alt="Agriculteur arrosant une pepiniere au Benin" style="width:100%;height:100%;object-fit:cover;border-radius:14px;"></div><div><img src="https://richfarmunity.com/photo-terrain-2.jpg" alt="Champ de laitue et papayers au Benin" style="width:100%;height:100%;object-fit:cover;border-radius:14px;"></div><div><img src="https://richfarmunity.com/photo-terrain-3.jpg" alt="Champ de concombres au Benin" style="width:100%;height:100%;object-fit:cover;border-radius:14px;"></div><div style="border-radius:14px;background:var(--vert-nuit);display:flex;align-items:center;justify-content:center;padding:20px;text-align:center;"><span style="color:var(--or-clair);font-family:var(--font-titres);font-size:1.1rem;">Rejoins la communaute Rich Farm Unity</span></div></div>
       </div>
     </section>
 
@@ -1106,7 +1127,7 @@
             <circle cx="60" cy="60" r="4" fill="#F5EFE0" opacity="0.7"/><circle cx="250" cy="50" r="4" fill="#F5EFE0" opacity="0.7"/>
             <circle cx="60" cy="210" r="4" fill="#F5EFE0" opacity="0.7"/><circle cx="250" cy="220" r="4" fill="#F5EFE0" opacity="0.7"/>
             <circle cx="150" cy="30" r="4" fill="#F5EFE0" opacity="0.7"/><circle cx="230" cy="140" r="4" fill="#F5EFE0" opacity="0.7"/>
-            <text x="128" y="118" font-family="IBM Plex Mono, monospace" font-size="9" fill="#F5EFE0">BÉNIN</text>
+            <text x="128" y="118" font-family="Inter, sans-serif" font-size="9" fill="#F5EFE0">BÉNIN</text>
           </svg>
         </div>
       </div>
@@ -1390,9 +1411,10 @@
   <!-- ==================== VUE NOUVELLE PUBLICATION ==================== -->
   <div class="view" id="view-nouvelle-pub">
     <div class="app-main">
-      <div class="page-head"><h2>Publier une annonce</h2><p>Décrivez ce que vous proposez — les autres acteurs pourront vous contacter directement.</p></div>
+      <div class="page-head"><h2 id="publicationFormTitle">Publier une annonce</h2><p>Décrivez ce que vous proposez — les autres acteurs pourront vous contacter directement.</p></div>
       <div class="card">
         <form id="formPublication">
+          <input type="hidden" id="pubEditId" value="">
           <div class="field">
             <label>Type d'annonce</label>
             <div style="display:flex;gap:12px;margin-top:8px;">
@@ -1428,6 +1450,7 @@
               <span id="geolocStatus" style="font-size:0.78rem;color:var(--vert-rich);margin-left:8px;"></span>
             </div>
           </div>
+          <div class="field"><label for="pubExpireAt">Date et heure d’expiration (optionnel)</label><input type="datetime-local" id="pubExpireAt"><small>L’annonce ne sera plus visible après cette échéance.</small></div>
           <div class="field" id="pubCertifWrap" style="display:none;">
             <label for="pubCertif">Certification(s) du produit ou de l'unité de transformation</label>
             <input type="text" id="pubCertif" placeholder="Ex : Autorisation ABSSA, Label bio, HACCP, ISO 22000, Certificat sanitaire…">
@@ -1456,6 +1479,7 @@
           </div>
           <div class="field"><label for="pubPhoto">Photos (jusqu'à 5, optionnel)</label><input type="file" id="pubPhoto" accept="image/*" multiple></div>
           <button type="submit" class="btn-main" id="btnPublier">Publier l'annonce</button>
+          <button type="button" class="btn-outline-small" id="btnAnnulerEdition" style="display:none;margin-left:8px;">Annuler la modification</button>
           <div class="msg" id="msgPublication"></div>
           <div id="notifPromptPublication" style="display:none;margin-top:14px;padding:16px;background:var(--ivoire-2);border-radius:12px;">
             <p style="font-size:0.88rem;color:var(--encre);margin-bottom:10px;">🔔 Activez les notifications pour savoir dès que votre annonce est validée.</p>
@@ -1495,12 +1519,14 @@
           </div>
           <div class="field-row">
             <div class="field"><label for="input-pub-images">Photos de la publicité</label><input type="file" id="input-pub-images" multiple accept="image/*" required></div>
-            <div class="field"><label for="pubDateExpiration">Expire le (optionnel)</label><input type="date" id="pubDateExpiration"></div>
+            <div class="field"><label for="pubDateExpiration">Date et heure d’expiration</label><input type="datetime-local" id="pubDateExpiration"></div>
           </div>
           <div class="field"><label for="pubLien">Lien de destination (optionnel)</label><input type="text" id="pubLien" placeholder="https://... ou https://wa.me/..."></div>
           <button type="submit" class="btn-main" style="margin-top:10px;">Ajouter la publicité</button>
         </form>
         <div id="listePublicitesAdmin" style="margin-top:18px;"></div>
+        <h4 style="margin-top:22px;">Publicités expirées</h4>
+        <div id="listePublicitesExpireesAdmin" style="margin-top:10px;"></div>
       </div>
       <div id="formationsContainer"><div class="empty state-loading"><h3>Chargement…</h3></div></div>
     </div>
@@ -1513,10 +1539,22 @@
     }
     .bandeau-pub-inner{ display:flex; gap:16px; flex-shrink:0; animation:bandeauPubScrollLoop 30s linear infinite; }
     .bandeau-pub-track:hover .bandeau-pub-inner{ animation-play-state:paused; }
-    .bandeau-pub-card{ flex-shrink:0; width:220px; height:120px; border-radius:14px; overflow:hidden; box-shadow:0 8px 20px rgba(15,44,19,0.15); }
-    .pub-card img{ width:100%; height:100%; object-fit:cover; display:block; }
+    .bandeau-pub-card{ position:relative; flex-shrink:0; width:220px; height:120px; border-radius:8px; overflow:hidden; box-shadow:0 8px 20px rgba(15,44,19,0.15); }
+    .bandeau-pub-card>img{ width:100%; height:100%; object-fit:cover; display:block; }
     @keyframes bandeauPubScrollLoop{ from{ transform:translateX(0); } to{ transform:translateX(-50%); } }
-    @media (max-width:600px){ .bandeau-pub-card{ width:180px; height:100px; } }
+    .expiration-info{display:flex;flex-wrap:wrap;align-items:center;gap:4px 10px;margin:10px 0;padding:9px 11px;border:1px solid rgba(27,94,32,.14);border-radius:8px;background:#f4f8f2;color:var(--vert-nuit);font-size:.82rem;line-height:1.45;}
+    .expiration-info strong{color:var(--terre);font-size:.78rem;font-weight:700;}
+    .bandeau-pub-card .expiration-info{position:absolute;right:5px;bottom:5px;left:5px;display:block;margin:0;padding:5px 7px;background:rgba(8,26,11,.88);border:0;color:#fff;font-size:.68rem;}
+    .bandeau-pub-card .expiration-info strong{display:block;color:#f5cf72;font-size:.68rem;}
+    .publicite-admin-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid var(--bordure);}
+    .publicite-admin-info{display:flex;align-items:center;gap:12px;min-width:0;}
+    .publicite-admin-info>img{width:70px;height:48px;object-fit:cover;border-radius:6px;}
+    .publicite-admin-info>div{min-width:0;}
+    .publicite-admin-info>div>span{display:block;color:var(--encre-douce);font-size:.8rem;margin-top:3px;}
+    .publicite-admin-info .expiration-info{margin-bottom:0;}
+    .publicite-admin-actions{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:6px;}
+    .mes-annonce-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;}
+    @media (max-width:600px){.bandeau-pub-card{width:180px;height:100px}.publicite-admin-row{align-items:flex-start;flex-direction:column}.publicite-admin-actions{width:100%;justify-content:flex-start}.publicite-admin-actions button{flex:1 1 auto}}
   </style>
 
   <!-- ==================== VUE ANCRAGE INSTITUTIONNEL ==================== -->
@@ -1982,7 +2020,7 @@
       display:flex; align-items:center; justify-content:center; font-size:2.1rem; margin-bottom:20px;
       box-shadow:var(--ombre-or);
     }
-    .fonct-step h3{ font-family:'Fraunces',serif; font-size:1.3rem; color:var(--ivoire); margin-bottom:12px; }
+    .fonct-step h3{ font-family:var(--font-titres); font-size:1.3rem; color:var(--ivoire); margin-bottom:12px; }
     .fonct-step p{ color:rgba(245,239,224,0.75); font-size:0.95rem; line-height:1.6; max-width:460px; }
     .fonct-dots{ display:flex; justify-content:center; gap:9px; margin-top:20px; }
     .fonct-dot{ width:9px; height:9px; border-radius:50%; background:rgba(28,26,20,0.18); transition:all .4s ease; cursor:pointer; }
@@ -2013,7 +2051,7 @@
       box-shadow:var(--ombre-or);
     }
     .reel-tag{ font-size:0.75rem; line-height:1.4; letter-spacing:1.2px; text-transform:uppercase; color:var(--or); font-weight:700; margin-bottom:10px; }
-    .reel-step h3{ font-family:'Fraunces',serif; font-size:1.35rem; color:var(--ivoire); margin-bottom:12px; }
+    .reel-step h3{ font-family:var(--font-titres); font-size:1.35rem; color:var(--ivoire); margin-bottom:12px; }
     .reel-step p{ color:rgba(245,239,224,0.78); font-size:0.95rem; line-height:1.6; max-width:480px; margin-bottom:18px; }
     .reel-exemple{
       background:rgba(217,166,43,0.12); border:1px solid rgba(217,166,43,0.35); border-radius:12px;
@@ -2111,6 +2149,11 @@
         <p>Ces annonces sont en attente de validation avant publication.</p>
       </div>
       <div id="moderationContainer" class="pub-list"><div class="empty state-loading"><h3>Chargement…</h3></div></div>
+      <div class="page-head" style="margin-top:36px;">
+        <h2>Publications expirées</h2>
+        <p>Ces annonces ne sont plus visibles dans les résultats publics.</p>
+      </div>
+      <div id="expiredPublicationsContainer" class="pub-list"><div class="empty state-loading"><h3>Chargement…</h3></div></div>
       <div class="page-head" style="margin-top:36px;">
         <h2>Prix en attente de validation</h2>
       </div>
@@ -2222,41 +2265,6 @@
 
 <div id="callBackdrop" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:1001;padding:16px;align-items:center;justify-content:center;">
   <div class="card" style="width:min(420px,95vw);text-align:center;"><h3>Partager ton numéro ?</h3><p>Partagez votre numéro avec ce vendeur pendant 30 secondes.</p><div id="callPhone" style="font-size:1.1rem;font-weight:700;color:var(--vert-rich);margin:14px 0;"></div><div style="display:flex;gap:10px;justify-content:center;"><button class="btn-main" onclick="confirmerAppel(true)">Oui</button><button class="btn-outline-small" onclick="confirmerAppel(false)">Non</button></div></div>
-</div>
-
-<style>
-#rich-fab{position:fixed;bottom:24px;right:24px;z-index:9998}
-#rich-fab-btn{width:60px;height:60px;border-radius:50%;background:#0f5d2f;display:flex;align-items:center;justify-content:center;color:white;font-size:28px;box-shadow:0 4px 12px rgba(0,0,0,.3);cursor:pointer;border:none}
-#rich-tooltip{position:absolute;bottom:70px;right:0;background:#111;color:#fff;padding:8px 14px;border-radius:20px;font-size:13px;white-space:nowrap;opacity:0;transition:.2s;pointer-events:none;transform:translateY(10px)}
-#rich-fab:hover #rich-tooltip{opacity:1;transform:translateY(0)}
-#rich-window{position:fixed;bottom:100px;right:12px;left:12px;width:calc(100% - 24px);max-width:420px;margin:12px;height:520px;max-height:80vh;background:#fff;border-radius:20px;box-shadow:0 10px 40px rgba(0,0,0,.25);z-index:9999;display:flex;flex-direction:column;overflow:hidden;border:1px solid #e5e7eb;box-sizing:border-box}
-#rich-window.hidden{display:none}
-#rich-window #rich-chat > div{max-width:100%!important;word-break:break-word;overflow-wrap:anywhere;}
-#rich-window input, #rich-window button{box-sizing:border-box;}
-#rich-window #rich-input{flex:1 1 auto;min-width:0;}
-#rich-window .rich-send{flex:0 0 auto;white-space:nowrap;}
-@media (min-width:768px){#rich-window{left:auto;right:24px;margin:12px;width:420px;}}
-</style>
-<div id="rich-fab"><div id="rich-tooltip">Discuter avec Rĩch</div><button id="rich-fab-btn" onclick="toggleRich()">🌱</button></div>
-<div id="rich-window" class="hidden">
-  <div style="background:#0f5d2f;color:white;padding:14px 16px;display:flex;justify-content:space-between;align-items:center">
-    <div><b>Rĩch</b> - Assistant IA<br><small>Français, English, 中文 • Vocal</small></div>
-    <button onclick="toggleRich()" style="background:rgba(255,255,255,.2);border:none;color:white;width:32px;height:32px;border-radius:50%">✕</button>
-  </div>
-  <div id="rich-chat" style="flex:1;overflow-y:auto;padding:16px;background:#f9fafb"></div>
-  <div style="padding:10px;border-top:1px solid #eee;background:white">
-    <div style="display:flex;gap:8px;align-items:center">
-      <button id="rich-mic" onclick="startVoice()" style="width:38px;height:38px;border-radius:50%;border:1px solid #ddd;background:#fff">🎤</button>
-      <label style="width:38px;height:38px;border-radius:50%;border:1px solid #ddd;background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer">📷<input id="rich-photo" type="file" accept="image/*" hidden onchange="sendPhoto(this)"></label>
-      <input id="rich-input" placeholder="Parlez à Rĩch..." style="flex:1 1 auto;min-width:0;border:1px solid #ddd;border-radius:20px;padding:10px 14px" onkeydown="if(event.key==='Enter') sendRich()">
-      <button class="rich-send" onclick="sendRich()" style="background:#0f5d2f;color:white;border:none;border-radius:20px;padding:10px 14px;font-weight:bold;flex-shrink:0">Envoyer</button>
-    </div>
-    <div id="richLangSelector" style="display:flex;justify-content:center;gap:6px;margin-top:7px">
-      <button type="button" data-lang="francais" style="border:1px solid #0f5d2f;background:#0f5d2f;color:white;border-radius:16px;padding:4px 9px;font-size:11px;font-weight:bold">🇫🇷 FR</button>
-      <button type="button" data-lang="anglais" style="border:1px solid #0f5d2f;background:white;color:#0f5d2f;border-radius:16px;padding:4px 9px;font-size:11px;font-weight:bold">🇬🇧 EN</button>
-      <button type="button" data-lang="chinois" style="border:1px solid #0f5d2f;background:white;color:#0f5d2f;border-radius:16px;padding:4px 9px;font-size:11px;font-weight:bold">🇨🇳 中文</button>
-    </div>
-  </div>
 </div>
 
 <footer class="site-footer">
@@ -2376,7 +2384,7 @@
     if(!bandeau){
       bandeau = document.createElement('div');
       bandeau.id = 'bandeauHorsLigne';
-      bandeau.style.cssText = 'display:none;position:sticky;top:0;z-index:9999;background:var(--rouge);color:#fff;text-align:center;padding:8px 12px;font-size:0.85rem;font-family:"Work Sans",sans-serif;';
+      bandeau.style.cssText = 'display:none;position:sticky;top:0;z-index:9999;background:var(--rouge);color:#fff;text-align:center;padding:8px 12px;font-size:0.85rem;font-family:var(--font-principale);';
       bandeau.textContent = '📡 Vous êtes hors connexion — certaines informations peuvent être obsolètes.';
       document.body.prepend(bandeau);
     }
@@ -2476,7 +2484,7 @@
     let sinceCompte = isoSince('compte');
 
     const results = await Promise.all([
-      badgeCount(sb.from('publications').select('id', { count: 'exact', head: true }).eq('approuve', true).gte('created_at', sinceAnnonce)),
+      badgeCount(sb.from('publications').select('id', { count: 'exact', head: true }).eq('approuve', true).eq('statut_moderation', 'publiee').or(`expire_at.is.null,expire_at.gt.${new Date().toISOString()}`).gte('created_at', sinceAnnonce)),
       badgeCount(sb.from('prix_marche').select('id', { count: 'exact', head: true }).eq('approuve', true).gte('created_at', sincePrix)),
       badgeCount(sb.from('formations').select('id', { count: 'exact', head: true }).gte('created_at', sinceFormation)),
       badgeCount(sb.from('forum_sujets').select('id', { count: 'exact', head: true }).gte('created_at', sinceForum)),
@@ -2510,7 +2518,7 @@
       (async () => {
         if(!currentProfile || !currentProfile.is_admin) return 0;
         const [annonces, prix, institutions] = await Promise.all([
-          badgeCount(sb.from('publications').select('id', { count: 'exact', head: true }).eq('approuve', false).eq('rejete', false)),
+          badgeCount(sb.from('publications').select('id', { count: 'exact', head: true }).eq('statut_moderation', 'en_attente')),
           badgeCount(sb.from('prix_marche').select('id', { count: 'exact', head: true }).eq('approuve', false)),
           badgeCount(sb.from('profiles').select('id', { count: 'exact', head: true }).eq('type_acteur', 'Membre d\'institution').eq('compte_approuve', false).eq('compte_rejete', false))
         ]);
@@ -2560,7 +2568,7 @@
     if(name === 'calendrier'){ remplirMenuCalendrier(); afficherCalendrier(); }
     if(name === 'carte'){ initOrRafraichirCarte(); }
     if(name === 'formations'){ loadFormations(); loadPublicites(); }
-    if(name === 'moderation'){ loadPending(); loadModeration(); loadModerationPrix(); }
+    if(name === 'moderation'){ loadPending(); loadModeration(); loadExpiredPublications(); loadModerationPrix(); }
     if(name === 'suggestions'){ loadSuggestions(); }
     if(name === 'forums'){ loadSujets(); demarrerAutoRefresh(rafraichirSujetsAutomatiquement); }
     if(name === 'institutionnel') loadContactsInstitutionnels();
@@ -3044,7 +3052,7 @@
       container.dataset.avisHandlerAttached = 'true';
     }
     if(!silencieux) container.innerHTML = '<div class="empty state-loading"><h3>Chargement…</h3></div>';
-    let query = sb.from('publications').select('*, profiles(prenom, nom, telephone, type_acteur, is_verified, rating_avg, rating_count)', { count: 'exact' }).order('created_at', { ascending: false });
+    let query = sb.from('publications').select('*, profiles(prenom, nom, telephone, type_acteur, is_verified, rating_avg, rating_count)', { count: 'exact' }).eq('approuve', true).eq('statut_moderation', 'publiee').or(`expire_at.is.null,expire_at.gt.${new Date().toISOString()}`).order('created_at', { ascending: false });
     if(typeAnnonceActuel !== 'toutes') query = query.eq('type_annonce', typeAnnonceActuel);
     const cat = document.getElementById('filterCategorie').value;
     const statut = document.getElementById('filterStatut').value;
@@ -3074,6 +3082,7 @@
       const certifBadge = p.certification ? ' <span class="pub-statut" style="background:#E6F1E6;color:var(--vert-rich);">✅ ' + escapeHtml(p.certification) + '</span>' : '';
       const statutClass = !p.approuve ? 'reserve' : (p.statut === 'reserve' ? 'reserve' : (p.statut === 'ecoule' ? 'ecoule' : ''));
       const statutLabel = !p.approuve ? 'En attente de validation' : (p.statut === 'reserve' ? 'Réservé' : (p.statut === 'ecoule' ? 'Écoulé' : 'Disponible'));
+      const expirationHtml = p.expire_at ? htmlExpiration(p.expire_at, 'publication') : '';
       const photoHtml = galleryHtml(p, 300);
       const ecoBadge = p.eco_responsable ? '<span class="pub-statut" style="background:#E6F1E6;color:var(--vert-rich);margin-left:6px;">🌱 Éco-responsable</span>' : '';
       const vendeurId = p.user_id;
@@ -3103,8 +3112,9 @@
       const audioUrl = safeHttpUrl(p.audio_url);
       const audioHtml = audioUrl ? `<audio src="${audioUrl}" controls style="width:100%;margin:10px 0;"></audio>` : '';
       const avisBtn = (currentUser && !isOwner) ? `<button class="btn-outline-small" style="margin-top:12px;margin-left:8px;" data-avis-user-id="${escapeHtml(p.user_id)}" data-avis-user-name="${escapeHtml(auteur)}">⭐ Laisser un avis</button>` : '';
-      return `<div class="pub-card"><div class="pub-top"><div><span class="pub-type ${typeAnnonceClass}">${typeAnnonceLabel}</span><span class="pub-tag">${escapeHtml(p.categorie)}</span><h3>${escapeHtml(p.titre)}</h3></div><span class="pub-statut ${statutClass}">${statutLabel}</span>${ecoBadge}</div><div class="pub-meta pub-meta-priority">${p.quantite ? '<span><strong>Quantité :</strong> ' + escapeHtml(p.quantite) + '</span>' : ''}${p.prix ? '<span><strong>Prix :</strong> ' + escapeHtml(p.prix) + '</span>' : ''}${p.localisation ? '<span><strong>Lieu :</strong> ' + escapeHtml(p.localisation) + '</span>' : ''}</div>${photoHtml}${p.description ? '<p class="desc">' + escapeHtml(p.description) + '</p>' : ''}${audioHtml}<div class="pub-footer">Publié par ${escapeHtml(auteur)}${verifiedBadge}${ratingBadge}${certifBadge}<br><span id="avisBadge-${p.user_id}" class="stars-display"></span></div>${contactBtn}${shareBtn}${avisBtn}${deleteBtn}</div>`;
+      return `<div class="pub-card" data-publication-expiration><div class="pub-top"><div><span class="pub-type ${typeAnnonceClass}">${typeAnnonceLabel}</span><span class="pub-tag">${escapeHtml(p.categorie)}</span><h3>${escapeHtml(p.titre)}</h3></div><span class="pub-statut ${statutClass}">${statutLabel}</span>${ecoBadge}</div><div class="pub-meta pub-meta-priority">${p.quantite ? '<span><strong>Quantité :</strong> ' + escapeHtml(p.quantite) + '</span>' : ''}${p.prix ? '<span><strong>Prix :</strong> ' + escapeHtml(p.prix) + '</span>' : ''}${p.localisation ? '<span><strong>Lieu :</strong> ' + escapeHtml(p.localisation) + '</span>' : ''}</div>${expirationHtml}${photoHtml}${p.description ? '<p class="desc">' + escapeHtml(p.description) + '</p>' : ''}${audioHtml}<div class="pub-footer">Publié par ${escapeHtml(auteur)}${verifiedBadge}${ratingBadge}${certifBadge}<br><span id="avisBadge-${p.user_id}" class="stars-display"></span></div>${contactBtn}${shareBtn}${avisBtn}${deleteBtn}</div>`;
     }).join('');
+    demarrerCompteARebours();
     renderAvisBadges([...new Set(data.map(p => p.user_id))]);
   }
 
@@ -3149,7 +3159,7 @@
           ${c.notes ? '<div style="font-size:0.8rem;color:var(--or-fonce);margin-top:4px;">' + escapeHtml(c.notes) + '</div>' : ''}
           ${estAdmin ? '<button type="button" class="btn-outline-small" style="margin-top:8px;border-color:var(--rouge);color:var(--rouge);" onclick="supprimerContactInstit(\'' + c.id + '\')">Supprimer</button>' : ''}
         </div>`).join('');
-      return `<div style="margin-bottom:22px;"><h4 style="font-family:'Fraunces',serif;color:var(--vert-nuit);margin-bottom:2px;">${escapeHtml(dep)}</h4>${items}</div>`;
+      return `<div style="margin-bottom:22px;"><h4 style="font-family:var(--font-titres);color:var(--vert-nuit);margin-bottom:2px;">${escapeHtml(dep)}</h4>${items}</div>`;
     }).join('');
   }
 
@@ -3197,6 +3207,53 @@
     if(mesAnnoncesVisible) await loadMesAnnonces();
   };
 
+  let annonceEnEdition = null;
+  function terminerEditionAnnonce(){
+    annonceEnEdition = null;
+    document.getElementById('pubEditId').value = '';
+    document.getElementById('publicationFormTitle').textContent = 'Publier une annonce';
+    document.getElementById('btnPublier').textContent = 'Publier l\'annonce';
+    document.getElementById('btnAnnulerEdition').style.display = 'none';
+  }
+
+  window.modifierAnnonce = async function(id){
+    if(!currentUser) return;
+    const { data, error } = await sb.from('publications').select('*').eq('id', id).eq('user_id', currentUser.id).maybeSingle();
+    if(error || !data){ alert('Impossible de charger cette annonce pour modification.'); return; }
+    if(data.statut === 'expiree' || (data.expire_at && new Date(data.expire_at).getTime() <= Date.now())){
+      alert('Une annonce expirée ne peut plus être modifiée.');
+      return;
+    }
+    annonceEnEdition = data;
+    document.getElementById('pubEditId').value = data.id;
+    document.getElementById('publicationFormTitle').textContent = 'Modifier mon annonce';
+    document.getElementById('btnPublier').textContent = 'Enregistrer les modifications';
+    document.getElementById('btnAnnulerEdition').style.display = 'inline-flex';
+    document.getElementById('pubTitre').value = data.titre || '';
+    document.getElementById('pubCategorie').value = data.categorie || '';
+    document.getElementById('pubQuantite').value = data.quantite || '';
+    document.getElementById('pubPrix').value = data.prix || '';
+    document.getElementById('pubLocalisation').value = data.localisation || '';
+    document.getElementById('pubLatitude').value = data.latitude ?? '';
+    document.getElementById('pubLongitude').value = data.longitude ?? '';
+    document.getElementById('pubDescription').value = data.description || '';
+    document.getElementById('pubCertif').value = data.certification || '';
+    document.getElementById('pubEcoResponsable').checked = Boolean(data.eco_responsable);
+    document.getElementById('pubExpireAt').value = data.expire_at ? new Date(new Date(data.expire_at).getTime() - new Date(data.expire_at).getTimezoneOffset() * 60000).toISOString().slice(0, 16) : '';
+    choisirTypeAnnonce(data.type_annonce || 'vente');
+    document.getElementById('pubModeTexteBtn').click();
+    document.getElementById('msgPublication').innerHTML = '';
+    showView('nouvelle-pub');
+  };
+
+  document.getElementById('btnAnnulerEdition').addEventListener('click', () => {
+    document.getElementById('formPublication').reset();
+    document.getElementById('pubCertifWrap').style.display = 'none';
+    document.getElementById('pubModeTexteBtn').click();
+    document.getElementById('msgPublication').innerHTML = '';
+    terminerEditionAnnonce();
+  });
+
   async function loadMesAnnonces(messageAnnonceId, messageStatut){
     if(!currentUser) return;
     const container = document.getElementById('mesAnnoncesContainer');
@@ -3217,18 +3274,22 @@
     }
     container.innerHTML = data.map(p => {
       let statutLabel, statutClass;
-      if(p.rejete){ statutLabel = 'Rejetée'; statutClass = 'ecoule'; }
+      const expiree = p.statut === 'expiree' || (p.expire_at && new Date(p.expire_at).getTime() <= Date.now());
+      if(expiree){ statutLabel = 'Expirée'; statutClass = 'ecoule'; }
+      else if(p.rejete){ statutLabel = 'Rejetée'; statutClass = 'ecoule'; }
       else if(!p.approuve){ statutLabel = 'En attente de validation'; statutClass = 'reserve'; }
       else if(p.statut === 'disponible' || p.statut === 'reserve' || p.statut === 'ecoule') { statutLabel = p.statut === 'reserve' ? 'Réservé' : (p.statut === 'ecoule' ? 'Écoulé' : 'Disponible'); statutClass = p.statut === 'reserve' ? 'reserve' : (p.statut === 'ecoule' ? 'ecoule' : ''); }
       else { statutLabel = 'Statut commercial non reconnu'; statutClass = 'reserve'; }
       const date = p.created_at ? new Date(p.created_at).toLocaleDateString('fr-FR') : '';
       const photoHtml = galleryHtml(p, 220);
-      const statutControl = p.approuve && !p.rejete && (p.statut === 'disponible' || p.statut === 'reserve' || p.statut === 'ecoule')
+      const statutControl = !expiree && p.approuve && !p.rejete && (p.statut === 'disponible' || p.statut === 'reserve' || p.statut === 'ecoule')
         ? `<label class="mes-annonce-status"><span>Statut commercial</span><select data-annonce-statut data-annonce-id="${escapeHtml(p.id)}" aria-label="Statut commercial de ${escapeHtml(p.titre)}"><option value="disponible"${p.statut === 'disponible' ? ' selected' : ''}>Disponible</option><option value="reserve"${p.statut === 'reserve' ? ' selected' : ''}>Réservé</option><option value="ecoule"${p.statut === 'ecoule' ? ' selected' : ''}>Écoulé</option></select></label>`
         : (!p.rejete && p.approuve && statutLabel === 'Statut commercial non reconnu' ? `<div class="mes-annonce-status"><span>${statutLabel} : ${escapeHtml(String(p.statut))}</span></div>` : '');
       const statutMessage = messageStatut && p.id === messageAnnonceId ? `<p class="mes-annonce-status-message" role="alert">${escapeHtml(messageStatut)}</p>` : '';
-      return `<div class="pub-card"><div class="pub-top"><div><span class="pub-tag">${escapeHtml(p.categorie)}</span><h3>${escapeHtml(p.titre)}</h3></div><span class="pub-statut ${statutClass}">${statutLabel}</span></div>${photoHtml}<div class="pub-footer">Publié le ${date}</div>${statutControl}${statutMessage}<button class="btn-outline-small" style="margin-top:12px;border-color:var(--rouge);color:var(--rouge);" onclick="supprimerAnnonce('${p.id}')">Supprimer</button></div>`;
+      const editButton = !expiree && !p.rejete ? `<button type="button" class="btn-outline-small" onclick="modifierAnnonce('${escapeHtml(p.id)}')">Modifier</button>` : '';
+      return `<div class="pub-card"><div class="pub-top"><div><span class="pub-tag">${escapeHtml(p.categorie)}</span><h3>${escapeHtml(p.titre)}</h3></div><span class="pub-statut ${statutClass}">${statutLabel}</span></div>${photoHtml}${p.expire_at ? htmlExpiration(p.expire_at, 'owner-publication') : ''}<div class="pub-footer">Publié le ${date}</div>${statutControl}${statutMessage}<div class="mes-annonce-actions">${editButton}<button type="button" class="btn-outline-small" style="border-color:var(--rouge);color:var(--rouge);" onclick="supprimerAnnonce('${escapeHtml(p.id)}')">Supprimer</button></div></div>`;
     }).join('');
+    demarrerCompteARebours();
   }
 
   async function changerStatutAnnonce(id, statut){
@@ -3566,7 +3627,7 @@
       }).addTo(carteLeaflet);
     }
     const categorie = document.getElementById('filterCarteCategorie').value;
-    let query = sb.from('publications').select('id,titre,prix,localisation,categorie,latitude,longitude,photo_url,photos').eq('approuve', true).not('latitude', 'is', null).not('longitude', 'is', null);
+    let query = sb.from('publications').select('id,titre,prix,localisation,categorie,latitude,longitude,photo_url,photos').eq('approuve', true).eq('statut_moderation', 'publiee').or(`expire_at.is.null,expire_at.gt.${new Date().toISOString()}`).not('latitude', 'is', null).not('longitude', 'is', null);
     if(categorie) query = query.eq('categorie', categorie);
     const { data, error } = await query;
 
@@ -4005,11 +4066,19 @@
   document.getElementById('formPublication').addEventListener('submit', async (e) => {
     e.preventDefault();
     if(!currentUser){ showMsg('msgPublication', 'Connectez-vous pour publier une annonce.', 'error'); return; }
+    const editId = document.getElementById('pubEditId').value;
+    const expireAtValue = document.getElementById('pubExpireAt').value;
+    if(expireAtValue && new Date(expireAtValue).getTime() <= Date.now()){
+      showMsg('msgPublication', 'La date et l’heure d’expiration doivent être dans le futur.', 'error');
+      return;
+    }
     const btn = document.getElementById('btnPublier');
     btn.disabled = true;
 
-    let photo_url = null;
-    let photos = [];
+    let photo_url = annonceEnEdition?.photo_url || null;
+    let photos = Array.isArray(annonceEnEdition?.photos)
+      ? [...annonceEnEdition.photos]
+      : (photo_url ? [photo_url] : []);
     const fileInput = document.getElementById('pubPhoto');
     const files = Array.from(fileInput.files).slice(0, 5);
     if(files.length > 0){
@@ -4031,7 +4100,7 @@
       photo_url = photos[0];
     }
 
-    let audio_url = null;
+    let audio_url = annonceEnEdition?.audio_url || null;
     if(pubDescMode === 'vocal'){
       const blob = pubVoiceRecorder.getBlob();
       if(blob){
@@ -4062,20 +4131,47 @@
       audio_url: audio_url,
       certification: document.getElementById('pubCertif').value.trim() || null,
       eco_responsable: document.getElementById('pubEcoResponsable').checked,
+      expire_at: expireAtValue ? new Date(expireAtValue).toISOString() : null,
       photo_url: photo_url,
       photos: photos,
       latitude: document.getElementById('pubLatitude').value ? parseFloat(document.getElementById('pubLatitude').value) : null,
       longitude: document.getElementById('pubLongitude').value ? parseFloat(document.getElementById('pubLongitude').value) : null
     };
-    const { error } = await sb.from('publications').insert(payload);
-    if(error){ showMsg('msgPublication', error.message, 'error'); }
+    let submitError = null;
+    if(editId){
+      const { data, error } = await sb.from('publications').update(payload).eq('id', editId).eq('user_id', currentUser.id).select('id').maybeSingle();
+      submitError = error || (!data ? new Error('Aucune annonce correspondante n’a été modifiée.') : null);
+    }else{
+      const { error } = await sb.from('publications').insert(payload);
+      submitError = error;
+    }
+    if(submitError){ showMsg('msgPublication', submitError.message, 'error'); }
     else {
-      const { data: admins } = await sb.from('profiles').select('email').eq('is_admin', true);
-      const adminEmails = [...new Set((admins || []).map(admin => admin.email).filter(Boolean))];
-      if(adminEmails.length){
-        await sb.functions.invoke('send-email', { body: { recipients: adminEmails, subject: 'Nouvelle annonce à valider', announcement: payload } });
+      if(!editId){
+        const { data: admins } = await sb.from('profiles').select('email').eq('is_admin', true);
+        const adminEmails = [...new Set((admins || []).map(admin => admin.email).filter(Boolean))];
+        if(adminEmails.length){
+          try{
+            const { error: emailError } = await sb.functions.invoke('send-email', { body: { recipients: adminEmails, subject: 'Nouvelle annonce à valider', announcement: payload } });
+            if(emailError) console.warn('Notification email admin indisponible', emailError.message);
+          }catch(emailError){
+            console.warn('Notification email admin indisponible', emailError);
+          }
+        }
       }
-      showMsg('msgPublication', 'Annonce publiée !', 'success'); pageActuelle = 1; loadPublications(); refreshBadges(); e.target.reset(); document.getElementById('pubCertifWrap').style.display = 'none'; document.getElementById('notifPromptPublication').style.display = 'block'; pubVoiceRecorder.reset(); document.getElementById('pubModeTexteBtn').click(); document.getElementById('geolocStatus').textContent = ''; await checkNotifStatus(); }
+      showMsg('msgPublication', editId ? 'Annonce modifiée !' : 'Annonce publiée !', 'success');
+      pageActuelle = 1;
+      loadPublications();
+      refreshBadges();
+      e.target.reset();
+      terminerEditionAnnonce();
+      document.getElementById('pubCertifWrap').style.display = 'none';
+      document.getElementById('notifPromptPublication').style.display = editId ? 'none' : 'block';
+      pubVoiceRecorder.reset();
+      document.getElementById('pubModeTexteBtn').click();
+      document.getElementById('geolocStatus').textContent = '';
+      await checkNotifStatus();
+    }
     btn.disabled = false;
     btn.textContent = "Publier l'annonce";
   });
@@ -4161,7 +4257,7 @@
   async function loadModeration(){
     const container = document.getElementById('moderationContainer');
     container.innerHTML = '<div class="empty state-loading"><h3>Chargement…</h3></div>';
-    const { data, error } = await sb.from('publications').select('*, profiles(prenom, nom, telephone, type_acteur, is_verified)').eq('approuve', false).eq('rejete', false).order('created_at', { ascending: true });
+    const { data, error } = await sb.from('publications').select('*, profiles(prenom, nom, telephone, type_acteur, is_verified)').eq('statut_moderation', 'en_attente').order('created_at', { ascending: true });
     if(error){ container.innerHTML = '<div class="empty state-error"><h3>Erreur</h3><p>' + escapeHtml(error.message) + '</p></div>'; return; }
     if(!data || data.length === 0){ container.innerHTML = '<div class="empty state-empty"><h3>Aucune annonce en attente</h3></div>'; return; }
     container.innerHTML = data.map(p => {
@@ -4170,8 +4266,21 @@
       const audioUrl = safeHttpUrl(p.audio_url);
       const audioHtmlMod = audioUrl ? `<audio src="${audioUrl}" controls style="width:100%;margin:10px 0;"></audio>` : '';
       const badgeAuteurMod = p.profiles && p.profiles.is_verified ? ' <span class="verified-badge">🛡️ Vérifié</span>' : '';
-      return `<div class="pub-card"><div class="pub-top"><div><span class="pub-tag">${escapeHtml(p.categorie)}</span><h3>${escapeHtml(p.titre)}</h3></div><span class="pub-statut reserve">En attente</span></div>${photoHtml}${p.description ? '<p class="desc">' + escapeHtml(p.description) + '</p>' : ''}${audioHtmlMod}<div class="pub-footer">Publié par ${escapeHtml(auteur)}${badgeAuteurMod}${p.profiles && p.profiles.telephone ? ' · ' + escapeHtml(p.profiles.telephone) : ''}</div><div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap;"><button class="btn-small" onclick="approuverAnnonce('${p.id}')">Approuver et publier</button><button class="btn-outline-small" style="border-color:var(--rouge);color:var(--rouge);" onclick="rejeterAnnonce('${p.id}')">Rejeter</button></div></div>`;
+      return `<div class="pub-card" data-moderation-id="${escapeHtml(p.id)}"><div class="pub-top"><div><span class="pub-tag">${escapeHtml(p.categorie)}</span><h3>${escapeHtml(p.titre)}</h3></div><span class="pub-statut reserve">En attente</span></div>${photoHtml}${p.description ? '<p class="desc">' + escapeHtml(p.description) + '</p>' : ''}${audioHtmlMod}<div class="pub-footer">Publié par ${escapeHtml(auteur)}${badgeAuteurMod}${p.profiles && p.profiles.telephone ? ' · ' + escapeHtml(p.profiles.telephone) : ''}</div><div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap;"><button type="button" class="btn-small" onclick="approuverAnnonce('${escapeHtml(p.id)}')">Approuver et publier</button><button type="button" class="btn-outline-small" style="border-color:var(--rouge);color:var(--rouge);" onclick="rejeterAnnonce('${escapeHtml(p.id)}')">Rejeter</button></div></div>`;
     }).join('');
+  }
+
+  async function loadExpiredPublications(){
+    const container = document.getElementById('expiredPublicationsContainer');
+    if(!container) return;
+    const { data, error } = await sb.from('publications').select('*, profiles(prenom, nom, telephone, type_acteur)').eq('approuve', true).not('expire_at', 'is', null).lte('expire_at', new Date().toISOString()).order('expire_at', { ascending: false });
+    if(error){ container.innerHTML = '<div class="empty state-error"><h3>Erreur</h3><p>' + escapeHtml(error.message) + '</p></div>'; return; }
+    if(!data || !data.length){ container.innerHTML = '<div class="empty state-empty"><h3>Aucune publication expirée</h3></div>'; return; }
+    container.innerHTML = data.map(p => {
+      const auteur = p.profiles ? `${p.profiles.prenom || ''} ${p.profiles.nom || ''}`.trim() : 'Utilisateur';
+      return `<div class="pub-card"><div class="pub-top"><div><span class="pub-tag">${escapeHtml(p.categorie)}</span><h3>${escapeHtml(p.titre)}</h3></div><span class="pub-statut ecoule">Expirée</span></div>${htmlExpiration(p.expire_at, 'expired-publication')}<div class="pub-footer">Publié par ${escapeHtml(auteur)}</div></div>`;
+    }).join('');
+    demarrerCompteARebours();
   }
 
   async function loadModerationPrix(){
@@ -4251,15 +4360,29 @@
     if(!error){ loadModerationPrix(); }
   };
   window.approuverAnnonce = async function(id){
-    const { error } = await sb.from('publications').update({ approuve: true }).eq('id', id);
-    if(!error){ loadModeration(); }
+    await modererAnnonce(id, { approuve: true, rejete: false, statut_moderation: 'publiee' });
   };
 
   window.rejeterAnnonce = async function(id){
-    if(!confirm('Rejeter et supprimer cette annonce ?')) return;
-    const { error } = await sb.from('publications').delete().eq('id', id);
-    if(!error){ loadModeration(); }
+    if(!confirm('Refuser cette annonce ?')) return;
+    await modererAnnonce(id, { approuve: false, rejete: true, statut_moderation: 'refusee' });
   };
+
+  async function modererAnnonce(id, changements){
+    const container = document.getElementById('moderationContainer');
+    const card = [...container.querySelectorAll('[data-moderation-id]')].find(item => item.dataset.moderationId === id);
+    card?.remove();
+    if(!container.querySelector('[data-moderation-id]')) container.innerHTML = '<div class="empty state-empty"><h3>Aucune annonce en attente</h3></div>';
+    try{
+      const { data, error } = await sb.from('publications').update(changements).eq('id', id).eq('statut_moderation', 'en_attente').select('id').maybeSingle();
+      if(error) throw error;
+      if(!data) throw new Error('Cette annonce n’est plus en attente de modération.');
+      refreshBadges();
+    }catch(error){
+      await loadModeration();
+      alert('Impossible de mettre à jour cette annonce : ' + (error.message || 'erreur inconnue'));
+    }
+  }
 
   function weeklyBuckets(rows, weeks){
     const now = new Date();
@@ -4285,7 +4408,7 @@
       <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;">
         <div style="font-size:0.72rem;color:var(--vert-nuit);font-weight:600;">${b.count}</div>
         <div style="width:100%;background:var(--vert-rich);border-radius:4px 4px 0 0;height:${Math.max(4, (b.count/max)*90)}px;"></div>
-        <div style="font-size:0.62rem;color:var(--encre-douce);font-family:'IBM Plex Mono',monospace;">${b.label}</div>
+        <div style="font-size:0.62rem;color:var(--encre-douce);font-family:var(--font-principale);">${b.label}</div>
       </div>`).join('');
   }
 
@@ -4309,7 +4432,7 @@
     const pubsEnAttente = pubs.filter(p => !p.approuve && !p.rejete).length;
 
     function statCard(label, value){
-      return `<div class="card"><div style="font-family:'Fraunces',serif;font-size:1.8rem;color:var(--vert-nuit);">${value}</div><div style="font-size:0.82rem;color:var(--encre-douce);margin-top:4px;">${label}</div></div>`;
+      return `<div class="card"><div style="font-family:var(--font-titres);font-size:1.8rem;color:var(--vert-nuit);">${value}</div><div style="font-size:0.82rem;color:var(--encre-douce);margin-top:4px;">${label}</div></div>`;
     }
 
     cardsEl.innerHTML =
@@ -4348,7 +4471,7 @@
   function makeAffluenceCard(label, value){
     return `<div class="card" style="margin:0;padding:16px 18px;">
       <div style="font-size:0.8rem;color:var(--encre-douce);margin-bottom:8px;">${label}</div>
-      <div style="font-family:'Fraunces',serif;font-size:1.75rem;color:var(--vert-nuit);">${value}</div>
+      <div style="font-family:var(--font-titres);font-size:1.75rem;color:var(--vert-nuit);">${value}</div>
     </div>`;
   }
 
@@ -4633,7 +4756,7 @@
       const audioUrl = safeHttpUrl(r.audio_url);
       const audioHtml = audioUrl ? `<audio src="${audioUrl}" controls style="width:100%;margin-top:6px;"></audio>` : '';
       const verifiedBadgeReponse = r.profiles && r.profiles.is_verified ? ' <span class="verified-badge">🛡️ Vérifié</span>' : '';
-      return `<div style="padding:10px 0;border-bottom:1px solid rgba(27,94,32,0.08);">${r.contenu ? '<p style="font-size:0.9rem;color:var(--encre);">' + escapeHtml(r.contenu) + '</p>' : ''}${audioHtml}<p style="font-size:0.76rem;color:var(--encre-douce);margin-top:4px;font-family:'IBM Plex Mono',monospace;">${escapeHtml(auteur)}${verifiedBadgeReponse} · ${date}</p></div>`;
+      return `<div style="padding:10px 0;border-bottom:1px solid rgba(27,94,32,0.08);">${r.contenu ? '<p style="font-size:0.9rem;color:var(--encre);">' + escapeHtml(r.contenu) + '</p>' : ''}${audioHtml}<p style="font-size:0.76rem;color:var(--encre-douce);margin-top:4px;font-family:var(--font-principale);">${escapeHtml(auteur)}${verifiedBadgeReponse} · ${date}</p></div>`;
     }).join('');
   }
 
@@ -4917,8 +5040,8 @@
   }
 
   async function loadPublicites(){
-    const aujourdHui = new Date().toISOString().slice(0,10);
-    const { data, error } = await sb.from('publicites').select('*').eq('actif', true).or(`date_expiration.is.null,date_expiration.gte.${aujourdHui}`).order('ordre', { ascending: true });
+    const maintenant = new Date().toISOString();
+    const { data, error } = await sb.from('publicites').select('*').eq('actif', true).or(`expire_at.is.null,expire_at.gt.${maintenant}`).order('ordre', { ascending: true });
     const wrap = document.getElementById('pubBandeauWrap');
     const track = document.getElementById('bandeauPubTrack');
     const cta = document.getElementById('bandeauPubCTA');
@@ -4932,7 +5055,8 @@
         const images = publiciteImageUrls(p);
         const lien = safeHttpUrl(p.lien);
         return images.map(imageUrl => {
-          const img = `<div class="bandeau-pub-card"><img src="${imageUrl}" alt="${escapeHtml(p.annonceur)}"></div>`;
+          const expiration = p.expire_at ? htmlExpiration(p.expire_at, 'publicite') : '';
+          const img = `<div class="bandeau-pub-card"><img src="${imageUrl}" alt="${escapeHtml(p.annonceur)}">${expiration}</div>`;
           return lien ? `<a href="${lien}" target="_blank" rel="noopener noreferrer">${img}</a>` : img;
         }).join('');
       }).join('');
@@ -4940,6 +5064,7 @@
       track.innerHTML = `<div class="bandeau-pub-inner">${cardsHtml}${cardsHtml}</div>`;
       wrap.style.display = 'block';
       cta.style.display = 'none';
+      demarrerCompteARebours();
     }
     if(currentProfile && currentProfile.is_admin) loadPublicitesAdmin();
   }
@@ -4947,22 +5072,22 @@
   async function loadPublicitesAdmin(){
     const { data, error } = await sb.from('publicites').select('*').order('ordre', { ascending: true });
     const list = document.getElementById('listePublicitesAdmin');
-    if(error || !data || data.length === 0){ list.innerHTML = '<p style="color:var(--encre-douce);font-size:0.9rem;">Aucune publicité pour le moment.</p>'; return; }
-    const aujourdHui = new Date().toISOString().slice(0,10);
-    list.innerHTML = data.map(p => {
-      const estExpiree = p.date_expiration && p.date_expiration < aujourdHui;
-      const statutTxt = estExpiree ? '· Expirée' : (p.actif ? '· Active' : '· Désactivée');
-      const expTxt = p.date_expiration ? ` · Expire le ${p.date_expiration}` : '';
-      return `
-      <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid rgba(28,26,20,0.12);">
-        ${(publiciteImageUrls(p)[0]) ? `<img src="${publiciteImageUrls(p)[0]}" style="width:70px;height:40px;object-fit:cover;border-radius:6px;">` : ''}
-        <div style="flex:1;"><strong>${escapeHtml(p.annonceur)}</strong><br><span style="font-size:0.8rem;color:${estExpiree ? 'var(--rouge)' : 'var(--encre-douce)'};">Ordre : ${p.ordre} ${statutTxt}${expTxt}</span></div>
-        <button class="btn-outline-small" onclick="togglePublicite('${p.id}', ${!p.actif})">${p.actif ? 'Désactiver' : 'Activer'}</button>
-        <button class="btn-outline-small" onclick="copierLienPublicite('${p.id}')">📤 Lien</button>
-        <button class="btn-outline-small" style="border-color:var(--rouge);color:var(--rouge);" onclick="supprimerPublicite('${p.id}')">Supprimer</button>
-      </div>
-    `;
-    }).join('');
+    const expiredList = document.getElementById('listePublicitesExpireesAdmin');
+    const emptyMessage = '<p style="color:var(--encre-douce);font-size:0.9rem;">Aucune publicité.</p>';
+    if(error || !data){ list.innerHTML = emptyMessage; expiredList.innerHTML = emptyMessage; return; }
+    const maintenant = Date.now();
+    const estExpiree = p => p.expire_at && new Date(p.expire_at).getTime() <= maintenant;
+    const rendrePublicite = (p, expiree) => {
+      const image = publiciteImageUrls(p)[0];
+      const expiration = p.expire_at ? htmlExpiration(p.expire_at, expiree ? 'expired-publicite' : 'admin-publicite') : '';
+      const statut = expiree ? 'Expirée' : (p.actif ? 'Active' : 'Désactivée');
+      return `<div class="publicite-admin-row"><div class="publicite-admin-info">${image ? `<img src="${image}" alt="${escapeHtml(p.annonceur)}">` : ''}<div><strong>${escapeHtml(p.annonceur)}</strong><span>Ordre : ${p.ordre ?? 0} · ${statut}</span>${expiration}</div></div><div class="publicite-admin-actions"><button class="btn-outline-small" ${expiree ? 'disabled' : ''} onclick="togglePublicite('${escapeHtml(p.id)}', ${!p.actif})">${p.actif ? 'Désactiver' : 'Activer'}</button><button class="btn-outline-small" onclick="copierLienPublicite('${escapeHtml(p.id)}')">Lien</button><button class="btn-outline-small" style="border-color:var(--rouge);color:var(--rouge);" onclick="supprimerPublicite('${escapeHtml(p.id)}')">Supprimer</button></div></div>`;
+    };
+    const actives = data.filter(p => !estExpiree(p));
+    const expirees = data.filter(estExpiree);
+    list.innerHTML = actives.length ? actives.map(p => rendrePublicite(p, false)).join('') : emptyMessage;
+    expiredList.innerHTML = expirees.length ? expirees.map(p => rendrePublicite(p, true)).join('') : emptyMessage;
+    demarrerCompteARebours();
   }
 
   window.togglePublicite = async function(id, nouvelEtat){
@@ -4988,6 +5113,11 @@
     const submitButton = e.submitter;
     const files = Array.from(document.getElementById('input-pub-images').files);
     if(!files.length){ alert('Sélectionnez au moins une photo pour la publicité.'); return; }
+    const dateExpiration = document.getElementById('pubDateExpiration').value;
+    if(dateExpiration && new Date(dateExpiration).getTime() <= Date.now()){
+      alert('La date et l’heure d’expiration doivent être dans le futur.');
+      return;
+    }
     submitButton.disabled = true;
     submitButton.textContent = 'Envoi des photos…';
     try {
@@ -5009,7 +5139,8 @@
         image_url: imageUrls[0],
         lien: document.getElementById('pubLien').value.trim() || null,
         ordre: parseInt(document.getElementById('pubOrdre').value) || 0,
-        date_expiration: document.getElementById('pubDateExpiration').value || null,
+        date_expiration: dateExpiration ? dateExpiration.slice(0, 10) : null,
+        expire_at: dateExpiration ? new Date(dateExpiration).toISOString() : null,
         actif: true
       };
       const { error } = await sb.from('publicites').insert(payload);
@@ -5244,6 +5375,71 @@
     }
   }
 
+  function formaterDateExpiration(value){
+    const date = new Date(value);
+    if(Number.isNaN(date.getTime())) return '';
+    const parts = new Intl.DateTimeFormat('fr-FR', { day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit', hourCycle:'h23' }).formatToParts(date);
+    const part = type => parts.find(item => item.type === type)?.value || '';
+    return `Expire le : ${part('day')}/${part('month')}/${part('year')} à ${part('hour')}:${part('minute')}`;
+  }
+
+  function htmlExpiration(value, kind){
+    const date = new Date(value);
+    if(Number.isNaN(date.getTime())) return '';
+    return `<div class="expiration-info" data-expire-at="${escapeHtml(date.toISOString())}" data-expiration-kind="${kind}"><span>${formaterDateExpiration(date)}</span><strong data-expiration-countdown></strong></div>`;
+  }
+
+  let compteAReboursTimer = null;
+  function demarrerCompteARebours(){
+    if(compteAReboursTimer) return;
+    compteAReboursTimer = setInterval(() => {
+      let annonceExpiree = false;
+      document.querySelectorAll('[data-expire-at]').forEach(element => {
+        const remaining = new Date(element.dataset.expireAt).getTime() - Date.now();
+        const countdown = element.querySelector('[data-expiration-countdown]');
+        if(!countdown) return;
+        if(remaining <= 0){
+          countdown.textContent = 'Expirée';
+          if(element.dataset.expirationKind === 'publication' && element.dataset.expired !== 'true'){
+            element.dataset.expired = 'true';
+            element.closest('[data-publication-expiration]')?.remove();
+            annonceExpiree = true;
+          }
+          if(element.dataset.expirationKind === 'owner-publication' && element.dataset.expired !== 'true'){
+            element.dataset.expired = 'true';
+            const card = element.closest('.pub-card');
+            const status = card?.querySelector('.pub-statut');
+            if(status){ status.textContent = 'Expirée'; status.classList.add('ecoule'); }
+            card?.querySelector('[data-annonce-statut]')?.remove();
+          }
+          if(element.dataset.expirationKind === 'publicite' && element.dataset.expired !== 'true'){
+            element.dataset.expired = 'true';
+            element.closest('.bandeau-pub-card')?.remove();
+          }
+          if(element.dataset.expirationKind === 'admin-publicite' && element.dataset.expired !== 'true'){
+            element.dataset.expired = 'true';
+            loadPublicitesAdmin();
+          }
+          return;
+        }
+        const totalMinutes = Math.floor(remaining / 60000);
+        const days = Math.floor(totalMinutes / 1440);
+        const hours = Math.floor((totalMinutes % 1440) / 60);
+        const minutes = totalMinutes % 60;
+        countdown.textContent = `Expire dans ${days ? days + ' j ' : ''}${hours} h ${String(minutes).padStart(2, '0')} min`;
+      });
+      if(annonceExpiree){
+        const container = document.getElementById('pubListContainer');
+        if(container && !container.querySelector('[data-publication-expiration]')) container.innerHTML = '<div class="empty state-empty"><h3>Aucune annonce disponible pour ces critères</h3></div>';
+      }
+      const track = document.getElementById('bandeauPubTrack');
+      if(track && !track.querySelector('.bandeau-pub-card')){
+        document.getElementById('pubBandeauWrap').style.display = 'none';
+        document.getElementById('bandeauPubCTA').style.display = 'block';
+      }
+    }, 1000);
+  }
+
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('is-visible'); });
   }, { threshold: 0.15 });
@@ -5346,105 +5542,6 @@
     const {data} = await sb.from('profiles').select('telephone').eq('id', appelInterlocuteur).maybeSingle();
     document.getElementById('callPhone').textContent = data?.telephone || 'Numéro indisponible';
     setTimeout(()=>{ document.getElementById('callPhone').textContent=''; document.getElementById('callBackdrop').style.display='none'; },30000);
-  }
-
-  let richRecorder = null;
-  let richAudioChunks = [];
-  let storedRichLang = localStorage.getItem('rich_lang');
-  let richLang = ['francais','anglais','chinois'].includes(storedRichLang) ? storedRichLang : 'francais';
-  if (!storedRichLang || !['francais','anglais','chinois'].includes(storedRichLang)) localStorage.setItem('rich_lang', richLang);
-  function toggleRich(){ document.getElementById('rich-window').classList.toggle('hidden'); }
-  function richBubble(text, user=true){
-    const zone=document.getElementById('rich-chat');
-    zone.insertAdjacentHTML('beforeend', `<div style="margin:8px 0 8px ${user?'auto':'0'};max-width:80%;background:${user?'#0f5d2f':'white'};color:${user?'white':'#111'};padding:10px 12px;border-radius:12px;box-shadow:0 1px 4px rgba(0,0,0,.08);">${escapeHtml(text)}</div>`);
-    zone.scrollTop=zone.scrollHeight;
-  }
-  async function sendPhoto(input){
-    const file=input.files?.[0]; if(!file) return;
-    const base64=await new Promise((resolve,reject)=>{ const reader=new FileReader(); reader.onload=()=>resolve(reader.result.split(',')[1]); reader.onerror=reject; reader.readAsDataURL(file); });
-    richBubble('📷 Photo agricole envoyée',true);
-    try{
-const response=await fetch(`${SUPABASE_URL}/functions/v1/agent-ia`,{method:'POST',headers:{'Content-Type':'application/json',apikey:SUPABASE_ANON_KEY,Authorization:'Bearer '+SUPABASE_ANON_KEY},body:JSON.stringify({question: question})});
-      const result=await response.json(); richBubble(result.reponse || result.message || 'Rĩch n\'a pas pu analyser la photo.',false);
-    }catch(e){ richBubble('Erreur lors de l’analyse de la photo.',false); }
-    input.value='';
-  }
-  async function sendRich(){
-    const input=document.getElementById('rich-input');
-    const chat=document.getElementById('rich-chat');
-    const raw=input.value.trim(); if(!raw) return;
-
-    const displayMsg=raw.replace(/#[a-zéèêàâîïôûùç]+/gi,'').replace(/#[\p{Script=Han}\p{Script=Latin}\p{Script=Common}\w]+/giu,'').trim();
-    const question = displayMsg || raw;
-    input.value=''; chat.scrollTop=chat.scrollHeight;
-    console.log('Rĩch langue active:',richLang);
-
-    if(!displayMsg){
-      const names={francais:'Français',anglais:'English',chinois:'中文'};
-      chat.innerHTML += '<div style="text-align:center;color:#777;font-size:12px;margin:8px">Langue changée en '+names[richLang]+'</div>';
-      chat.scrollTop=chat.scrollHeight;
-    }else{
-      chat.innerHTML += '<div style="display:flex;justify-content:flex-end;margin-bottom:8px"><div style="background:#0f5d2f;color:white;padding:10px 14px;border-radius:18px;max-width:80%">'+escapeHtml(displayMsg)+'</div></div>';
-    }
-
-    if(!displayMsg){
-      try{
-const response=await fetch(`${SUPABASE_URL}/functions/v1/agent-ia`,{method:'POST',headers:{'Content-Type':'application/json',apikey:SUPABASE_ANON_KEY,Authorization:'Bearer '+SUPABASE_ANON_KEY},body:JSON.stringify({question: question})});
-        const data=await response.json();
-        chat.innerHTML += '<div style="background:white;border:1px solid #eee;padding:10px 14px;border-radius:18px;margin-bottom:8px;white-space:pre-wrap">'+escapeHtml(data.reponse||'Bonjour 🌱')+'</div>';
-      }catch(e){ console.error(e); }
-      chat.scrollTop=chat.scrollHeight;
-      return;
-    }
-
-    const loadingId='loading-'+Date.now();
-    chat.innerHTML += '<div id="'+loadingId+'" style="background:#f5f5f5;padding:10px 14px;border-radius:18px;margin-bottom:8px;display:inline-block">Rĩch écrit...</div>';
-    try{
-const response=await fetch(`${SUPABASE_URL}/functions/v1/agent-ia`,{method:'POST',headers:{'Content-Type':'application/json',apikey:SUPABASE_ANON_KEY,Authorization:'Bearer '+SUPABASE_ANON_KEY},body:JSON.stringify({question: question})});
-      const text=await response.text(); let data;
-      try{data=JSON.parse(text);}catch{data={reponse:text||'Réponse reçue'};}
-      document.getElementById(loadingId)?.remove();
-      chat.innerHTML += '<div style="background:white;border:1px solid #eee;padding:10px 14px;border-radius:18px;margin-bottom:8px;white-space:pre-wrap">'+escapeHtml(data.reponse||data.error||'Je suis là 🌱')+'</div>';
-    }catch(e){
-  document.getElementById(loadingId)?.remove();
-  chat.innerHTML += '<div style="background:white;border:1px solid #eee;padding:10px 14px;border-radius:18px;margin-bottom:8px">Erreur : '+escapeHtml(e.message || e)+'<br>URL : '+escapeHtml(SUPABASE_URL)+'</div>';
-  console.error('ERREUR sendRich:', e);
-}chat.scrollTop=chat.scrollHeight;
-    }
-    
-  function updateRichLanguageUI(){
-    document.querySelectorAll('#richLangSelector button').forEach(btn=>{
-      const active=btn.dataset.lang===richLang;
-      btn.style.background=active?'#0f5d2f':'white';
-      btn.style.color=active?'white':'#0f5d2f';
-      btn.style.borderColor=active?'#0f5d2f':'#bbb';
-    });
-  }
-  document.querySelectorAll('#richLangSelector button').forEach(btn=>btn.addEventListener('click',()=>{
-    const examples={francais:'Bonjour, comment vendre du maïs ?',anglais:'Hello, how can I sell corn?',chinois:'你好，我想卖玉米'};
-    document.getElementById('rich-input').placeholder=examples[btn.dataset.lang];
-  }));
-  updateRichLanguageUI();
-  async function startVoice(){
-    const button=document.getElementById('rich-mic');
-    if(richRecorder && richRecorder.state === 'recording'){ richRecorder.stop(); button.textContent='🎤'; return; }
-    if(!navigator.mediaDevices?.getUserMedia){ alert('Microphone non disponible.'); return; }
-    const stream=await navigator.mediaDevices.getUserMedia({audio:true});
-    richRecorder=new MediaRecorder(stream); richAudioChunks=[];
-    richRecorder.ondataavailable=e=>{ if(e.data.size) richAudioChunks.push(e.data); };
-    richRecorder.onstop=async()=>{ const blob=new Blob(richAudioChunks,{type:richRecorder.mimeType || 'audio/webm'}); const reader=new FileReader(); reader.onload=()=>sendRich(reader.result.split(',')[1]); reader.readAsDataURL(blob); stream.getTracks().forEach(t=>t.stop()); };
-    richRecorder.start(); button.textContent='⏹';
-  }
-  async function envoyerIa(){
-    const input=document.getElementById('iaQuestion'); const question=input.value.trim(); if(!question) return;
-    const zone=document.getElementById('iaChatZone'); zone.insertAdjacentHTML('beforeend',`<div style="margin:8px 0 8px auto;max-width:80%;background:#207A3D;color:white;padding:10px;border-radius:12px;">${escapeHtml(question)}</div>`); input.value='';
-    let image_base64=''; const f=document.getElementById('iaImage').files[0]; if(f) image_base64=await lireImageBase64(f);
-    try{
-const response=await fetch(`${SUPABASE_URL}/functions/v1/agent-ia`,{method:'POST',headers:{'Content-Type':'application/json',apikey:SUPABASE_ANON_KEY,Authorization:'Bearer '+SUPABASE_ANON_KEY},body:JSON.stringify({question: question})});
-      const result=await response.json();
-      zone.insertAdjacentHTML('beforeend',`<div style="margin:8px auto 8px 0;max-width:80%;background:white;padding:10px;border-radius:12px;box-shadow:0 1px 4px rgba(0,0,0,.08);">${escapeHtml(result.reponse || result.message || 'Réponse indisponible')}</div>`);
-    }catch(e){ zone.insertAdjacentHTML('beforeend','<div style="margin:8px 0;background:white;padding:10px;border-radius:12px;">Service IA indisponible.</div>'); }
-    zone.scrollTop=zone.scrollHeight;
   }
 
   async function payerBadge(){

@@ -1,13 +1,5 @@
 [functions.ia-prix-auto]
 schedule = "0 5 * * 1,4"
+# Scheduled price updates run on Mondays and Thursdays.
 
-[functions.agent-ia]
-enabled = true
-verify_jwt = false
-import_map = "./functions/agent-ia/deno.json"
-# Uncomment to specify a custom file path to the entrypoint.
-# Supported file extensions are: .ts, .js, .mjs, .jsx, .tsx
-entrypoint = "./functions/agent-ia/index.ts"
-# Specifies static files to be bundled with the function. Supports glob patterns.
-# For example, if you want to serve static HTML pages in your function:
-# static_files = [ "./functions/agent-ia/*.html" ]
+# The assistant edge function has been removed.

@@ -34,7 +34,10 @@ export async function onRequestGet(context) {
         : type === "publicite"
         ? "annonceur,image_url,lien"
         : "titre,description,prix,localisation,photos,photo_url";
-      const filtre = type === "publicite" ? "&actif=is.true" : (type === "formation" ? "" : "&approuve=is.true");
+      const expiration = `or=${encodeURIComponent(`(expire_at.is.null,expire_at.gt.${new Date().toISOString()})`)}`;
+      const filtre = type === "publicite"
+        ? `&actif=is.true&${expiration}`
+        : (type === "formation" ? "" : `&approuve=is.true&statut_moderation=eq.publiee&${expiration}`);
 
       const res = await fetch(
         `${SUPABASE_URL}/rest/v1/${table}?id=eq.${encodeURIComponent(id)}&select=${selectFields}${filtre}`,
