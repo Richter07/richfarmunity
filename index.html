@@ -5030,15 +5030,6 @@
     return validImages.length ? validImages : (safeHttpUrl(publicite.image_url) ? [safeHttpUrl(publicite.image_url)] : []);
   }
 
-  async function ensurePubliciteBucket(){
-    const { data: buckets, error: listError } = await sb.storage.listBuckets();
-    if(listError) throw new Error('Impossible de vérifier le stockage publicitaire : ' + listError.message);
-    if(!buckets || !buckets.some(bucket => bucket.name === 'publicites')){
-      const { error: createError } = await sb.storage.createBucket('publicites', { public: true });
-      if(createError && !/already exists/i.test(createError.message)) throw createError;
-    }
-  }
-
   async function loadPublicites(){
     const maintenant = new Date().toISOString();
     const { data, error } = await sb.from('publicites').select('*').eq('actif', true).or(`expire_at.is.null,expire_at.gt.${maintenant}`).order('ordre', { ascending: true });
@@ -5135,14 +5126,13 @@
       }
       currentUser = authenticatedUser;
       window.currentUser = authenticatedUser;
-      await ensurePubliciteBucket();
       const imageUrls = [];
       for(let i = 0; i < files.length; i++){
         const file = files[i];
         const extension = (file.name.split('.').pop() || 'jpg').replace(/[^a-z0-9]/gi, '').toLowerCase();
-        const path = `${currentUser.id}/${Date.now()}-${i}-${Math.random().toString(36).slice(2)}.${extension}`;
+        const path = `${authenticatedUser.id}/${Date.now()}-${i}-${Math.random().toString(36).slice(2)}.${extension}`;
         const { error: uploadError } = await sb.storage.from('publicites').upload(path, file, { contentType: file.type, cacheControl: '3600', upsert: false });
-        if(uploadError) throw new Error('Erreur d’envoi de ' + file.name + ' : ' + uploadError.message);
+        if(uploadError) throw new Error(`Upload photo refusé : bucket publicites, is_admin = true. Erreur pour ${file.name} : ${uploadError.message}`);
         const { data: publicData } = sb.storage.from('publicites').getPublicUrl(path);
         if(publicData && publicData.publicUrl) imageUrls.push(publicData.publicUrl);
       }
@@ -5158,7 +5148,12 @@
         actif: true
       };
       const { error } = await sb.from('publicites').insert(payload);
-      if(error) throw error;
+      if(error){
+        if(/row-level security|42501/i.test(error.message || '')){
+          throw new Error(`Insertion publicité refusée : table publicites, is_admin = true. ${error.message}`);
+        }
+        throw error;
+      }
       document.getElementById('formPublicite').reset();
       loadPublicites();
     } catch(error){
