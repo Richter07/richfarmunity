@@ -5121,6 +5121,20 @@
     submitButton.disabled = true;
     submitButton.textContent = 'Envoi des photos…';
     try {
+      const { data: sessionData, error: sessionError } = await sb.auth.getSession();
+      if(sessionError) throw sessionError;
+      const authenticatedUser = sessionData.session?.user;
+      if(!authenticatedUser) throw new Error('Connectez-vous avec un compte administrateur pour créer une publicité.');
+      const { data: adminProfile, error: profileError } = await sb.from('profiles')
+        .select('id, is_admin')
+        .eq('id', authenticatedUser.id)
+        .maybeSingle();
+      if(profileError) throw profileError;
+      if(!adminProfile || adminProfile.id !== authenticatedUser.id || adminProfile.is_admin !== true){
+        throw new Error('Votre profil ne dispose pas des droits administrateur requis.');
+      }
+      currentUser = authenticatedUser;
+      window.currentUser = authenticatedUser;
       await ensurePubliciteBucket();
       const imageUrls = [];
       for(let i = 0; i < files.length; i++){
