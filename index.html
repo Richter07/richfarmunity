@@ -131,7 +131,6 @@
   .nav-notification-badge.is-visible{ display:inline-flex; }
   @media (max-width:767px){
     nav.tabs button .nav-notification-badge{ top:-4px; right:-4px; }
-    nav.tabs{ overflow-x:auto !important; overflow-y:auto !important; touch-action:pan-x pan-y !important; -webkit-overflow-scrolling:touch; }
   }
   nav.tabs button:hover:not(.active){ background:rgba(27,94,32,0.22); border-color:var(--vert-clair); color:var(--ivoire); }
   header a:focus-visible, header button:focus-visible{ outline:2px solid var(--or-clair); outline-offset:2px; box-shadow:0 0 0 4px rgba(15,44,19,0.9); }
@@ -149,35 +148,34 @@
   }
   @media (max-width:767px){
     .menu-toggle{ display:flex; }
-    .menu-backdrop{
-      display:none;
-      position:fixed; inset:0; background:rgba(0,0,0,0.5);
-      z-index:9998; opacity:0; transition:opacity .3s ease;
-    }
-    .menu-backdrop.open{ display:block; opacity:1; }
     nav.tabs{
-      display:flex;
-      position:fixed; top:64px; right:0; left:0; bottom:auto;
-      width:100vw; max-width:100vw;
+      order:4; flex:0 0 100%;
+      display:flex; position:relative; top:auto; right:auto; left:auto; bottom:auto;
+      width:100%; max-width:none; max-height:0; margin:0;
       background:linear-gradient(180deg, rgba(6,20,9,0.99), rgba(12,36,16,0.98));
       backdrop-filter:blur(10px);
-      flex-direction:row; flex-wrap:nowrap; align-items:center; gap:8px;
-      height:auto; padding:10px 12px;
-      overflow-x:auto !important; overflow-y:auto !important; touch-action:pan-x pan-y !important;
-      z-index:9999; background:#1a2e1a;
-      transform:translateX(100%);
-      visibility:hidden; transition:transform .3s cubic-bezier(.2,.7,.2,1), visibility 0s linear .3s;
-      box-shadow:-8px 0 30px rgba(0,0,0,0.3);
+      flex-direction:column; flex-wrap:nowrap; align-items:flex-end; gap:4px;
+      height:auto; padding:0 12px;
+      overflow-x:hidden; overflow-y:auto; touch-action:pan-y;
+      z-index:auto; background:#1a2e1a;
+      visibility:hidden; pointer-events:none;
+      transition:max-height .3s ease, padding .3s ease, visibility 0s linear .3s;
+      box-shadow:none;
       overscroll-behavior:contain;
       -webkit-overflow-scrolling:touch;
     }
-    nav.tabs.open{ transform:translateX(0); visibility:visible; transition:transform .3s cubic-bezier(.2,.7,.2,1), visibility 0s; }
+    nav.tabs.open{
+      max-height:65vh; max-height:min(65vh,560px); padding:10px 12px 12px;
+      visibility:visible; pointer-events:auto;
+      transition:max-height .3s ease, padding .3s ease, visibility 0s;
+    }
     nav.tabs button{
-      width:auto; flex:0 0 auto; flex-shrink:0;
-      text-align:center; padding:10px 14px; font-size:0.98rem; border-radius:14px;
+      width:min(100%,360px); flex:0 0 auto; flex-shrink:0; align-self:flex-end;
+      text-align:right; padding:10px 14px; font-size:0.98rem; border-radius:14px;
     }
     .menu-close{ display:none; }
     nav.tabs.open .menu-close{ display:flex; }
+    .account-box{ max-width:30vw; overflow:hidden; text-overflow:ellipsis; }
   }
   @media (min-width:768px){
     header{
@@ -662,7 +660,7 @@
 <header class="relative z-[9999]">
   <nav class="relative z-[9999]">
     <a href="#" class="logo" onclick="showView('accueil'); return false;"><img src="https://richfarmunity.com/icon-192.png" alt="Rĩch Farm Unity" style="height:40px;width:auto;border-radius:6px;">Rĩch Farm Unity</a>
-    <nav class="tabs hidden md:flex flex-wrap gap-x-4 gap-y-2 items-center max-w-[75vw] relative z-[9999]" id="menuMobile" style="position:fixed; top:64px; right:0; left:0; width:100vw; max-width:100vw; height:auto; z-index:9999; background:#1a2e1a; overflow-x:auto; overflow-y:hidden; touch-action:pan-x!important; -webkit-overflow-scrolling:touch; display:flex; flex-direction:row; flex-wrap:nowrap;">
+    <nav class="tabs" id="menuMobile">
       <button class="menu-close" id="menuClose" aria-label="Fermer le menu">✕</button>
       <button data-view="accueil" class="active">Accueil</button>
       <button data-view="publications">Annonces</button>
@@ -684,8 +682,6 @@
     <div class="account-box" id="accountLabel"></div>
     <button class="menu-toggle" id="menuToggle" aria-label="Ouvrir le menu">☰</button>
   </nav>
-  <div class="menu-backdrop fixed inset-0 bg-black/50" id="menuOverlay" onclick="closeMenu()"></div>
-
   <div class="avis-modal-backdrop" id="avisModalBackdrop">
     <div class="avis-modal">
       <button type="button" class="avis-modal-close" id="avisModalClose">✕</button>
@@ -706,22 +702,27 @@
   // pour continuer à fonctionner même si le reste du script rencontre un problème
   // (ex: connexion lente empêchant le SDK Supabase de charger à temps).
   (function(){
+    var menu = document.getElementById('menuMobile');
+    var toggle = document.getElementById('menuToggle');
     function openMenu(){
-      document.getElementById('menuMobile').classList.add('open');
-      document.getElementById('menuOverlay').classList.add('open');
-      document.body.style.overflow = 'hidden';
+      menu.classList.add('open');
+      toggle.setAttribute('aria-expanded', 'true');
     }
     function closeMenu(){
-      document.getElementById('menuMobile').classList.remove('open');
-      document.getElementById('menuOverlay').classList.remove('open');
-      document.body.style.overflow = '';
+      menu.classList.remove('open');
+      toggle.setAttribute('aria-expanded', 'false');
     }
     window.closeMenu = closeMenu;
-    document.getElementById('menuToggle').addEventListener('click', openMenu);
+    toggle.addEventListener('click', openMenu);
     document.getElementById('menuClose').addEventListener('click', closeMenu);
-    document.getElementById('menuOverlay').addEventListener('click', closeMenu);
     document.querySelectorAll('nav.tabs button').forEach(function(btn){
       btn.addEventListener('click', closeMenu);
+    });
+    document.addEventListener('click', function(event){
+      if(!menu.closest('header').contains(event.target)) closeMenu();
+    });
+    document.addEventListener('keydown', function(event){
+      if(event.key === 'Escape') closeMenu();
     });
   })();
 
@@ -2401,7 +2402,7 @@
   }
 
   // ---- Navigation entre vues ----
-  const tabButtons = document.querySelectorAll('nav.tabs button');
+  const tabButtons = document.querySelectorAll('nav.tabs button[data-view]');
   let autoRefreshTimer = null;
   function demarrerAutoRefresh(fn){
     if(autoRefreshTimer) clearInterval(autoRefreshTimer);
@@ -2430,6 +2431,7 @@
   }
 
   function markBadgeVisited(view){
+    badgeRefreshRequest++;
     localStorage.setItem(BADGE_LAST_VISIT_PREFIX + badgeStorageKey(view), new Date().toISOString());
     badgeCounts[view] = 0;
     setMenuBadge(view, 0);
@@ -2527,6 +2529,24 @@
   }
   window.refreshBadges = refreshBadges;
 
+  const badgeRealtimeTables = ['publications', 'prix_marche', 'formations', 'forum_sujets', 'forum_reponses', 'profiles', 'suggestions', 'messages'];
+  let badgeRealtimeChannel = null;
+  let badgeRealtimeRefreshTimer = null;
+  function demarrerEcouteBadgesRealtime(){
+    if(badgeRealtimeChannel) return;
+    let channel = sb.channel('menu-badges');
+    badgeRealtimeTables.forEach(table => {
+      channel = channel.on('postgres_changes', { event: '*', schema: 'public', table }, () => {
+        clearTimeout(badgeRealtimeRefreshTimer);
+        badgeRealtimeRefreshTimer = setTimeout(() => {
+          badgeRealtimeRefreshTimer = null;
+          refreshBadges();
+        }, 150);
+      });
+    });
+    badgeRealtimeChannel = channel.subscribe();
+  }
+
   function showView(name){
     markBadgeVisited(name);
     trackEvent('page_view', name);
@@ -2587,7 +2607,10 @@
   }
   setInterval(rafraichirVueActive, 40000); // toutes les 40 secondes
   document.addEventListener('visibilitychange', () => {
-    if(document.visibilityState === 'visible') rafraichirVueActive();
+    if(document.visibilityState === 'visible'){
+      rafraichirVueActive();
+      refreshBadges();
+    }
   });
 
   // ---- Auth : bascule inscription / connexion ----
@@ -5228,9 +5251,15 @@
 
   sb.auth.onAuthStateChange((event) => {
     if(event === 'PASSWORD_RECOVERY'){ showRecoveryScreen(); return; }
-    refreshSession().finally(() => refreshBadges());
+    refreshSession().finally(() => {
+      demarrerEcouteBadgesRealtime();
+      refreshBadges();
+    });
   });
-  refreshSession().finally(() => refreshBadges());
+  refreshSession().finally(() => {
+    demarrerEcouteBadgesRealtime();
+    refreshBadges();
+  });
   setInterval(refreshBadges, 30000);
 
   const urlParams = new URLSearchParams(window.location.search);
