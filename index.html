@@ -138,45 +138,36 @@
   header a:focus-visible, header button:focus-visible{ outline:2px solid var(--or-clair); outline-offset:2px; box-shadow:0 0 0 4px rgba(15,44,19,0.9); }
 
   .menu-toggle{
-    display:none; background:transparent; border:1px solid rgba(245,239,224,0.25); color:var(--ivoire);
-    width:44px; height:44px; border-radius:12px; cursor:pointer; font-size:1.3rem; align-items:center; justify-content:center; flex-shrink:0;
-  }
-
-  .menu-close{
-    display:none; align-self:flex-end;
-    background:transparent; border:1px solid rgba(245,239,224,0.25); color:var(--ivoire);
-    width:44px; height:44px; border-radius:12px; align-items:center; justify-content:center; font-size:1.2rem; cursor:pointer;
-    margin-bottom:6px;
+    display:none; background:rgba(245,239,224,0.1); border:1px solid rgba(245,239,224,0.36); color:var(--ivoire);
+    width:52px; height:52px; border-radius:14px; cursor:pointer; font-size:1.45rem; line-height:1; align-items:center; justify-content:center; flex-shrink:0;
   }
   @media (max-width:767px){
-    .menu-toggle{ display:flex; }
+    .menu-toggle{ display:flex; position:relative; z-index:10002; }
+    .header-actions{ position:relative; z-index:10002; }
     nav.tabs{
-      order:4; flex:0 0 100%;
-      display:flex; position:relative; top:auto; right:auto; left:auto; bottom:auto;
-      width:100%; max-width:none; max-height:0; margin:0;
-      background:linear-gradient(180deg, rgba(6,20,9,0.99), rgba(12,36,16,0.98));
+      position:fixed; inset:0; z-index:10001;
+      display:flex; width:100vw; max-width:100vw; height:100vh; height:100dvh; max-height:none; margin:0;
+      padding:calc(92px + env(safe-area-inset-top)) 20px calc(24px + env(safe-area-inset-bottom));
+      background:linear-gradient(155deg, #0b2410 0%, #123a19 52%, #081a0b 100%);
       backdrop-filter:blur(10px);
-      flex-direction:column; flex-wrap:nowrap; align-items:flex-end; gap:4px;
-      height:auto; padding:0 12px;
+      flex-direction:column; flex-wrap:nowrap; align-items:stretch; justify-content:flex-start; gap:9px;
       overflow-x:hidden; overflow-y:auto; touch-action:pan-y;
-      z-index:auto; background:#1a2e1a;
-      visibility:hidden; pointer-events:none;
-      transition:max-height .3s ease, padding .3s ease, visibility 0s linear .3s;
-      box-shadow:none;
-      overscroll-behavior:contain;
+      transform:translateX(100%); visibility:hidden; pointer-events:none;
+      transition:transform .28s ease, visibility 0s linear .28s;
+      box-shadow:-16px 0 40px rgba(0,0,0,.24); overscroll-behavior:contain;
       -webkit-overflow-scrolling:touch;
     }
     nav.tabs.open{
-      max-height:65vh; max-height:min(65vh,560px); padding:10px 12px 12px;
+      transform:translateX(0);
       visibility:visible; pointer-events:auto;
-      transition:max-height .3s ease, padding .3s ease, visibility 0s;
+      transition:transform .28s ease, visibility 0s;
     }
     nav.tabs button{
-      width:min(100%,360px); flex:0 0 auto; flex-shrink:0; align-self:flex-end;
-      text-align:right; padding:10px 14px; font-size:0.98rem; border-radius:14px;
+      width:100%; min-height:56px; flex:0 0 auto; align-self:stretch;
+      text-align:left; padding:14px 16px; font-size:1.02rem; line-height:1.35; border-radius:12px;
     }
-    .menu-close{ display:none; }
-    nav.tabs.open .menu-close{ display:flex; }
+    nav.tabs button.menu-admin-action{background:rgba(217,166,43,.13);border-color:rgba(217,166,43,.62);color:#fff3ce;}
+    header.menu-open > nav:not(.tabs) > .logo{position:relative;z-index:10002;}
     .header-actions .account-box{ display:none; }
   }
   @media (min-width:768px){
@@ -693,6 +684,14 @@
   }
   input:focus,select:focus,textarea:focus{border-color:var(--vert-rich);outline:3px solid rgba(63,139,68,.16);}
   .field label{font-weight:600;color:var(--vert-nuit);}
+  .admin-publicite-header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px;}
+  .admin-publicite-header h3{margin:0;}
+  #carteAjoutPub{scroll-margin-top:112px;}
+  @media (max-width:600px){
+    #carteAjoutPub{padding:16px;}
+    .admin-publicite-header{align-items:stretch;flex-direction:column;}
+    .admin-publicite-header .btn-main{width:100%;min-height:52px;font-size:1rem;}
+  }
 </style>
 
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
@@ -704,9 +703,9 @@
   <nav class="relative z-[9999]">
     <a href="#" class="logo" onclick="showView('accueil'); return false;"><img src="https://richfarmunity.com/icon-192.png" alt="Rĩch Farm Unity" style="height:40px;width:auto;border-radius:6px;">Rĩch Farm Unity</a>
     <nav class="tabs" id="menuMobile">
-      <button class="menu-close" id="menuClose" aria-label="Fermer le menu">✕</button>
       <button data-view="accueil" class="active">Accueil</button>
       <button data-view="publications">Annonces</button>
+      <button type="button" id="tabPublicites" class="menu-admin-action" style="display:none;">Gérer les publicités</button>
       <button data-view="prixmarche">Prix du marché</button>
       <button data-view="calendrier">Calendrier culturel</button>
       <button data-view="carte">Carte</button>
@@ -724,7 +723,7 @@
     </nav>
     <div class="header-actions">
       <div class="account-box" id="accountLabel"></div>
-      <button class="menu-toggle" id="menuToggle" aria-label="Ouvrir le menu" aria-expanded="false">☰</button>
+      <button type="button" class="menu-toggle" id="menuToggle" aria-label="Ouvrir le menu" aria-expanded="false">☰</button>
     </div>
   </nav>
   <div class="avis-modal-backdrop" id="avisModalBackdrop">
@@ -749,22 +748,39 @@
   (function(){
     var menu = document.getElementById('menuMobile');
     var toggle = document.getElementById('menuToggle');
+    var header = menu.closest('header');
+    var bodyOverflowBeforeOpen = '';
     function openMenu(){
       menu.classList.add('open');
+      header.classList.add('menu-open');
+      bodyOverflowBeforeOpen = document.body.style.overflow;
+      document.body.style.overflow = 'hidden';
       toggle.setAttribute('aria-expanded', 'true');
+      toggle.setAttribute('aria-label', 'Fermer le menu');
+      toggle.textContent = '×';
     }
     function closeMenu(){
       menu.classList.remove('open');
+      header.classList.remove('menu-open');
+      document.body.style.overflow = bodyOverflowBeforeOpen;
       toggle.setAttribute('aria-expanded', 'false');
+      toggle.setAttribute('aria-label', 'Ouvrir le menu');
+      toggle.textContent = '☰';
     }
     window.closeMenu = closeMenu;
-    toggle.addEventListener('click', openMenu);
-    document.getElementById('menuClose').addEventListener('click', closeMenu);
-    document.querySelectorAll('nav.tabs button').forEach(function(btn){
+    toggle.addEventListener('click', function(){
+      if(menu.classList.contains('open')) closeMenu();
+      else openMenu();
+    });
+    document.querySelectorAll('nav.tabs button[data-view]').forEach(function(btn){
       btn.addEventListener('click', closeMenu);
     });
+    document.getElementById('tabPublicites').addEventListener('click', function(){
+      closeMenu();
+      window.allerGererPublicites();
+    });
     document.addEventListener('click', function(event){
-      if(!menu.closest('header').contains(event.target)) closeMenu();
+      if(menu.classList.contains('open') && !menu.contains(event.target) && !toggle.contains(event.target)) closeMenu();
     });
     document.addEventListener('keydown', function(event){
       if(event.key === 'Escape') closeMenu();
@@ -1177,7 +1193,10 @@
     <div class="app-main">
       <div id="publicitesAnnonces" class="publicites-zone" aria-label="Publicités"></div>
       <div class="card" id="carteAjoutPub" style="margin-bottom:20px;display:none;">
-        <h3 style="margin-bottom:14px;">Gérer les publicités (admin)</h3>
+        <div class="admin-publicite-header">
+          <h3>Gérer les publicités</h3>
+          <button type="button" class="btn-main" id="btnCreerPublicite">+ Créer une publicité</button>
+        </div>
         <form id="formPublicite">
           <div class="field-row">
             <div class="field"><label for="pubAnnonceur">Nom de l'annonceur</label><input type="text" id="pubAnnonceur" required placeholder="Ex : Agro-Intrants Bénin"></div>
@@ -2594,6 +2613,14 @@
     if(name === 'stats') loadStats();
     if(name === 'compte' && currentUser) loadMesAlertes();
   }
+  window.allerGererPublicites = function(){
+    if(!currentProfile || !currentProfile.is_admin) return;
+    showView('publications');
+    setTimeout(() => {
+      document.getElementById('carteAjoutPub').scrollIntoView({ behavior:'smooth', block:'start' });
+      document.getElementById('btnCreerPublicite').focus({ preventScroll:true });
+    }, 120);
+  };
   tabButtons.forEach(btn => btn.addEventListener('click', () => showView(btn.dataset.view)));
 
   async function trackEvent(event_type, page, metadata={}) {
@@ -2851,6 +2878,7 @@
       document.getElementById('tabSuggestions').style.display = 'none';
       document.getElementById('tabMembres').style.display = 'none';
       document.getElementById('tabStats').style.display = 'none';
+      document.getElementById('tabPublicites').style.display = 'none';
       document.getElementById('carteAjoutContactInstit').style.display = 'none';
       document.getElementById('carteAjoutPub').style.display = 'none';
     };
@@ -2897,6 +2925,7 @@
         document.getElementById('accountLabel').textContent = '';
         document.getElementById('compteConnecte').style.display = 'none';
         document.getElementById('compteNonConnecte').style.display = 'block';
+        document.getElementById('tabPublicites').style.display = 'none';
         return;
       }
       if(profile && profile.compte_rejete){
@@ -2916,6 +2945,7 @@
         document.getElementById('tabSuggestions').style.display = 'none';
         document.getElementById('tabMembres').style.display = 'none';
         document.getElementById('tabStats').style.display = 'none';
+        document.getElementById('tabPublicites').style.display = 'none';
         return;
       }
       errorCard.style.display = 'none';
@@ -2959,6 +2989,7 @@
       document.getElementById('btnNouveauSujet').style.display = compteActif(profile) ? 'inline-block' : 'none';
       document.getElementById('tabMembres').style.display = (profile && profile.is_admin) ? 'inline-block' : 'none';
       document.getElementById('tabStats').style.display = (profile && profile.is_admin) ? 'inline-block' : 'none';
+      document.getElementById('tabPublicites').style.display = (profile && profile.is_admin) ? 'inline-block' : 'none';
       const pendingMsg = document.getElementById('compteEnAttente');
       const completeCard = document.getElementById('carteCompleterProfil');
       const publierBtn = document.getElementById('btnAllerPublier');
@@ -3044,6 +3075,7 @@
       document.getElementById('compteConnecte').style.display = 'none';
       document.getElementById('compteNonConnecte').style.display = 'block';
       document.getElementById('btnNouvelleFormation').style.display = 'none';
+      document.getElementById('tabPublicites').style.display = 'none';
     }
   }
 
@@ -5331,6 +5363,10 @@
     if(event.target === publicitePreview || event.target.closest('.publicite-preview-close') || event.target.closest('[data-preview-edit]')) fermerApercuPublicite();
   });
   document.addEventListener('keydown', event => { if(event.key === 'Escape') fermerApercuPublicite(); });
+  document.getElementById('btnCreerPublicite').addEventListener('click', () => {
+    document.getElementById('formPublicite').scrollIntoView({ behavior:'smooth', block:'start' });
+    document.getElementById('pubAnnonceur').focus({ preventScroll:true });
+  });
 
   document.getElementById('btnVoirApercuPub').addEventListener('click', () => {
     const form = document.getElementById('formPublicite');
